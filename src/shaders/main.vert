@@ -11,7 +11,7 @@ out vec3 frag_pos;
 out vec3 normal;
 
 void main() {
-	frag_pos = in_vec_pos;
+	frag_pos = vec3(model * vec4(in_vec_pos, 1.0f));
 	
 	mat3 normal_matrix = transpose(inverse(mat3(model)));
 	normal = normalize(normal_matrix * in_normal);

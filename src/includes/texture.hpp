@@ -49,8 +49,8 @@ Texture2D::Texture2D(std::string texture_path) {
 		GLenum format;
 
 		if (nr_channels == 1) format = GL_RED;
-		else if (nr_channels == 3) format == GL_RGB;
-		else if (nr_channels == 4) format == GL_RGBA;
+		else if (nr_channels == 3) format = GL_RGB;
+		else if (nr_channels == 4) format = GL_RGBA;
 
 		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);

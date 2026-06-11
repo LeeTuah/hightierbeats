@@ -54,17 +54,23 @@ struct Spotlight {
 
 vec3 calculate_dir_light(DirLight light, Shard shard, vec3 viewer_dirn, vec3 normal) {
 	vec3 light_dirn = normalize(-(light.direction));
-	
+
 	vec3 ambient_light = light.ambient * shard.ambient;
 
 	float diffuse_dot_value = max(dot(light_dirn, normal), 0.0f);
-	vec3 diffuse_light = diffuse_dot_value * light.diffuse * shard.diffuse;
+
+	float diffuse_levels = 7.0f;
+	float toon_diffuse = floor(diffuse_dot_value * diffuse_levels) / diffuse_levels;
+	vec3 diffuse_light = toon_diffuse * light.diffuse * shard.diffuse;
 
 	vec3 reflected_dirn = normalize(reflect(-light_dirn, normal));
 	float specular_dot_value = pow(max(dot(reflected_dirn, viewer_dirn), 0.0f), shard.shininess);
-	vec3 specular_light = specular_dot_value * light.specular * shard.diffuse;
 
-	return (ambient_light + diffuse_light + specular_light);
+	float specular_levels = 10.0f;
+	float toon_specular = floor(specular_dot_value * specular_levels) / specular_levels;
+	vec3 specular_light = toon_specular * light.specular * shard.specular;
+
+	return (ambient_light + diffuse_light); // FIXME: disabled specular for now
 }
 
 
@@ -73,17 +79,21 @@ in vec3 normal;
 
 out vec4 FragColor;
 
+uniform vec3 viewer_pos;
 uniform Shard shard;
-uniform DirLight sun;
+
+# define TOTAL_SUNS 10
+uniform int allocated_suns;
+uniform DirLight suns[TOTAL_SUNS];
 
 void main() {
 	vec3 norm = normalize(normal);
-	vec3 viewer_pos = vec3(0.0f);
 	vec3 viewer_dirn = normalize(viewer_pos - frag_pos);
 
 	vec3 result = vec3(0.0f);
 
-	result += calculate_dir_light(sun, shard, viewer_dirn, norm);
+	for (int i = 0; i < allocated_suns; i++)
+		result += calculate_dir_light(suns[i], shard, viewer_dirn, norm);
 
 	FragColor = vec4(result, 1.0f);
 }
