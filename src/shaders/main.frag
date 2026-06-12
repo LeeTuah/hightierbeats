@@ -70,7 +70,7 @@ vec3 calculate_dir_light(DirLight light, Shard shard, vec3 viewer_dirn, vec3 nor
 	float toon_specular = floor(specular_dot_value * specular_levels) / specular_levels;
 	vec3 specular_light = toon_specular * light.specular * shard.specular;
 
-	return (ambient_light + diffuse_light); // FIXME: disabled specular for now
+	return (ambient_light + diffuse_light + specular_light);
 }
 
 

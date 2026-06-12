@@ -10,11 +10,23 @@
 # include "includes/texture.hpp"
 
 # include <vector>
+# include <map>
 
 enum GameState {
 	GAME_PAUSED,
 	GAME_RUNNING,
 	GAME_ZERO_HP
+};
+
+enum ShieldAlignment {
+	W = 90,
+	A = 180,
+	S = -90,
+	D = 0,
+	WD = 45,
+	DS = -45,
+	SA = -135,
+	WA = 135
 };
 
 struct Shard {
@@ -27,6 +39,18 @@ struct Shard {
 	bool active;
 };
 
+struct Shield {
+	glm::vec3 position;
+	glm::vec3 pivot;
+
+	float rotation_angle;
+	glm::vec3 rotation_axis;
+
+	ShieldAlignment alignment;
+	
+	int segments;
+};
+
 class Game {
 public:
 	GameState game_state;
@@ -36,15 +60,18 @@ public:
 	
 	unsigned int shard_VAO, shard_VBO;
 	unsigned int core_VAO, core_VBO;
+	unsigned int shield_VAO, shield_VBO;
 	unsigned int font_VAO, font_VBO;
 
 	Shader* main_shader;
 	Shader* text_shader;
 
 	glm::mat4 view, projection, model, text_projection;
-	std::vector<Shard> shards;
-	glm::vec3 core_position;
 	std::vector<glm::vec3> sun_directions;
+	
+	std::vector<Shard> shards;
+	Shard core;
+	Shield shield;
 
 	Game(int width, int height);
 
@@ -71,9 +98,23 @@ Game::Game(int width, int height) {
 	generate_VAOs();
 
 	shards.push_back({glm::vec3(+10.0f, 0.0f, +10.0f), glm::vec3(0.0f, 0.0f, 0.0f), 90.0f, glm::vec3(0.0f, 0.0f, 1.0f), false});
-	shards.push_back({glm::vec3(+10.0f, 0.0f, -10.0f), glm::vec3(0.0f, 0.0f, 1.5f), 90.0f, glm::vec3(0.0f, 0.0f, 1.0f), false});
+	shards.push_back({glm::vec3(+10.0f, 0.0f, -10.0f), glm::vec3(0.0f, 0.0f, 2.5f), 90.0f, glm::vec3(0.0f, 0.0f, 1.0f), false});
 
-	core_position = glm::vec3(10.0f, 0.0f, 0.0f);
+	core.position = glm::vec3(10.0f, 0.0f, 0.0f);
+	core.velocity = glm::vec3(0.0f);
+
+	core.rotation_angle = 0.0f;
+	core.rotation_axis = glm::vec3(1.0f);
+
+	core.active = true; // core.active means if it will be surrounded by wireframe or not
+
+	shield.position = core.position + glm::vec3(0.0f, 0.0f, -1.5f);
+	shield.pivot = core.position;
+	shield.alignment = D;
+
+	shield.rotation_angle = 0.0f;
+	shield.rotation_axis = glm::vec3(-1.0f, 0.0f, 0.0f);
+	// shield.rotation_axis = glm::vec3(0.0f, -1.0f, 0.0f);
 
 	sun_directions.push_back(glm::vec3(+1.0f, -1.0f, +0.0f));
 	sun_directions.push_back(glm::vec3(+1.0f, +1.0f, +0.0f));
@@ -82,6 +123,26 @@ Game::Game(int width, int height) {
 void Game::process_input(GLFWwindow* window, float delta_time) {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS and glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+		shield.alignment = WA;
+	} else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS and glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+		shield.alignment = SA;
+	} else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS and glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+		shield.alignment = DS;
+	} else if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS and glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+		shield.alignment = WD;
+	}
+
+	else if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+		shield.alignment = W;
+	} else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+		shield.alignment = S;
+	} else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+		shield.alignment = A;
+	} else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+		shield.alignment = D;
 	}
 }
 
@@ -120,7 +181,7 @@ void Game::render(float delta_time) {
 
 		main_shader->set_float3(name + "ambient", 0.1f, 0.1f, 0.1f);
 		main_shader->set_float3(name + "diffuse", 0.3f, 0.3f, 0.3f);
-		main_shader->set_float3(name + "specular", 1.0f, 1.0f, 1.0f);
+		main_shader->set_float3(name + "specular", 0.0f, 0.0f, 0.0f);
 
 		main_shader->set_float3(name + "direction", sun_directions[i]);
 	}
@@ -132,17 +193,36 @@ void Game::render(float delta_time) {
 		model = glm::translate(model, shard.position);
 		if (shard.rotation_angle != 0.0f)
 			model = glm::rotate(model, glm::radians(shard.rotation_angle), glm::normalize(shard.rotation_axis));
+
 		main_shader->set_mat4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 24);
 	}
 
 	glBindVertexArray(core_VAO);
+	core.rotation_angle = 25.0f * glfwGetTime();
 
 	model = glm::mat4(1.0f);
-	model = glm::translate(model, core_position);
-	model = glm::rotate(model, (float)glm::radians(25.0f * glfwGetTime()), glm::normalize(glm::vec3(1.0f)));
+	model = glm::translate(model, core.position);
+	model = glm::rotate(model, (float)glm::radians(core.rotation_angle), glm::normalize(core.rotation_axis));
 	main_shader->set_mat4("model", model);
 	glDrawArrays(GL_TRIANGLES, 0, 60);
+
+	if (core.active) {
+		model = glm::scale(model, glm::vec3(1.1f));
+		main_shader->set_mat4("model", model);
+		glDrawArrays(GL_LINE_LOOP, 0, 60);
+	}
+
+	glBindVertexArray(shield_VAO);
+	shield.rotation_angle = (float)shield.alignment;
+
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, core.position);
+	if (shield.rotation_angle != 0)
+		model = glm::rotate(model, glm::radians(shield.rotation_angle), glm::normalize(shield.rotation_axis));
+	model = glm::translate(model, shield.position - core.position);
+	main_shader->set_mat4("model", model);
+	glDrawArrays(GL_TRIANGLES, 0, 24 * shield.segments + 12);
 }
 
 void Game::check_for_collisions() {
@@ -312,6 +392,83 @@ void Game::generate_VAOs() {
 	glGenBuffers(1, &core_VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, core_VBO);
 	glBufferData(GL_ARRAY_BUFFER, core_data.size() * sizeof(float), core_data.data(), GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
+	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	glBindVertexArray(0);
+
+	std::vector<float> shield_vertices;
+
+	auto push_four = [&](glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec3 v4) {
+		shield_vertices.insert(shield_vertices.end(), {
+			v1.x, v1.y, v1.z,
+			v2.x, v2.y, v2.z,
+			v3.x, v3.y, v3.z,
+
+			v1.x, v1.y, v1.z,
+			v3.x, v3.y, v3.z,
+			v4.x, v4.y, v4.z,
+		});
+	};
+
+	shield.segments = 8;
+	float total_angle = glm::radians(90.0f);
+
+	float radius_in = 1.4f;
+	float radius_out = 1.6;
+	float thick_x = 0.2f;
+
+	float angle_change = total_angle / (float)shield.segments;
+	float starting_angle = -total_angle / 2.0f;
+
+	float angle_one, angle_two, y1_in, y1_out, z1_in, z1_out, y2_in, y2_out, z2_in, z2_out;
+	glm::vec3 in_bl, in_br, in_tl, in_tr, out_bl, out_br, out_tl, out_tr;
+
+	for (int i = 0; i < shield.segments; i++) {
+		angle_one = starting_angle + i * angle_change;
+		angle_two = starting_angle + (i + 1) * angle_change;
+
+		y1_in = radius_in * sin(angle_one);
+		z1_in = -radius_in * cos(angle_one) + 1.5f;
+		y1_out = radius_out * sin(angle_one);
+		z1_out = -radius_out * cos(angle_one) + 1.5f;
+
+		y2_in = radius_in * sin(angle_two);
+		z2_in = -radius_in * cos(angle_two) + 1.5f;
+		y2_out = radius_out * sin(angle_two);
+		z2_out = -radius_out * cos(angle_two) + 1.5f;
+
+		in_bl = glm::vec3(-thick_x, y1_in, z1_in);
+		in_br = glm::vec3( thick_x, y1_in, z1_in);
+		in_tl = glm::vec3(-thick_x, y2_in, z2_in);
+		in_tr = glm::vec3( thick_x, y2_in, z2_in);
+
+		out_bl = glm::vec3(-thick_x, y1_out, z1_out);
+		out_br = glm::vec3( thick_x, y1_out, z1_out);
+		out_tl = glm::vec3(-thick_x, y2_out, z2_out);
+		out_tr = glm::vec3( thick_x, y2_out, z2_out);
+
+		push_four(out_bl, out_br, out_tr, out_tl);
+		push_four(in_br, in_bl, in_tl, in_tr);
+		push_four(out_br, in_br, in_tr, out_tr);
+		push_four(in_bl, out_bl, out_tl, in_tl);
+
+		if (i == 0) push_four(in_bl, in_br, out_br, out_bl);
+		if (i == shield.segments - 1) push_four(out_tl, out_tr, in_tr, in_tl);
+	}
+
+	std::vector<float> shield_data = generate_normals(shield_vertices);
+	
+	glGenVertexArrays(1, &shield_VAO);
+	glBindVertexArray(shield_VAO);
+
+	glGenBuffers(1, &shield_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, shield_VBO);
+	glBufferData(GL_ARRAY_BUFFER, shield_data.size() * sizeof(float), shield_data.data(), GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(0);

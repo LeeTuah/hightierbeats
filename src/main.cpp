@@ -37,8 +37,8 @@ int main () {
 		last_time = current_time;
 
 		htb_engine->process_input(window, delta_time);
-		htb_engine->render(delta_time);
 		htb_engine->check_for_collisions();
+		htb_engine->render(delta_time);
 
 		glfwSwapBuffers(window);
 	}
