@@ -38,7 +38,8 @@ int main () {
 
 		htb_engine->process_input(window, delta_time);
 		htb_engine->check_for_collisions();
-		htb_engine->render(delta_time);
+		htb_engine->render();
+		htb_engine->update(delta_time);
 
 		glfwSwapBuffers(window);
 	}

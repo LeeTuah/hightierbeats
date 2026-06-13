@@ -31,10 +31,15 @@ enum ShieldAlignment {
 
 struct Shard {
 	glm::vec3 position;
-	glm::vec3 velocity;
+	ShieldAlignment alignment;
+	glm::vec3 direction;
+	float velocity;
 
 	float rotation_angle;
 	glm::vec3 rotation_axis;
+
+	float impact_time;
+	float spawn_time;
 
 	bool active;
 };
@@ -77,8 +82,9 @@ public:
 
 	void process_input(GLFWwindow* window, float delta_time);
 
-	void render(float delta_time);
+	void render();
 	void check_for_collisions();
+	void update(float delta_time);
 private:
 	void generate_VAOs();
 	std::vector<float> generate_normals(std::vector<float> vertices);
@@ -97,16 +103,115 @@ Game::Game(int width, int height) {
 
 	generate_VAOs();
 
-	shards.push_back({glm::vec3(+10.0f, 0.0f, +10.0f), glm::vec3(0.0f, 0.0f, 0.0f), 90.0f, glm::vec3(0.0f, 0.0f, 1.0f), false});
-	shards.push_back({glm::vec3(+10.0f, 0.0f, -10.0f), glm::vec3(0.0f, 0.0f, 2.5f), 90.0f, glm::vec3(0.0f, 0.0f, 1.0f), false});
-
 	core.position = glm::vec3(10.0f, 0.0f, 0.0f);
-	core.velocity = glm::vec3(0.0f);
+	core.direction = glm::vec3(0.0f);
 
 	core.rotation_angle = 0.0f;
 	core.rotation_axis = glm::vec3(1.0f);
 
 	core.active = true; // core.active means if it will be surrounded by wireframe or not
+
+	// temporary beatmap to test stuff (will be changed later)
+	Shard test_note;
+	test_note.active = false;
+	test_note.velocity = 8.0f; 
+
+	test_note.alignment = W;  test_note.impact_time = 3.0f;  shards.push_back(test_note);
+	test_note.alignment = S;  test_note.impact_time = 3.5f;  shards.push_back(test_note);
+	test_note.alignment = A;  test_note.impact_time = 4.0f;  shards.push_back(test_note);
+	test_note.alignment = D;  test_note.impact_time = 4.5f;  shards.push_back(test_note);
+
+	test_note.alignment = WD; test_note.impact_time = 5.0f;  shards.push_back(test_note);
+	test_note.alignment = SA; test_note.impact_time = 5.25f; shards.push_back(test_note);
+	test_note.alignment = WA; test_note.impact_time = 5.5f;  shards.push_back(test_note);
+	test_note.alignment = DS; test_note.impact_time = 5.75f; shards.push_back(test_note);
+
+	test_note.alignment = W;  test_note.impact_time = 7.0f;  shards.push_back(test_note);
+	test_note.alignment = WD; test_note.impact_time = 7.2f;  shards.push_back(test_note);
+	test_note.alignment = D;  test_note.impact_time = 7.4f;  shards.push_back(test_note);
+	test_note.alignment = DS; test_note.impact_time = 7.6f;  shards.push_back(test_note);
+	test_note.alignment = S;  test_note.impact_time = 7.8f;  shards.push_back(test_note);
+	test_note.alignment = SA; test_note.impact_time = 8.0f;  shards.push_back(test_note);
+	test_note.alignment = A;  test_note.impact_time = 8.2f;  shards.push_back(test_note);
+	test_note.alignment = WA; test_note.impact_time = 8.4f;  shards.push_back(test_note);
+
+	test_note.alignment = W;  test_note.impact_time = 9.5f;  shards.push_back(test_note);
+	test_note.alignment = S;  test_note.impact_time = 9.7f;  shards.push_back(test_note);
+	
+	test_note.alignment = A;  test_note.impact_time = 10.2f; shards.push_back(test_note);
+	test_note.alignment = D;  test_note.impact_time = 10.4f; shards.push_back(test_note);
+
+	test_note.alignment = WD; test_note.impact_time = 10.9f; shards.push_back(test_note);
+	test_note.alignment = SA; test_note.impact_time = 11.1f; shards.push_back(test_note);
+	
+	test_note.velocity = 12.0f; 
+
+	test_note.alignment = W;  test_note.impact_time = 12.5f; shards.push_back(test_note);
+	test_note.alignment = W;  test_note.impact_time = 12.7f; shards.push_back(test_note);
+	test_note.alignment = W;  test_note.impact_time = 12.9f; shards.push_back(test_note);
+	
+	test_note.alignment = D;  test_note.impact_time = 13.3f; shards.push_back(test_note);
+	test_note.alignment = D;  test_note.impact_time = 13.5f; shards.push_back(test_note);
+	
+	test_note.alignment = A;  test_note.impact_time = 13.9f; shards.push_back(test_note);
+	test_note.alignment = D;  test_note.impact_time = 14.1f; shards.push_back(test_note);
+
+	float x_level = 10.0f, y_level = 8.0f, z_level = 14.0f;
+	for (auto &shard : shards) {
+		switch (shard.alignment) {
+			case W:
+				shard.position = glm::vec3(x_level, +y_level, 0.0f);
+				break;
+			
+			case S:
+				shard.position = glm::vec3(x_level, -y_level, 0.0f);
+				break;
+
+			case A:
+				shard.position = glm::vec3(x_level, 0.0f, +z_level);
+				break;
+
+			case D:
+				shard.position = glm::vec3(x_level, 0.0f, -z_level);
+				break;
+
+
+			case WD:
+				shard.position = glm::vec3(x_level, +y_level, -z_level);
+				break;
+
+			case DS:
+				shard.position = glm::vec3(x_level, -y_level, -z_level);
+				break;
+
+			case SA:
+				shard.position = glm::vec3(x_level, -y_level, +z_level);
+				break;
+
+			case WA:
+				shard.position = glm::vec3(x_level, +y_level, +z_level);
+				break;
+		} shard.direction = glm::normalize(core.position - shard.position);
+
+		if (shard.direction.y == 0.0f and shard.direction.z != 0.0f) {
+			shard.rotation_angle = 90.0f;
+			shard.rotation_axis = glm::vec3(1.0f, 0.0f, 0.0f);
+		}
+		else if (shard.direction.y != 0.0f and shard.direction.z == 0.0f) {
+			shard.rotation_angle = 45.0f;
+			shard.rotation_axis = glm::vec3(0.0f, 1.0f, 0.0f);
+		}
+		else if ((shard.direction.y > 0.0f and shard.direction.z < 0.0f) or (shard.direction.y < 0.0f and shard.direction.z > 0.0f)) {
+			shard.rotation_angle = -45.0f;
+			shard.rotation_axis = glm::vec3(1.0f, 0.0f, 0.0f);
+		}
+		else if ((shard.direction.y < 0.0f and shard.direction.z < 0.0f) or (shard.direction.y > 0.0f and shard.direction.z > 0.0f)) {
+			shard.rotation_angle = 45.0f;
+			shard.rotation_axis = glm::vec3(1.0f, 0.0f, 0.0f);
+		}
+
+		shard.spawn_time = shard.impact_time - (glm::distance(core.position, shard.position) / shard.velocity);
+	}
 
 	shield.position = core.position + glm::vec3(0.0f, 0.0f, -1.5f);
 	shield.pivot = core.position;
@@ -146,7 +251,7 @@ void Game::process_input(GLFWwindow* window, float delta_time) {
 	}
 }
 
-void Game::render(float delta_time) {
+void Game::render() {
 	// glfwSetInputMode for mouse later
 	glClearColor(0.02f, 0.02f, 0.02f, 1.0f);
 
@@ -187,13 +292,14 @@ void Game::render(float delta_time) {
 	}
 
 	for (auto &shard : shards) {
-		if (shard.active) shard.position += shard.velocity * delta_time;
+		if (not shard.active) continue;
 
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, shard.position);
 		if (shard.rotation_angle != 0.0f)
 			model = glm::rotate(model, glm::radians(shard.rotation_angle), glm::normalize(shard.rotation_axis));
 
+		model = glm::rotate(model, glm::radians(90.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
 		main_shader->set_mat4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 24);
 	}
@@ -226,7 +332,22 @@ void Game::render(float delta_time) {
 }
 
 void Game::check_for_collisions() {
-	// check for collisions here
+
+}
+
+void Game::update(float delta_time) {
+	float current_time = glfwGetTime();
+
+	for (auto &shard : shards) {
+		if (not shard.active and current_time >= shard.spawn_time)
+			shard.active = true;
+
+		if (shard.active and current_time >= shard.impact_time)
+			shard.active = false;
+
+		if (shard.active)
+			shard.position += shard.direction * shard.velocity * delta_time;
+	}	
 }
 
 void Game::generate_VAOs() {
