@@ -95,5 +95,5 @@ void main() {
 	for (int i = 0; i < allocated_suns; i++)
 		result += calculate_dir_light(suns[i], shard, viewer_dirn, norm);
 
-	FragColor = vec4(result, 1.0f);
+	FragColor = vec4(result * shard.color, 1.0f);
 }

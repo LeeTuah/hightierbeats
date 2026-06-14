@@ -36,10 +36,11 @@ int main () {
 		delta_time = current_time - last_time;
 		last_time = current_time;
 
-		htb_engine->process_input(window, delta_time);
 		htb_engine->check_for_collisions();
-		htb_engine->render();
+
+		htb_engine->process_input(window, delta_time);
 		htb_engine->update(delta_time);
+		htb_engine->render();
 
 		glfwSwapBuffers(window);
 	}

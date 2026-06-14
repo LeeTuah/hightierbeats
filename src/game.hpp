@@ -42,6 +42,7 @@ struct Shard {
 	float spawn_time;
 
 	bool active;
+	bool destroyed;
 };
 
 struct Shield {
@@ -60,22 +61,30 @@ class Game {
 public:
 	GameState game_state;
 
+	int health_point;
+
 	Camera* camera;
 	int SCR_WIDTH, SCR_HEIGHT;
 	
 	unsigned int shard_VAO, shard_VBO;
 	unsigned int core_VAO, core_VBO;
 	unsigned int shield_VAO, shield_VBO;
+	unsigned int square_VAO, square_VBO;
 	unsigned int font_VAO, font_VBO;
 
 	Shader* main_shader;
 	Shader* text_shader;
+	Shader* screen_shader;
 
 	glm::mat4 view, projection, model, text_projection;
 	std::vector<glm::vec3> sun_directions;
 	
-	std::vector<Shard> shards;
 	Shard core;
+	float shield_radius;
+	float core_radius;
+	glm::vec3 core_color;
+
+	std::vector<Shard> shards;
 	Shield shield;
 
 	Game(int width, int height);
@@ -95,11 +104,13 @@ Game::Game(int width, int height) {
 	SCR_HEIGHT = height;
 
 	game_state = GAME_RUNNING;
+	health_point = 100;
 
 	camera = new Camera(glm::vec3(0.0f));
 
 	main_shader = new Shader("shaders/main.vert", "shaders/main.frag");
 	text_shader = new Shader("shaders/text.vert", "shaders/text.frag");
+	screen_shader = new Shader("shaders/screen.vert", "shaders/screen.frag");
 
 	generate_VAOs();
 
@@ -111,9 +122,14 @@ Game::Game(int width, int height) {
 
 	core.active = true; // core.active means if it will be surrounded by wireframe or not
 
+	shield_radius = 1.5f;
+	core_radius = 0.7f;
+	core_color = glm::vec3(0.0f, 1.0f, 0.0f);
+
 	// temporary beatmap to test stuff (will be changed later)
 	Shard test_note;
 	test_note.active = false;
+	test_note.destroyed = false;
 	test_note.velocity = 8.0f; 
 
 	test_note.alignment = W;  test_note.impact_time = 3.0f;  shards.push_back(test_note);
@@ -143,7 +159,7 @@ Game::Game(int width, int height) {
 
 	test_note.alignment = WD; test_note.impact_time = 10.9f; shards.push_back(test_note);
 	test_note.alignment = SA; test_note.impact_time = 11.1f; shards.push_back(test_note);
-	
+
 	test_note.velocity = 12.0f; 
 
 	test_note.alignment = W;  test_note.impact_time = 12.5f; shards.push_back(test_note);
@@ -160,11 +176,11 @@ Game::Game(int width, int height) {
 	for (auto &shard : shards) {
 		switch (shard.alignment) {
 			case W:
-				shard.position = glm::vec3(x_level, +y_level, 0.0f);
+				shard.position = glm::vec3(x_level, -y_level, 0.0f);
 				break;
 			
 			case S:
-				shard.position = glm::vec3(x_level, -y_level, 0.0f);
+				shard.position = glm::vec3(x_level, +y_level, 0.0f);
 				break;
 
 			case A:
@@ -177,19 +193,19 @@ Game::Game(int width, int height) {
 
 
 			case WD:
-				shard.position = glm::vec3(x_level, +y_level, -z_level);
-				break;
-
-			case DS:
 				shard.position = glm::vec3(x_level, -y_level, -z_level);
 				break;
 
+			case DS:
+				shard.position = glm::vec3(x_level, +y_level, -z_level);
+				break;
+
 			case SA:
-				shard.position = glm::vec3(x_level, -y_level, +z_level);
+				shard.position = glm::vec3(x_level, +y_level, +z_level);
 				break;
 
 			case WA:
-				shard.position = glm::vec3(x_level, +y_level, +z_level);
+				shard.position = glm::vec3(x_level, -y_level, +z_level);
 				break;
 		} shard.direction = glm::normalize(core.position - shard.position);
 
@@ -291,6 +307,7 @@ void Game::render() {
 		main_shader->set_float3(name + "direction", sun_directions[i]);
 	}
 
+	main_shader->set_float3("shard.color", glm::vec3(1.0f));
 	for (auto &shard : shards) {
 		if (not shard.active) continue;
 
@@ -304,6 +321,11 @@ void Game::render() {
 		glDrawArrays(GL_TRIANGLES, 0, 24);
 	}
 
+	float del_change_for_hp = 1.0f - ((float)health_point / 100.0f);
+	core_color.x = del_change_for_hp;
+	core_color.y = 1.0f - del_change_for_hp;
+	main_shader->set_float3("shard.color", core_color);
+	
 	glBindVertexArray(core_VAO);
 	core.rotation_angle = 25.0f * glfwGetTime();
 
@@ -319,6 +341,7 @@ void Game::render() {
 		glDrawArrays(GL_LINE_LOOP, 0, 60);
 	}
 
+	main_shader->set_float3("shard.color", glm::vec3(1.0f));
 	glBindVertexArray(shield_VAO);
 	shield.rotation_angle = (float)shield.alignment;
 
@@ -329,16 +352,74 @@ void Game::render() {
 	model = glm::translate(model, shield.position - core.position);
 	main_shader->set_mat4("model", model);
 	glDrawArrays(GL_TRIANGLES, 0, 24 * shield.segments + 12);
+
+	screen_shader->use(); 
+	glBindVertexArray(square_VAO);
+
+	float starting_pos = -0.92f;
+	int total_filled_hp_boxes = health_point / 5;
+
+	for (int i = 0; i < 20; i++) {
+		if (total_filled_hp_boxes <= 0) continue;
+
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(starting_pos, 0.85f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.2f, 0.3f, 0.0f));
+		screen_shader->set_mat4("model", model);
+
+		float red_channel = del_change_for_hp;
+		float green_channel = std::max(0.65f - (red_channel / 5.0f), 0.0f);
+		float blue_channel = std::max(0.83f - red_channel, 0.0f);
+		screen_shader->set_float3("frag_color", red_channel, green_channel, blue_channel);
+
+		starting_pos += 0.04f;
+		total_filled_hp_boxes--;
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+	}
 }
 
 void Game::check_for_collisions() {
+	float current_time = glfwGetTime();
+	float reaction_time = 0.160f;
 
+	for (auto &shard : shards) {
+		if (not shard.active) continue;
+
+		float split_reaction_time = reaction_time / 2.0f;
+		if (
+			((shard.impact_time >= current_time
+			and shard.impact_time - current_time <= split_reaction_time)
+			or
+			(shard.impact_time <= current_time
+			and current_time - shard.impact_time <= split_reaction_time))
+			and shield.alignment == shard.alignment
+		) {
+			health_point += 10;
+			shard.active = false;
+			shard.destroyed = true;
+			continue;
+		}
+		else if (shard.impact_time < current_time) {
+			health_point -= 15;
+			shard.active = false;
+			shard.destroyed = true;
+			continue;
+		}
+	}
 }
 
 void Game::update(float delta_time) {
 	float current_time = glfwGetTime();
 
+	if (health_point > 100) health_point = 100;
+	else if (health_point < 0) health_point = 0;
+	else if (health_point == 0) {
+		game_state = GAME_ZERO_HP;
+	}
+
 	for (auto &shard : shards) {
+		if (shard.destroyed) continue;
+
 		if (not shard.active and current_time >= shard.spawn_time)
 			shard.active = true;
 
@@ -347,7 +428,9 @@ void Game::update(float delta_time) {
 
 		if (shard.active)
 			shard.position += shard.direction * shard.velocity * delta_time;
-	}	
+	}
+
+	// std::cout << "HP: " << health_point << std::endl;
 }
 
 void Game::generate_VAOs() {
@@ -596,6 +679,30 @@ void Game::generate_VAOs() {
 
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+
+	glBindVertexArray(0);
+
+	const float square_size = 0.1f;
+	const float square_offset = 0.043f;
+	float square_vertices[] = {
+		+square_size + square_offset, +square_size,
+		-square_size + square_offset, +square_size,
+		-square_size - square_offset, -square_size,
+
+		-square_size - square_offset, -square_size,
+		+square_size - square_offset, -square_size,
+		+square_size + square_offset, +square_size
+	};
+
+	glGenVertexArrays(1, &square_VAO);
+	glBindVertexArray(square_VAO);
+
+	glGenBuffers(1, &square_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, square_VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(square_vertices), square_vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
+	glEnableVertexAttribArray(0);
 
 	glBindVertexArray(0);
 
