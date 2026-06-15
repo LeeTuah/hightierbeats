@@ -29,6 +29,7 @@ int main () {
 
 	Game* htb_engine = new Game(SCR_WIDTH, SCR_HEIGHT);
 
+	htb_engine->play_sound();
 	while (not glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 
