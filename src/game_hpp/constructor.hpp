@@ -91,7 +91,7 @@ inline Game::Game(int width, int height) {
 	}
 
 	total_losing_shards = 700;
-	losing_shard_velocity = 10.0f;
+	losing_shard_velocity = 15.0f;
 
 	gravity_for_core_particles = 2.5f;
 	is_core_shards_flying = true;
@@ -115,7 +115,7 @@ inline Game::Game(int width, int height) {
 	if (ma_engine_init(NULL, &audio_engine) != MA_SUCCESS) 
 		std::cout << "Audio engine failed to initialize!" << std::endl;
 	
-	if (ma_sound_init_from_file(&audio_engine, "assets/test_sound.mp3", 0, NULL, NULL, &bgm) != MA_SUCCESS)
+	if (ma_sound_init_from_file(&audio_engine, bg_song_path.c_str(), 0, NULL, NULL, &bgm) != MA_SUCCESS)
 		std::cout << "Failed to load audio from source file!" << std::endl;
 
 	is_sound_playing = false;

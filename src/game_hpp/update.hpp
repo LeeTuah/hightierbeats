@@ -35,9 +35,15 @@ inline void Game::update(float delta_time) {
 	}
 
 	if (game_state == GAME_ZERO_HP)
-		sound_pitch -= 0.5 * delta_time * sound_pitch; 
+		sound_pitch -= 0.5 * delta_time * sound_pitch;
 
-	ma_sound_set_pitch(&bgm, sound_pitch);
+	if (sound_pitch <= 0.09f) {
+		ma_sound_stop(&bgm);
+		is_sound_playing = false;
+	}
+
+	if (is_sound_playing)
+		ma_sound_set_pitch(&bgm, sound_pitch);
 }
 
 # endif

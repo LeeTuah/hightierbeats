@@ -1,0 +1,45 @@
+{
+	"name": "Du Bist Gut Genug",
+	"audio": "song.mp3",
+	"background": "image.jpg",
+	"base_velocity": 8.0,
+	"notes": [
+		{"time": 3.0, "alignment": "W"},
+		{"time": 3.5, "alignment": "S"},
+		{"time": 4.0, "alignment": "A"},
+		{"time": 4.5, "alignment": "D"},
+
+		{"time": 5.0, "alignment": "WD"},
+		{"time": 5.25, "alignment": "SA"},
+		{"time": 5.5, "alignment": "WA"},
+		{"time": 5.75, "alignment": "DS"},
+
+		{"time": 7.0, "alignment": "W"},
+		{"time": 7.2, "alignment": "WD"},
+		{"time": 7.4, "alignment": "D"},
+		{"time": 7.6, "alignment": "DS"},
+		{"time": 7.8, "alignment": "S"},
+		{"time": 8.0, "alignment": "SA"},
+		{"time": 8.2, "alignment": "A"},
+		{"time": 8.4, "alignment": "WA"},
+
+		{"time": 9.5, "alignment": "W"},
+		{"time": 9.7, "alignment": "S"},
+		
+		{"time": 10.2, "alignment": "A"},
+		{"time": 10.4, "alignment": "D"},
+
+		{"time": 10.9, "alignment": "WD"},
+		{"time": 11.1, "alignment": "SA"},
+
+		{"time": 12.5, "alignment": "W", "velocity_multiplier": 1.5},
+		{"time": 12.7, "alignment": "W", "velocity_multiplier": 1.5},
+		{"time": 12.9, "alignment": "W", "velocity_multiplier": 1.5},
+		
+		{"time": 13.3, "alignment": "D", "velocity_multiplier": 1.5},
+		{"time": 13.5, "alignment": "D", "velocity_multiplier": 1.5},
+		
+		{"time": 13.9, "alignment": "A", "velocity_multiplier": 1.5},
+		{"time": 14.1, "alignment": "D", "velocity_multiplier": 1.5}
+	]
+}

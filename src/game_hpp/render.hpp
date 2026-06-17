@@ -77,7 +77,7 @@ inline void Game::render() {
 			main_shader->set_mat4("model", model);
 			glDrawArrays(GL_LINE_LOOP, 0, 60);
 		}
-	} else if (game_state == GAME_ZERO_HP) {
+	} else if (game_state == GAME_ZERO_HP and is_sound_playing) {
 		particle_shader->use();
 
 		particle_shader->set_mat4("projection", projection);
@@ -121,17 +121,19 @@ inline void Game::render() {
 		main_shader->use();
 	}
 
-	main_shader->set_float3("shard.color", glm::vec3(1.0f));
-	glBindVertexArray(shield_VAO);
-	shield.rotation_angle = (float)shield.alignment;
+	if (game_state == GAME_RUNNING) {
+		main_shader->set_float3("shard.color", glm::vec3(1.0f));
+		glBindVertexArray(shield_VAO);
+		shield.rotation_angle = (float)shield.alignment;
 
-	model = glm::mat4(1.0f);
-	model = glm::translate(model, core.position);
-	if (shield.rotation_angle != 0)
-		model = glm::rotate(model, glm::radians(shield.rotation_angle), glm::normalize(shield.rotation_axis));
-	model = glm::translate(model, shield.position - core.position);
-	main_shader->set_mat4("model", model);
-	glDrawArrays(GL_TRIANGLES, 0, 24 * shield.segments + 12);
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, core.position);
+		if (shield.rotation_angle != 0)
+			model = glm::rotate(model, glm::radians(shield.rotation_angle), glm::normalize(shield.rotation_axis));
+		model = glm::translate(model, shield.position - core.position);
+		main_shader->set_mat4("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 24 * shield.segments + 12);
+	}
 
 	screen_shader->use(); 
 	glBindVertexArray(square_VAO);

@@ -8,6 +8,14 @@
 # include <glm/gtc/matrix_transform.hpp>
 # include <glm/gtc/type_ptr.hpp>
 
+# include <nlohmann/json.hpp>
+# include <fstream>
+# include <sstream>
+# include <filesystem>
+
+using json = nlohmann::json;
+namespace fs = std::filesystem;
+
 # include "includes/camera.hpp"
 # include "includes/shaders.hpp"
 # include "includes/texture.hpp"
@@ -109,6 +117,9 @@ public:
 	float losing_shard_velocity;
 	float gravity_for_core_particles;
 	bool is_core_shards_flying;
+
+	std::string bg_song_path;
+	std::string bg_image_path;
 
 	ma_engine audio_engine;
 	ma_sound bgm;

@@ -4,51 +4,68 @@
 # include "../game.hpp"
 
 inline void Game::load_beatmap_from_file(int index) {
-	// temporary beatmap to test stuff (will be changed later)
-	Shard test_note;
-	test_note.active = false;
-	test_note.destroyed = false;
-	test_note.velocity = 8.0f; 
+	fs::path beatmap_path = "beatmaps/";
+	std::string beatmap_name = "";
+	int beatmap_index = 0;
 
-	test_note.alignment = W;  test_note.impact_time = 3.0f;  shards.push_back(test_note);
-	test_note.alignment = S;  test_note.impact_time = 3.5f;  shards.push_back(test_note);
-	test_note.alignment = A;  test_note.impact_time = 4.0f;  shards.push_back(test_note);
-	test_note.alignment = D;  test_note.impact_time = 4.5f;  shards.push_back(test_note);
+	try {
+		for (auto &beatmap : fs::directory_iterator(beatmap_path)) {
+			if (not fs::is_directory(beatmap)) continue;
+			if (index != beatmap_index++) continue;
 
-	test_note.alignment = WD; test_note.impact_time = 5.0f;  shards.push_back(test_note);
-	test_note.alignment = SA; test_note.impact_time = 5.25f; shards.push_back(test_note);
-	test_note.alignment = WA; test_note.impact_time = 5.5f;  shards.push_back(test_note);
-	test_note.alignment = DS; test_note.impact_time = 5.75f; shards.push_back(test_note);
-
-	test_note.alignment = W;  test_note.impact_time = 7.0f;  shards.push_back(test_note);
-	test_note.alignment = WD; test_note.impact_time = 7.2f;  shards.push_back(test_note);
-	test_note.alignment = D;  test_note.impact_time = 7.4f;  shards.push_back(test_note);
-	test_note.alignment = DS; test_note.impact_time = 7.6f;  shards.push_back(test_note);
-	test_note.alignment = S;  test_note.impact_time = 7.8f;  shards.push_back(test_note);
-	test_note.alignment = SA; test_note.impact_time = 8.0f;  shards.push_back(test_note);
-	test_note.alignment = A;  test_note.impact_time = 8.2f;  shards.push_back(test_note);
-	test_note.alignment = WA; test_note.impact_time = 8.4f;  shards.push_back(test_note);
-
-	test_note.alignment = W;  test_note.impact_time = 9.5f;  shards.push_back(test_note);
-	test_note.alignment = S;  test_note.impact_time = 9.7f;  shards.push_back(test_note);
+			beatmap_name = beatmap.path().filename().string();
+			break;
+		}
+	} catch (fs::filesystem_error &e) {
+		std::cout << e.what() << std::endl;
+	}
 	
-	test_note.alignment = A;  test_note.impact_time = 10.2f; shards.push_back(test_note);
-	test_note.alignment = D;  test_note.impact_time = 10.4f; shards.push_back(test_note);
+	std::ifstream beatmap_file;
+	std::stringstream beatmap_stringstream;
+	std::string beatmap_data = "";
 
-	test_note.alignment = WD; test_note.impact_time = 10.9f; shards.push_back(test_note);
-	test_note.alignment = SA; test_note.impact_time = 11.1f; shards.push_back(test_note);
+	beatmap_file.open(("beatmaps/" + beatmap_name + "/" + beatmap_name + ".json").c_str());
+	if (not beatmap_file.is_open()){
+		std::cout << "[!] Failed to open beatmap file!" << std::endl;
+		return;
+	}
 
-	test_note.velocity = 12.0f; 
+	beatmap_stringstream << beatmap_file.rdbuf();
+	beatmap_file.close();
+	beatmap_data = beatmap_stringstream.str();
 
-	test_note.alignment = W;  test_note.impact_time = 12.5f; shards.push_back(test_note);
-	test_note.alignment = W;  test_note.impact_time = 12.7f; shards.push_back(test_note);
-	test_note.alignment = W;  test_note.impact_time = 12.9f; shards.push_back(test_note);
-	
-	test_note.alignment = D;  test_note.impact_time = 13.3f; shards.push_back(test_note);
-	test_note.alignment = D;  test_note.impact_time = 13.5f; shards.push_back(test_note);
-	
-	test_note.alignment = A;  test_note.impact_time = 13.9f; shards.push_back(test_note);
-	test_note.alignment = D;  test_note.impact_time = 14.1f; shards.push_back(test_note);
+	json beatmap_json = json::parse(beatmap_data);
+
+	bg_song_path = beatmap_path.string() + beatmap_name + "/" + beatmap_json["audio"].get<std::string>();
+	bg_image_path = beatmap_path.string() + beatmap_name + "/" + beatmap_json["background"].get<std::string>();
+
+	Shard base_shard;
+	base_shard.active = false;
+	base_shard.destroyed = false;
+	base_shard.velocity = beatmap_json["base_velocity"];
+	float base_velocity = base_shard.velocity;
+
+	for (auto note : beatmap_json["notes"]) {
+		base_shard.velocity = base_velocity;
+		
+		base_shard.impact_time = note["time"];
+		std::string alignment = note["alignment"].get<std::string>();
+
+		if (alignment == "W") base_shard.alignment = W;
+		else if (alignment == "S") base_shard.alignment = S;
+		else if (alignment == "A") base_shard.alignment = A;
+		else if (alignment == "D") base_shard.alignment = D;
+
+		else if (alignment == "WD") base_shard.alignment = WD;
+		else if (alignment == "DS") base_shard.alignment = DS;
+		else if (alignment == "SA") base_shard.alignment = SA;
+		else if (alignment == "WA") base_shard.alignment = WA;
+
+		if (note.contains("velocity_multiplier"))
+			base_shard.velocity = base_shard.velocity * note["velocity_multiplier"].get<float>();
+		
+		shards.push_back(base_shard);
+	}
 }
 
 # endif
