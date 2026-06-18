@@ -18,6 +18,28 @@ inline void Game::render() {
 	text_projection = glm::ortho(0.0f, (float)SCR_WIDTH, 0.0f, (float)SCR_HEIGHT);
 	model = glm::mat4(1.0f);
 
+	flat_shader->use();
+	glBindVertexArray(rect_VAO);
+
+	flat_shader->set_mat4("projection", projection);
+	flat_shader->set_mat4("view", view);
+
+	glActiveTexture(GL_TEXTURE0);
+	background_image->bind();
+
+	flat_shader->set_int("tex", 0);
+	flat_shader->set_float("background_dim", 1.0f - background_dim);
+
+	const float IMAGE_SCALE_FACTOR = 2.85f;
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, core.position + glm::vec3(3.0f, 0.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(1.0f, 9.0f * IMAGE_SCALE_FACTOR, 16.0f * IMAGE_SCALE_FACTOR));
+	model = glm::rotate(model, glm::radians(90.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
+	model = glm::rotate(model, glm::radians(-180.0f), glm::normalize(glm::vec3(1.0f, 0.0f, 0.0f)));
+	flat_shader->set_mat4("model", model);
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
 	main_shader->use();
 
 	glBindVertexArray(shard_VAO);

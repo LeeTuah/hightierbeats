@@ -299,6 +299,31 @@ inline void Game::generate_VAOs() {
 
 	glBindVertexArray(0);
 
+	float rect_vertices[] = {
+		-0.5f, -0.5f, 0.0f, 0.0f,
+		+0.5f, -0.5f, 1.0f, 0.0f,
+		+0.5f, +0.5f, 1.0f, 1.0f,
+
+		+0.5f, +0.5f, 1.0f, 1.0f,
+		-0.5f, +0.5f, 0.0f, 1.0f,
+		-0.5f, -0.5f, 0.0f, 0.0f
+	};
+
+	glGenVertexArrays(1, &rect_VAO);
+	glBindVertexArray(rect_VAO);
+
+	glGenBuffers(1, &rect_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, rect_VBO);
+	glBufferData(GL_ARRAY_BUFFER, std::size(rect_vertices) * sizeof(float), rect_vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)0);
+	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)(2 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	glBindVertexArray(0);
+
 	glGenVertexArrays(1, &font_VAO);
 	glBindVertexArray(font_VAO);
 

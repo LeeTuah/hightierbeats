@@ -19,9 +19,6 @@ inline void Game::update(float delta_time) {
 			if (not shard.active and current_time >= shard.spawn_time)
 				shard.active = true;
 
-			if (shard.active and current_time >= shard.impact_time)
-				shard.active = false;
-
 			if (shard.active)
 				shard.position += shard.direction * shard.velocity * delta_time;
 		}

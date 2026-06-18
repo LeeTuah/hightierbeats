@@ -32,15 +32,21 @@ enum GameState {
 	GAME_ZERO_HP
 };
 
+enum BeatTiming {
+	BEAT_PERFECT = 500,
+	BEAT_GREAT   = 300,
+	BEAT_GOOD    = 100
+};
+
 enum ShieldAlignment {
-	W = 90,
-	A = 180,
-	S = -90,
-	D = 0,
-	WD = 45,
-	DS = -45,
+	W  =   90,
+	A  =  180,
+	S  =  -90,
+	D  =    0,
+	WD =   45,
+	DS =  -45,
 	SA = -135,
-	WA = 135
+	WA =  135
 };
 
 struct Shard {
@@ -84,6 +90,7 @@ public:
 	GameState game_state;
 
 	int health_point;
+	int score_point;
 
 	Camera* camera;
 	int SCR_WIDTH, SCR_HEIGHT;
@@ -93,12 +100,14 @@ public:
 	unsigned int core_VAO, core_VBO;
 	unsigned int shield_VAO, shield_VBO;
 	unsigned int square_VAO, square_VBO;
+	unsigned int rect_VAO, rect_VBO;
 	unsigned int font_VAO, font_VBO;
 
 	Shader* main_shader;
 	Shader* text_shader;
 	Shader* screen_shader;
 	Shader* particle_shader;
+	Shader* flat_shader;
 
 	glm::mat4 view, projection, model, text_projection;
 	std::vector<glm::vec3> sun_directions;
@@ -120,6 +129,10 @@ public:
 
 	std::string bg_song_path;
 	std::string bg_image_path;
+
+	Texture2D *background_image;
+	Texture2D *black_img;
+	float background_dim;
 
 	ma_engine audio_engine;
 	ma_sound bgm;

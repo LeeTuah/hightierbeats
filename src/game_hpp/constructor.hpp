@@ -9,6 +9,7 @@ inline Game::Game(int width, int height) {
 
 	game_state = GAME_RUNNING;
 	health_point = 100;
+	score_point = 0;
 
 	camera = new Camera(glm::vec3(0.0f));
 
@@ -16,6 +17,7 @@ inline Game::Game(int width, int height) {
 	text_shader = new Shader("shaders/text.vert", "shaders/text.frag");
 	screen_shader = new Shader("shaders/screen.vert", "shaders/screen.frag");
 	particle_shader = new Shader("shaders/particle.vert", "shaders/main.frag");
+	flat_shader = new Shader("shaders/flat.vert", "shaders/flat.frag");
 
 	generate_VAOs();
 
@@ -113,14 +115,18 @@ inline Game::Game(int width, int height) {
 	sun_directions.push_back(glm::vec3(+1.0f, +1.0f, +0.0f));
 
 	if (ma_engine_init(NULL, &audio_engine) != MA_SUCCESS) 
-		std::cout << "Audio engine failed to initialize!" << std::endl;
+		std::cout << "[!] Audio engine failed to initialize!" << std::endl;
 	
 	if (ma_sound_init_from_file(&audio_engine, bg_song_path.c_str(), 0, NULL, NULL, &bgm) != MA_SUCCESS)
-		std::cout << "Failed to load audio from source file!" << std::endl;
+		std::cout << "[!] Failed to load audio from source file!" << std::endl;
 
 	is_sound_playing = false;
 	sound_volume = 0.1f;
 	sound_pitch = 1.0f;
+
+	black_img = new Texture2D("assets/black.png");
+	background_image = new Texture2D(bg_image_path);
+	background_dim = 0.7f;
 }
 
 inline Game::~Game() {
