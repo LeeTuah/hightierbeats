@@ -18,6 +18,39 @@ inline void Game::render() {
 	text_projection = glm::ortho(0.0f, (float)SCR_WIDTH, 0.0f, (float)SCR_HEIGHT);
 	model = glm::mat4(1.0f);
 
+	auto format_int_to_str = [&](int total_size, int number) {
+		std::string num = std::to_string(number);
+		
+		if (num.size() > total_size) return std::string("");
+		else if (num.size() == total_size) return num;
+
+		std::string zeroes(total_size - num.size(), '0');
+		return zeroes + num;
+	};
+
+	if (fps_counter)
+		vcr_osd_mono->render_text(std::to_string((int)fps), 20, 20, 0.5f, glm::vec3(1.0f));
+
+	std::string beat_timing_msg = "", score_msg = "", combo_msg = "";
+	glm::vec3 beat_text_color = glm::vec3(0.0f);
+
+	if (last_beat_status == BEAT_GOOD) {
+		beat_timing_msg = "GOOD";
+		beat_text_color = glm::vec3(1.0f, 1.0f, 0.0f);
+	} else if (last_beat_status == BEAT_GREAT) {
+		beat_timing_msg = "GREAT";
+		beat_text_color = glm::vec3(0.0f, 1.0f, 0.0f);
+	} else if (last_beat_status == BEAT_PERFECT) {
+		beat_timing_msg = "PERFECT";
+		beat_text_color = glm::vec3(0.0f, 1.0f, 1.0f);
+	}
+	score_msg = format_int_to_str(8, score_point);
+	combo_msg = "x" + format_int_to_str(3, combo_point);
+
+	vcr_osd_mono->render_text(beat_timing_msg, (SCR_WIDTH / 2) - 20, SCR_HEIGHT - 100, 0.5f, beat_text_color);
+	vcr_osd_mono->render_text(score_msg, SCR_WIDTH - 147, SCR_HEIGHT - 50, 0.6f, glm::vec3(1.0f));
+	vcr_osd_mono->render_text(combo_msg, SCR_WIDTH - 80, SCR_HEIGHT - 80, 0.6f, glm::vec3(1.0f));
+
 	flat_shader->use();
 	glBindVertexArray(rect_VAO);
 

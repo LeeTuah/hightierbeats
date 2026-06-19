@@ -7,9 +7,17 @@ inline Game::Game(int width, int height) {
 	SCR_WIDTH = width;
 	SCR_HEIGHT = height;
 
+	glfwSwapInterval(0); // disable vsync
+
 	game_state = GAME_RUNNING;
 	health_point = 100;
 	score_point = 0;
+	combo_point = 0;
+
+	FPS_COUNTING_DELAY = 0.250f;
+	fps_counter = true;
+	fps = 0.0f;
+	last_fps_clock_time = 0.0f;
 
 	camera = new Camera(glm::vec3(0.0f));
 
@@ -104,6 +112,11 @@ inline Game::Game(int width, int height) {
 		);
 	}
 
+	BEAT_DISPLAY_DELAY = 0.100f;
+	last_beat_status = BEAT_NULL;
+	beat_clock_time = 0.0f;
+
+
 	shield.position = core.position + glm::vec3(0.0f, 0.0f, -1.5f);
 	shield.pivot = core.position;
 	shield.alignment = W;
@@ -127,6 +140,9 @@ inline Game::Game(int width, int height) {
 	black_img = new Texture2D("assets/black.png");
 	background_image = new Texture2D(bg_image_path);
 	background_dim = 0.7f;
+
+	vcr_osd_mono = new character_class("assets/VCR_OSD_MONO_1.001.ttf", text_shader, &font_VAO, &font_VBO, &text_projection);
+	rajdhani_regular = new character_class("assets/Rajdhani-Regular.ttf", text_shader, &font_VAO, &font_VBO, &text_projection);
 }
 
 inline Game::~Game() {

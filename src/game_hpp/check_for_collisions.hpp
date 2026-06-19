@@ -7,7 +7,24 @@ inline void Game::check_for_collisions() {
 	audio_time = calc_audio_time();
 
 	float current_time = audio_time;
-	float reaction_time = 0.150f;
+	float reaction_time = 0.200f;
+
+	auto update_health = [&](int sign, Shard &shard, BeatTiming beat_status) {
+		if (sign > 0) {
+			health_point += 10;
+			combo_point++;
+		} else {
+			health_point -= 15;
+			combo_point = 0;
+		}
+		shard.active = false;
+		shard.destroyed = true;
+
+		if (beat_status != BEAT_NULL) {
+			last_beat_status = beat_status;
+			beat_clock_time = current_time;
+		}
+	};
 
 	for (auto &shard : shards) {
 		if (not shard.active) continue;
@@ -17,28 +34,27 @@ inline void Game::check_for_collisions() {
 		
 		// FIXME: shard collision issue
 		if (
+			is_strike_frame and
 			time_difference <= split_reaction_time
 			and shield.alignment == shard.alignment
 			and game_state == GAME_RUNNING
 		) {
+			BeatTiming beat_status;
 			if (time_difference <= split_reaction_time / 3.0f)
-				score_point += BEAT_PERFECT;
+				beat_status = BEAT_PERFECT;
 
 			else if (time_difference <= split_reaction_time / 1.5f)
-				score_point += BEAT_GREAT;
+				beat_status = BEAT_GREAT;
 
 			else
-				score_point += BEAT_GOOD;
+				beat_status = BEAT_GOOD;
 
-			health_point += 10;
-			shard.active = false;
-			shard.destroyed = true; 
+			score_point += beat_status;
+			update_health(1, shard, beat_status);
 			continue;
 		}
 		else if (shard.impact_time < current_time and time_difference > split_reaction_time) {
-			health_point -= 15;
-			shard.active = false;
-			shard.destroyed = true;
+			update_health(-1, shard, BEAT_NULL);
 			continue;
 		}
 	}

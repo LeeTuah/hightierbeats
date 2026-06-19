@@ -73,15 +73,21 @@ struct Character{
 class character_class{
 public:
 	std::map<char, Character> characters;
+	Shader *shader;
+	unsigned int *VAO, *VBO;
+	glm::mat4 *projection;
 
-	character_class(const char* font_path, int font_height = 48);
-	void render_text(
-		Shader s, std::string text, unsigned int VAO, unsigned int VBO, 
-		float x, float y, float scale, glm::vec3 color, glm::mat4 projection
+	character_class(
+		const char* font_path, Shader *shader, unsigned int *VAO, 
+		unsigned int *VBO, glm::mat4 *projection, int font_height = 48
 	);
+	void render_text(std::string text, float x, float y, float scale, glm::vec3 color);
 };
 
-character_class::character_class(const char* font_path, int font_height) {
+character_class::character_class(
+	const char* font_path, Shader *shader, unsigned int *VAO, 
+	unsigned int *VBO, glm::mat4 *projection, int font_height
+) {
 	FT_Library ft;
 	if (FT_Init_FreeType(&ft)){
 		std::cout << "[!] Error: Could not initialize freetype!" << std::endl;
@@ -126,20 +132,25 @@ character_class::character_class(const char* font_path, int font_height) {
 		characters.insert({c, character});
 	}
 
+	this->shader = shader;
+	this->VAO = VAO;
+	this->VBO = VBO;
+	this->projection = projection;
+
 	FT_Done_Face(face);
 	FT_Done_FreeType(ft);
 }
 
 void character_class::render_text(
-	Shader shader, std::string text, unsigned int VAO, unsigned int VBO, 
-	float x, float y, float scale, glm::vec3 color, glm::mat4 projection
+	std::string text,
+	float x, float y, float scale, glm::vec3 color
 ) {
-	shader.use();
-	shader.set_mat4("projection", projection);
-	shader.set_float3("text_color", color);
+	shader->use();
+	shader->set_mat4("projection", *projection);
+	shader->set_float3("text_color", color);
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindVertexArray(VAO);
+	glBindVertexArray(*VAO);
 
 	for (auto ch : text) {
 		Character _char = characters[ch];
@@ -161,7 +172,7 @@ void character_class::render_text(
 
 		glBindTexture(GL_TEXTURE_2D, _char.texture_id);
 
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBindBuffer(GL_ARRAY_BUFFER, *VBO);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 

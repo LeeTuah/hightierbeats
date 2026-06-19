@@ -22,6 +22,7 @@ namespace fs = std::filesystem;
 
 # include "includes/miniaudio.h"
 
+# include <algorithm>
 # include <vector>
 # include <map>
 # include <random>
@@ -35,7 +36,8 @@ enum GameState {
 enum BeatTiming {
 	BEAT_PERFECT = 500,
 	BEAT_GREAT   = 300,
-	BEAT_GOOD    = 100
+	BEAT_GOOD    = 100,
+	BEAT_NULL    = 0
 };
 
 enum ShieldAlignment {
@@ -91,6 +93,13 @@ public:
 
 	int health_point;
 	int score_point;
+	int combo_point;
+	bool is_strike_frame;
+	
+	bool fps_counter;
+	float fps;
+	float FPS_COUNTING_DELAY;
+	float last_fps_clock_time;
 
 	Camera* camera;
 	int SCR_WIDTH, SCR_HEIGHT;
@@ -127,12 +136,19 @@ public:
 	float gravity_for_core_particles;
 	bool is_core_shards_flying;
 
+	BeatTiming last_beat_status;
+	float beat_clock_time;
+	float BEAT_DISPLAY_DELAY;
+
 	std::string bg_song_path;
 	std::string bg_image_path;
 
 	Texture2D *background_image;
 	Texture2D *black_img;
 	float background_dim;
+
+	character_class *vcr_osd_mono;
+	character_class *rajdhani_regular;
 
 	ma_engine audio_engine;
 	ma_sound bgm;

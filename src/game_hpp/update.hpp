@@ -7,8 +7,8 @@ inline void Game::update(float delta_time) {
 	float current_time = audio_time;
 
 	if (health_point > 100) health_point = 100;
-	else if (health_point < 0) health_point = 0;
-	else if (health_point == 0) {
+	else if (health_point <= 0) {
+		health_point = 0;
 		game_state = GAME_ZERO_HP;
 	}
 
@@ -41,6 +41,14 @@ inline void Game::update(float delta_time) {
 
 	if (is_sound_playing)
 		ma_sound_set_pitch(&bgm, sound_pitch);
+
+	if (current_time - beat_clock_time > BEAT_DISPLAY_DELAY and last_beat_status != BEAT_NULL)
+		last_beat_status = BEAT_NULL;
+
+	if (fps_counter and current_time - last_fps_clock_time > FPS_COUNTING_DELAY) {
+		fps = 1.0f / delta_time;
+		last_fps_clock_time = current_time;
+	}
 }
 
 # endif

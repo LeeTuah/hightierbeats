@@ -27,6 +27,11 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 	} else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 		shield.alignment = D;
 	}
+
+	bool is_strike_frame = (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) or
+						  (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) or
+						  (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) or
+						  (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS);
 }
 
 # endif
