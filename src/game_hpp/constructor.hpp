@@ -41,6 +41,13 @@ inline Game::Game(int width, int height) {
 	core_radius = 0.7f;
 	core_color = glm::vec3(0.0f, 1.0f, 0.0f);
 
+	CORE_SHAKE_INTENSITY = 0.3f;
+	CORE_SHAKE_DECAY_SPEED = 3.95f;
+
+	core_shake_intensity = 0.0f;
+	core_offset_one = 0.0f;
+	core_offset_two = 0.0f;
+
 	load_beatmap_from_file(0);
 
 	float x_level = 10.0f, y_level = 8.0f, z_level = 14.0f;

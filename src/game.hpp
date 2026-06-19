@@ -126,6 +126,11 @@ public:
 	float core_radius;
 	glm::vec3 core_color;
 
+	float CORE_SHAKE_INTENSITY;
+	float CORE_SHAKE_DECAY_SPEED;
+	float core_shake_intensity;
+	float core_offset_one, core_offset_two;
+
 	std::vector<Shard> shards;
 	Shield shield;
 

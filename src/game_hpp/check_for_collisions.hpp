@@ -49,11 +49,15 @@ inline void Game::check_for_collisions() {
 			else
 				beat_status = BEAT_GOOD;
 
-			score_point += beat_status;
+			float combo_decay = (combo_point > 1)? 2.0f / (float)combo_point : 1.0f;
+			score_point += beat_status + (int)(beat_status * combo_decay);
+			
 			update_health(1, shard, beat_status);
 			continue;
 		}
 		else if (shard.impact_time < current_time and time_difference > split_reaction_time) {
+			core_shake_intensity = CORE_SHAKE_INTENSITY;
+			
 			update_health(-1, shard, BEAT_NULL);
 			continue;
 		}

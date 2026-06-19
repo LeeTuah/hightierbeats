@@ -49,6 +49,18 @@ inline void Game::update(float delta_time) {
 		fps = 1.0f / delta_time;
 		last_fps_clock_time = current_time;
 	}
+
+	float core_shake_offset = core_shake_intensity * delta_time * CORE_SHAKE_DECAY_SPEED;
+	core_offset_one = 0.0f;
+	core_offset_two = 0.0f;
+
+	if (core_shake_intensity > 0.0f) {
+		core_offset_one = ((float)random_number() / 100.0f) * core_shake_intensity;
+		core_offset_two = ((float)random_number() / 100.0f) * core_shake_intensity;
+
+		core_shake_intensity -= core_shake_offset;
+		if (core_shake_intensity <= 0.01f) core_shake_intensity = 0.0f;
+	}
 }
 
 # endif

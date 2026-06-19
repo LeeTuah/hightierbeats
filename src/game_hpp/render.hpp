@@ -122,7 +122,7 @@ inline void Game::render() {
 		core.rotation_angle = 25.0f * glfwGetTime();
 
 		model = glm::mat4(1.0f);
-		model = glm::translate(model, core.position);
+		model = glm::translate(model, core.position + glm::vec3(0.0f, core_offset_one, core_offset_two));
 		model = glm::rotate(model, (float)glm::radians(core.rotation_angle), glm::normalize(core.rotation_axis));
 		main_shader->set_mat4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 60);
