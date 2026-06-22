@@ -9,7 +9,7 @@ inline Game::Game(int width, int height) {
 
 	glfwSwapInterval(0); // disable vsync
 
-	game_state = GAME_RUNNING;
+	game_state = GAME_MAIN_MENU;
 	health_point = 100;
 	score_point = 0;
 	combo_point = 0;
@@ -28,6 +28,42 @@ inline Game::Game(int width, int height) {
 	flat_shader = new Shader("shaders/flat.vert", "shaders/flat.frag");
 
 	generate_VAOs();
+
+	MenuTile base_tile;
+	const float menu_tiles_gap = 110.0f;
+
+	menu_input_process_delay = 0.250f;
+	last_menu_input_time = 0.0f;
+
+	base_tile.position = glm::vec3(SCR_WIDTH - 250, SCR_HEIGHT - 200, 1.0f);
+	base_tile.scale = glm::vec3(1.0f);
+	base_tile.color = glm::vec3(1.0f);
+
+	base_tile.label = "";
+	base_tile.function_ptr = nullptr;
+	base_tile.active = false;
+
+	play_tile = base_tile;
+	play_tile.label = "Play";
+
+	settings_tile = base_tile;
+	settings_tile.label = "Settings";
+	settings_tile.position = base_tile.position - glm::vec3(0.0f, menu_tiles_gap, 0.0f);
+
+	credits_tile = base_tile;
+	credits_tile.label = "Credits";
+	credits_tile.position = base_tile.position - glm::vec3(0.0f, 2 * menu_tiles_gap, 0.0f);
+
+	exit_tile = base_tile;
+	exit_tile.label = "Exit";
+	exit_tile.position = base_tile.position - glm::vec3(0.0f, 3 * menu_tiles_gap, 0.0f);
+
+	main_menu_tiles.push_back(&play_tile);
+	main_menu_tiles.push_back(&settings_tile);
+	main_menu_tiles.push_back(&credits_tile);
+	main_menu_tiles.push_back(&exit_tile);
+
+	current_menu_tile = main_menu_tiles.begin();
 
 	core.position = glm::vec3(10.0f, 0.0f, 0.0f);
 	core.direction = glm::vec3(0.0f);

@@ -12,6 +12,13 @@ inline void Game::update(float delta_time) {
 		game_state = GAME_ZERO_HP;
 	}
 
+	if (game_state == GAME_MAIN_MENU) {
+		for (auto &menu_tile : main_menu_tiles)
+			menu_tile->active = false;
+
+		(*current_menu_tile)->active = true;
+	}
+
 	if (game_state == GAME_RUNNING) {
 		for (auto &shard : shards) {
 			if (shard.destroyed) continue;

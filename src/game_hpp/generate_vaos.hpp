@@ -4,6 +4,54 @@
 # include "../game.hpp"
 
 inline void Game::generate_VAOs() {
+	const float tile_length = 0.8f;
+	const float tile_height = 0.25f;
+	const float model_scale_up = 150.0f;
+
+	glm::vec2 point_one(tile_length * 0.66f * model_scale_up, tile_height * model_scale_up);
+	glm::vec2 point_two(tile_length * model_scale_up, 0.0f * model_scale_up), point_three(point_one.x, -point_one.y);
+	glm::vec2 point_four(-point_one.x, point_one.y), point_five(-point_two.x, point_two.y), point_six(-point_three.x, point_three.y);
+	float menu_tile_vertices[] = {
+		0.0f, 0.0f, 0.0f, 0.0f,
+		point_two.x, point_two.y, 0.0f, 0.0f,
+		point_one.x, point_one.y, 0.0f, 0.0f,
+
+		point_one.x, point_one.y, 0.0f, 0.0f,
+		point_four.x, point_four.y, 0.0f, 0.0f,
+		0.0, 0.0f, 0.0f, 0.0f,
+
+		0.0f, 0.0f, 0.0f, 0.0f,
+		point_four.x, point_four.y, 0.0f, 0.0f,
+		point_five.x, point_five.y, 0.0f, 0.0f,
+
+		point_five.x, point_five.y, 0.0f, 0.0f,
+		point_six.x, point_six.y, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f,
+
+		0.0f, 0.0f, 0.0f, 0.0f,
+		point_six.x, point_six.y, 0.0f, 0.0f,
+		point_three.x, point_three.y, 0.0f, 0.0f,
+
+		point_three.x, point_three.y, 0.0f, 0.0f,
+		point_two.x, point_two.y, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f
+	};
+
+	glGenVertexArrays(1, &menu_tile_VAO);
+	glBindVertexArray(menu_tile_VAO);
+
+	glGenBuffers(1, &menu_tile_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, menu_tile_VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(menu_tile_vertices), menu_tile_vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)0);
+	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)(2 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	glBindVertexArray(0);
+
 	const float shard_length[] = {0.2f, 1.0f, 0.5f};
 	std::vector<float> shard_vertices = {
 		+shard_length[0], 0.0f, 0.0f,

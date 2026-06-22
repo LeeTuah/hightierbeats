@@ -1,9 +1,9 @@
-# ifndef GAME_HPP_RENDER
-# define GAME_HPP_RENDER
+# ifndef GAME_HPP_RENDER_GAME
+# define GAME_HPP_RENDER_GAME
 
 # include "../game.hpp"
 
-inline void Game::render() {
+inline void Game::render_game() {
 	// glfwSetInputMode for mouse later
 	glClearColor(0.02f, 0.02f, 0.02f, 1.0f);
 
@@ -60,6 +60,7 @@ inline void Game::render() {
 	glActiveTexture(GL_TEXTURE0);
 	background_image->bind();
 
+	flat_shader->set_bool("use_texture", true);
 	flat_shader->set_int("tex", 0);
 	flat_shader->set_float("background_dim", 1.0f - background_dim);
 

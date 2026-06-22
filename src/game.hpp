@@ -26,8 +26,11 @@ namespace fs = std::filesystem;
 # include <vector>
 # include <map>
 # include <random>
+# include <any>
+# include <functional>
 
 enum GameState {
+	GAME_MAIN_MENU,
 	GAME_PAUSED,
 	GAME_RUNNING,
 	GAME_ZERO_HP
@@ -49,6 +52,18 @@ enum ShieldAlignment {
 	DS =  -45,
 	SA = -135,
 	WA =  135
+};
+
+struct MenuTile {
+	glm::vec3 position;
+	glm::vec3 scale;
+	glm::vec3 color;
+
+	std::string label;
+	std::any function_ptr;
+
+	bool active;
+
 };
 
 struct Shard {
@@ -104,6 +119,7 @@ public:
 	Camera* camera;
 	int SCR_WIDTH, SCR_HEIGHT;
 	
+	unsigned int menu_tile_VAO, menu_tile_VBO;
 	unsigned int shard_VAO, shard_VBO;
 	unsigned int core_particle_VAO, core_particle_VBO, core_particle_VBO2;
 	unsigned int core_VAO, core_VBO;
@@ -121,6 +137,13 @@ public:
 	glm::mat4 view, projection, model, text_projection;
 	std::vector<glm::vec3> sun_directions;
 	
+	MenuTile play_tile, settings_tile, credits_tile, exit_tile;
+	std::vector<MenuTile*> main_menu_tiles;
+	std::vector<MenuTile*>::iterator current_menu_tile;
+	
+	float menu_input_process_delay;
+	float last_menu_input_time;
+
 	Shard core;
 	float shield_radius;
 	float core_radius;
@@ -170,7 +193,8 @@ public:
 
 	void process_input(GLFWwindow* window, float delta_time);
 
-	void render();
+	void render_menu();
+	void render_game();
 	void check_for_collisions();
 	void update(float delta_time);
 private:
@@ -191,7 +215,8 @@ private:
 # include "game_hpp/load_beatmap.hpp"
 # include "game_hpp/sound.hpp"
 # include "game_hpp/process_input.hpp"
-# include "game_hpp/render.hpp"
+# include "game_hpp/render_menu.hpp"
+# include "game_hpp/render_game.hpp"
 # include "game_hpp/check_for_collisions.hpp"
 # include "game_hpp/update.hpp"
 # include "game_hpp/generate_vaos.hpp"
