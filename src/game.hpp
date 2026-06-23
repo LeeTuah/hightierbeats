@@ -63,7 +63,6 @@ struct MenuTile {
 	std::any function_ptr;
 
 	bool active;
-
 };
 
 struct Shard {
@@ -139,10 +138,19 @@ public:
 	
 	MenuTile play_tile, settings_tile, credits_tile, exit_tile;
 	std::vector<MenuTile*> main_menu_tiles;
-	std::vector<MenuTile*>::iterator current_menu_tile;
+	std::vector<MenuTile*>::iterator current_menu_tile, last_menu_tile;
 	
 	float menu_input_process_delay;
 	float last_menu_input_time;
+	
+	bool animating_menu_tile;
+	float max_menu_scale;
+	float menu_scale;
+	float menu_tile_size_change; 
+
+	std::vector<Texture2D*> menu_video_frames;
+	int total_menu_video_frames;
+	float menu_video_fps;
 
 	Shard core;
 	float shield_radius;

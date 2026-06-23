@@ -15,14 +15,20 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 			if (current_menu_tile != main_menu_tiles.begin()) {
-				current_menu_tile--;
+				last_menu_tile = current_menu_tile--;
 				last_menu_input_time = current_time;
+
+				animating_menu_tile = true;
+				menu_scale = 1.0f;
 			}
 		}
 		else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
 			if (current_menu_tile != main_menu_tiles.end() - 1) {
-				current_menu_tile++;
+				last_menu_tile = current_menu_tile++;
 				last_menu_input_time = current_time;
+
+				animating_menu_tile = true;
+				menu_scale = 1.0f;
 			}
 		}
 	}

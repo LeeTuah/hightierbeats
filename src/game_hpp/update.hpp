@@ -19,6 +19,14 @@ inline void Game::update(float delta_time) {
 		(*current_menu_tile)->active = true;
 	}
 
+	if (animating_menu_tile)
+		menu_scale += menu_tile_size_change * delta_time;
+
+	if (menu_scale >= max_menu_scale) {
+		menu_scale = max_menu_scale;
+		animating_menu_tile = false;
+	}
+
 	if (game_state == GAME_RUNNING) {
 		for (auto &shard : shards) {
 			if (shard.destroyed) continue;

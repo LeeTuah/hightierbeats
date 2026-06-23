@@ -37,7 +37,7 @@ inline Game::Game(int width, int height) {
 
 	base_tile.position = glm::vec3(SCR_WIDTH - 250, SCR_HEIGHT - 200, 1.0f);
 	base_tile.scale = glm::vec3(1.0f);
-	base_tile.color = glm::vec3(1.0f);
+	base_tile.color = glm::vec3(0.7f);
 
 	base_tile.label = "";
 	base_tile.function_ptr = nullptr;
@@ -64,6 +64,23 @@ inline Game::Game(int width, int height) {
 	main_menu_tiles.push_back(&exit_tile);
 
 	current_menu_tile = main_menu_tiles.begin();
+	last_menu_tile = main_menu_tiles.end();
+
+	max_menu_scale = 1.1f;
+	menu_tile_size_change = 0.8f;
+	menu_scale = max_menu_scale;
+	animating_menu_tile = false;
+
+	total_menu_video_frames = 28;
+	menu_video_fps = 30.0f;
+	std::string current_frame;
+	for (int i = 1; i <= total_menu_video_frames; i++) {
+		if (i <= 9) current_frame += "0";
+		current_frame += std::to_string(i);
+
+		menu_video_frames.push_back(new Texture2D("assets/menu_background/frame_" + current_frame + ".jpg"));
+		current_frame = "";
+	} 
 
 	core.position = glm::vec3(10.0f, 0.0f, 0.0f);
 	core.direction = glm::vec3(0.0f);
