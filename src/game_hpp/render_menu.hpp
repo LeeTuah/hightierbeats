@@ -31,7 +31,6 @@ inline void Game::render_menu() {
 	flat_shader->set_float("background_dim", 0.5f);
 
 	model = glm::mat4(1.0f);
-	// model = glm::translate(model, glm::vec3(SCR_WIDTH / 2.0f, SCR_HEIGHT / 2.0f, 0.0f));
 	model = glm::scale(model, glm::vec3(2.0f, 2.0f, 1.0f));
 
 	flat_shader->set_mat4("model", model);
@@ -43,23 +42,77 @@ inline void Game::render_menu() {
 	flat_shader->set_mat4("projection", text_projection);
 	flat_shader->set_mat4("view", view);
 
-	for (auto menu_tile : main_menu_tiles) {
-		flat_shader->set_float3("color", menu_tile->color);
+	if (game_state == GAME_SELECTING_BEATMAP) {
+		for (auto beatmap_tile : beatmap_tiles) {
+			if (beatmap_tile->position.y > SCR_HEIGHT + 100.0f or beatmap_tile->position.y < -100.0f)
+				continue;
 
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, menu_tile->position);
-		model = glm::scale(model, menu_tile->scale);
+			flat_shader->set_float3("color", beatmap_tile->color);
 
-		if (menu_tile == *current_menu_tile and menu_tile->active) 
-			model = glm::scale(model, glm::vec3(menu_scale));
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, beatmap_tile->position);
+			model = glm::scale(model, beatmap_tile->scale);
 
-		else if (menu_tile == *last_menu_tile and not menu_tile->active)
-			model = glm::scale(model, glm::vec3(1.0f + max_menu_scale - menu_scale));
+			if (current_user_beatmap_index == beatmap_tile->index)
+				model = glm::scale(model, glm::vec3(menu_scale));
 
-		flat_shader->set_mat4("model", model);
-		glDrawArrays(GL_TRIANGLES, 0, 18);
+			else if (last_user_beatmap_index == beatmap_tile->index)
+				model = glm::scale(model, glm::vec3(1.0f + max_menu_scale - menu_scale));
+
+			flat_shader->set_mat4("model", model);
+			glDrawArrays(GL_TRIANGLES, 0, 18);
+		}
+
+		for (auto beatmap_tile : beatmap_tiles) {
+			float beatmap_label_scale = 0.4f;
+
+			if (beatmap_tile->index == current_user_beatmap_index)
+				beatmap_label_scale = menu_scale - 0.6f;
+			
+			else if (beatmap_tile->index == last_user_beatmap_index)
+				beatmap_label_scale = 1.0f + max_menu_scale - menu_scale - 0.5f;
+
+			vcr_osd_mono->render_text(
+				beatmap_tile->label,
+				beatmap_tile->position.x - 35.0f + beatmap_tile->label_x_offset,
+				beatmap_tile->position.y - 10.0f,
+				beatmap_label_scale, glm::vec3(0.0f)
+			);
+		}
 	}
 
+	else if (game_state == GAME_MAIN_MENU) {
+		for (auto menu_tile : main_menu_tiles) {
+			flat_shader->set_float3("color", menu_tile->color);
+
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, menu_tile->position);
+			model = glm::scale(model, menu_tile->scale);
+
+			if (menu_tile == *current_menu_tile and menu_tile->active) 
+				model = glm::scale(model, glm::vec3(menu_scale));
+
+			else if (menu_tile == *last_menu_tile and not menu_tile->active)
+				model = glm::scale(model, glm::vec3(1.0f + max_menu_scale - menu_scale));
+
+			flat_shader->set_mat4("model", model);
+			glDrawArrays(GL_TRIANGLES, 0, 18);
+		}
+
+		for (auto menu_tile : main_menu_tiles) {
+			float menu_label_scale = 0.5f;
+
+			if (menu_tile == *current_menu_tile) menu_label_scale = menu_scale - 0.5f;
+			else if (menu_tile == *last_menu_tile) menu_label_scale = 1.0f + max_menu_scale - menu_scale - 0.5f;
+
+			vcr_osd_mono->render_text(
+				menu_tile->label,
+				menu_tile->position.x - 35.0f + menu_tile->label_x_offset, 
+				menu_tile->position.y - 10.0f,
+				menu_label_scale, glm::vec3(0.0f)
+			);
+		}
+	}
 }
 
 # endif

@@ -19,6 +19,18 @@ inline void Game::update(float delta_time) {
 		(*current_menu_tile)->active = true;
 	}
 
+	if (game_state == GAME_SELECTING_BEATMAP) {
+		float gap_size = 110.0f;
+		float center = (float)SCR_HEIGHT / 2.0f;
+
+		for (auto i = 0; i < beatmap_tiles.size(); i++) {
+			float distance_from_center = i - current_user_beatmap_index;
+			float target_y_pos = center - (distance_from_center * gap_size);
+
+			beatmap_tiles[i]->position.y = target_y_pos;
+		}
+	}
+
 	if (animating_menu_tile)
 		menu_scale += menu_tile_size_change * delta_time;
 

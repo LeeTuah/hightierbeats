@@ -31,6 +31,23 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 				menu_scale = 1.0f;
 			}
 		}
+		else if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
+			std::string current_menu_label = (*current_menu_tile)->label;
+
+			if (current_menu_label == "Play") {
+				game_state = GAME_SELECTING_BEATMAP;
+				load_all_beatmaps();
+			}
+			else if (current_menu_label == "Settings") {
+
+			}
+			else if (current_menu_label == "Credits") {
+
+			}
+			else if (current_menu_label == "Exit") {
+				glfwSetWindowShouldClose(window, 1);
+			}
+		}
 	}
 
 	else if (game_state == GAME_RUNNING) {

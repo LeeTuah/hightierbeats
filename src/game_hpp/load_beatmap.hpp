@@ -3,6 +3,34 @@
 
 # include "../game.hpp"
 
+inline void Game::load_all_beatmaps() {
+	fs::path beatmap_path = "beatmaps/";
+
+	try {
+		unsigned index = 0;
+		for (auto &beatmap : fs::directory_iterator(beatmap_path)) {
+			if (not fs::is_directory(beatmap)) continue;
+
+			BeatmapTile *bmt = new BeatmapTile();
+			bmt->position = glm::vec3(SCR_WIDTH - 250, 0.0f, 0.0f);
+			bmt->scale = glm::vec3(1.0f);
+			bmt->color = glm::vec3(1.0f);
+
+			bmt->label = beatmap.path().filename().string();
+			bmt->label_x_offset = 0.0f;
+
+			bmt->function_ptr = nullptr;
+			bmt->active = false;
+		
+			bmt->index = index++;
+
+			beatmap_tiles.push_back(bmt);
+		}
+	} catch (fs::filesystem_error &e) {
+		std::cout << e.what() << std::endl;
+	}
+}
+
 inline void Game::load_beatmap_from_file(int index) {
 	fs::path beatmap_path = "beatmaps/";
 	std::string beatmap_name = "";

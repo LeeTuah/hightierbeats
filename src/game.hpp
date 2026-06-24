@@ -31,6 +31,7 @@ namespace fs = std::filesystem;
 
 enum GameState {
 	GAME_MAIN_MENU,
+	GAME_SELECTING_BEATMAP,
 	GAME_PAUSED,
 	GAME_RUNNING,
 	GAME_ZERO_HP
@@ -54,15 +55,20 @@ enum ShieldAlignment {
 	WA =  135
 };
 
-struct MenuTile {
+struct MenuTile { // TODO: remove function_ptr if possible
 	glm::vec3 position;
 	glm::vec3 scale;
 	glm::vec3 color;
 
 	std::string label;
+	float label_x_offset;
 	std::any function_ptr;
 
 	bool active;
+};
+
+struct BeatmapTile : MenuTile {
+	int index;
 };
 
 struct Shard {
@@ -162,6 +168,9 @@ public:
 	float core_shake_intensity;
 	float core_offset_one, core_offset_two;
 
+	unsigned int current_user_beatmap_index, last_user_beatmap_index;
+	std::vector<BeatmapTile*> beatmap_tiles;
+
 	std::vector<Shard> shards;
 	Shield shield;
 
@@ -196,6 +205,7 @@ public:
 	~Game();
 
 	void load_beatmap_from_file(int index);
+	void load_all_beatmaps();
 	void play_sound();
 	float calc_audio_time();
 
@@ -209,15 +219,6 @@ private:
 	void generate_VAOs();
 	std::vector<float> generate_normals(std::vector<float> vertices);
 };
-
-/*
-# ifndef GAME_HPP_LOAD_BEATMAP
-# define GAME_HPP_LOAD_BEATMAP
-
-# include "../game.hpp"
-
-# endif
-*/
 
 # include "game_hpp/constructor.hpp"
 # include "game_hpp/load_beatmap.hpp"

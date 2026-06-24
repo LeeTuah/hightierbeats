@@ -40,22 +40,28 @@ inline Game::Game(int width, int height) {
 	base_tile.color = glm::vec3(0.7f);
 
 	base_tile.label = "";
+	base_tile.label_x_offset = 0.0f;
+
 	base_tile.function_ptr = nullptr;
 	base_tile.active = false;
 
 	play_tile = base_tile;
+	play_tile.label_x_offset = 3.0f;
 	play_tile.label = "Play";
 
 	settings_tile = base_tile;
 	settings_tile.label = "Settings";
+	settings_tile.label_x_offset = -24.0f;
 	settings_tile.position = base_tile.position - glm::vec3(0.0f, menu_tiles_gap, 0.0f);
 
 	credits_tile = base_tile;
 	credits_tile.label = "Credits";
+	credits_tile.label_x_offset = -20.0f;
 	credits_tile.position = base_tile.position - glm::vec3(0.0f, 2 * menu_tiles_gap, 0.0f);
 
 	exit_tile = base_tile;
 	exit_tile.label = "Exit";
+	exit_tile.label_x_offset = 3.0f;
 	exit_tile.position = base_tile.position - glm::vec3(0.0f, 3 * menu_tiles_gap, 0.0f);
 
 	main_menu_tiles.push_back(&play_tile);
@@ -82,6 +88,8 @@ inline Game::Game(int width, int height) {
 		current_frame = "";
 	} 
 
+	current_user_beatmap_index = 0;
+
 	core.position = glm::vec3(10.0f, 0.0f, 0.0f);
 	core.direction = glm::vec3(0.0f);
 
@@ -101,7 +109,7 @@ inline Game::Game(int width, int height) {
 	core_offset_one = 0.0f;
 	core_offset_two = 0.0f;
 
-	load_beatmap_from_file(0);
+	// load_beatmap_from_file(0);
 
 	float x_level = 10.0f, y_level = 8.0f, z_level = 14.0f;
 	for (auto &shard : shards) {
