@@ -54,10 +54,10 @@ inline void Game::render_menu() {
 			model = glm::scale(model, beatmap_tile->scale);
 
 			if (current_user_beatmap_index == beatmap_tile->index)
-				model = glm::scale(model, glm::vec3(menu_scale));
+				model = glm::scale(model, glm::vec3(beatmap_scale, 1.0f, 1.0f));
 
-			else if (last_user_beatmap_index == beatmap_tile->index)
-				model = glm::scale(model, glm::vec3(1.0f + max_menu_scale - menu_scale));
+			if (last_user_beatmap_index == beatmap_tile->index)
+				model = glm::scale(model, glm::vec3(1.0f + max_beatmap_scale - beatmap_scale, 1.0f, 1.0f));
 
 			flat_shader->set_mat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 18);
@@ -65,16 +65,18 @@ inline void Game::render_menu() {
 
 		for (auto beatmap_tile : beatmap_tiles) {
 			float beatmap_label_scale = 0.4f;
+			float beatmap_selected_label_x_offet = 0.0f;
 
-			if (beatmap_tile->index == current_user_beatmap_index)
-				beatmap_label_scale = menu_scale - 0.6f;
-			
-			else if (beatmap_tile->index == last_user_beatmap_index)
-				beatmap_label_scale = 1.0f + max_menu_scale - menu_scale - 0.5f;
+			std::string beatmap_label = beatmap_tile->label;
+			if (beatmap_label.size() > 15 and current_user_beatmap_index != beatmap_tile->index)
+				beatmap_label = beatmap_label.substr(0, 12) + "...";
+
+			if (current_user_beatmap_index == beatmap_tile->index)
+				beatmap_selected_label_x_offet = -180.0f;
 
 			vcr_osd_mono->render_text(
-				beatmap_tile->label,
-				beatmap_tile->position.x - 35.0f + beatmap_tile->label_x_offset,
+				beatmap_label,
+				beatmap_tile->position.x - 35.0f + beatmap_tile->label_x_offset + beatmap_selected_label_x_offet,
 				beatmap_tile->position.y - 10.0f,
 				beatmap_label_scale, glm::vec3(0.0f)
 			);

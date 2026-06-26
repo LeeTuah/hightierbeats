@@ -17,7 +17,7 @@ inline void Game::load_all_beatmaps() {
 			bmt->color = glm::vec3(1.0f);
 
 			bmt->label = beatmap.path().filename().string();
-			bmt->label_x_offset = 0.0f;
+			bmt->label_x_offset = -50.0f;
 
 			bmt->function_ptr = nullptr;
 			bmt->active = false;
@@ -28,6 +28,16 @@ inline void Game::load_all_beatmaps() {
 		}
 	} catch (fs::filesystem_error &e) {
 		std::cout << e.what() << std::endl;
+	}
+
+	float gap_size = 110.0f;
+	float center = (float)SCR_HEIGHT / 2.0f;
+
+	for (auto i = 0; i < beatmap_tiles.size(); i++) {
+		float distance_from_center = i - current_user_beatmap_index;
+		float target_y_pos = center - (distance_from_center * gap_size);
+
+		beatmap_tiles[i]->position.y = target_y_pos;
 	}
 }
 

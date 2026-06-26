@@ -45,7 +45,7 @@ int main () {
 		if (htb_engine->game_state == GAME_RUNNING)
 			htb_engine->render_game();
 
-		else if (htb_engine->game_state == GAME_MAIN_MENU)
+		else if (htb_engine->game_state == GAME_MAIN_MENU or htb_engine->game_state == GAME_SELECTING_BEATMAP)
 			htb_engine->render_menu();
 
 		glfwSwapBuffers(window);

@@ -37,7 +37,7 @@ inline Game::Game(int width, int height) {
 
 	base_tile.position = glm::vec3(SCR_WIDTH - 250, SCR_HEIGHT - 200, 1.0f);
 	base_tile.scale = glm::vec3(1.0f);
-	base_tile.color = glm::vec3(0.7f);
+	base_tile.color = glm::vec3(0.9f);
 
 	base_tile.label = "";
 	base_tile.label_x_offset = 0.0f;
@@ -72,10 +72,18 @@ inline Game::Game(int width, int height) {
 	current_menu_tile = main_menu_tiles.begin();
 	last_menu_tile = main_menu_tiles.end();
 
+	animating_menu_tile = false;
 	max_menu_scale = 1.1f;
 	menu_tile_size_change = 0.8f;
 	menu_scale = max_menu_scale;
-	animating_menu_tile = false;
+
+	max_beatmap_scale = 3.3f;
+	beatmap_tile_size_change = 6.6f;
+	beatmap_scale = max_beatmap_scale; 
+
+	is_beatmap_moving_up = false;
+	beatmap_tile_speed = 3.2f;
+	beatmap_tile_distance_change = 0.0f;
 
 	total_menu_video_frames = 28;
 	menu_video_fps = 30.0f;
@@ -195,18 +203,16 @@ inline Game::Game(int width, int height) {
 	sun_directions.push_back(glm::vec3(+1.0f, -1.0f, +0.0f));
 	sun_directions.push_back(glm::vec3(+1.0f, +1.0f, +0.0f));
 
+	// FIXME: Load sound and image background later
+
 	if (ma_engine_init(NULL, &audio_engine) != MA_SUCCESS) 
 		std::cout << "[!] Audio engine failed to initialize!" << std::endl;
-	
-	if (ma_sound_init_from_file(&audio_engine, bg_song_path.c_str(), 0, NULL, NULL, &bgm) != MA_SUCCESS)
-		std::cout << "[!] Failed to load audio from source file!" << std::endl;
 
 	is_sound_playing = false;
 	sound_volume = 0.1f;
 	sound_pitch = 1.0f;
 
 	black_img = new Texture2D("assets/black.png");
-	background_image = new Texture2D(bg_image_path);
 	background_dim = 0.7f;
 
 	vcr_osd_mono = new character_class("assets/VCR_OSD_MONO_1.001.ttf", text_shader, &font_VAO, &font_VBO, &text_projection);

@@ -154,6 +154,14 @@ public:
 	float menu_scale;
 	float menu_tile_size_change; 
 
+	float max_beatmap_scale;
+	float beatmap_scale;
+	float beatmap_tile_size_change;
+
+	float is_beatmap_moving_up;
+	float beatmap_tile_distance_change;
+	float beatmap_tile_speed;
+
 	std::vector<Texture2D*> menu_video_frames;
 	int total_menu_video_frames;
 	float menu_video_fps;
@@ -168,7 +176,7 @@ public:
 	float core_shake_intensity;
 	float core_offset_one, core_offset_two;
 
-	unsigned int current_user_beatmap_index, last_user_beatmap_index;
+	int current_user_beatmap_index, last_user_beatmap_index;
 	std::vector<BeatmapTile*> beatmap_tiles;
 
 	std::vector<Shard> shards;

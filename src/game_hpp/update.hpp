@@ -19,24 +19,43 @@ inline void Game::update(float delta_time) {
 		(*current_menu_tile)->active = true;
 	}
 
-	if (game_state == GAME_SELECTING_BEATMAP) {
+	if (game_state == GAME_SELECTING_BEATMAP and animating_menu_tile) {
 		float gap_size = 110.0f;
 		float center = (float)SCR_HEIGHT / 2.0f;
 
+		beatmap_tile_distance_change += beatmap_tile_speed * delta_time;
+		if (beatmap_tile_distance_change > 1.0f)
+			beatmap_tile_distance_change = 1.0f;
+
+		beatmap_scale += beatmap_tile_size_change * delta_time;
+		if (beatmap_scale >= max_beatmap_scale)
+			beatmap_scale = max_beatmap_scale;
+
 		for (auto i = 0; i < beatmap_tiles.size(); i++) {
 			float distance_from_center = i - current_user_beatmap_index;
-			float target_y_pos = center - (distance_from_center * gap_size);
+			float prev_distance_from_center = i - last_user_beatmap_index;
 
-			beatmap_tiles[i]->position.y = target_y_pos;
+			float target_y_pos = center - (distance_from_center * gap_size);
+			float prev_y_pos = center - (prev_distance_from_center * gap_size);
+
+			float del_change_in_y = (target_y_pos - prev_y_pos) * beatmap_tile_distance_change;
+
+			beatmap_tiles[i]->position.y = prev_y_pos + del_change_in_y;
 		}
 	}
 
-	if (animating_menu_tile)
+	if (animating_menu_tile and game_state == GAME_MAIN_MENU)
 		menu_scale += menu_tile_size_change * delta_time;
 
-	if (menu_scale >= max_menu_scale) {
+	if (menu_scale >= max_menu_scale and game_state == GAME_MAIN_MENU) {
 		menu_scale = max_menu_scale;
 		animating_menu_tile = false;
+	}
+
+	if (beatmap_scale >= max_beatmap_scale and game_state == GAME_SELECTING_BEATMAP and beatmap_tile_distance_change >= 1.0f) {
+		beatmap_scale = max_beatmap_scale;
+		animating_menu_tile = false;
+		beatmap_tile_distance_change = 1.0f;
 	}
 
 	if (game_state == GAME_RUNNING) {
