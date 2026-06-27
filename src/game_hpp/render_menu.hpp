@@ -6,6 +6,7 @@
 inline void Game::render_menu() {
 	glClearColor(0.02f, 0.02f, 0.02f, 1.0f);
 
+	glDisable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glEnable(GL_BLEND);

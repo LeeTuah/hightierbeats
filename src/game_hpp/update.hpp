@@ -7,7 +7,7 @@ inline void Game::update(float delta_time) {
 	float current_time = audio_time;
 
 	if (health_point > 100) health_point = 100;
-	else if (health_point <= 0) {
+	else if (health_point <= 0 and game_state == GAME_RUNNING) {
 		health_point = 0;
 		game_state = GAME_ZERO_HP;
 	}
@@ -68,6 +68,16 @@ inline void Game::update(float delta_time) {
 			if (shard.active)
 				shard.position += shard.direction * shard.velocity * delta_time;
 		}
+
+		total_accuracy = (total_shards_destroyed != 0)? (sum_of_total_accuracy / (total_shards_destroyed * ACCURACY_PERFECT)) * 100.0f : 0.0f;
+		total_accuracy = std::round(total_accuracy * 10.0f) / 10.0f;
+
+		if (ma_sound_at_end(&bgm) and not game_state == GAME_ZERO_HP) {
+			is_sound_playing = false;
+			if (combo_point > max_combo_reached) max_combo_reached = combo_point;
+
+			game_state = GAME_WIN;
+		}
 	} else if (game_state == GAME_ZERO_HP) {
 		int index = 0;
 		for (auto &shard_pos : losing_shards) { 
@@ -75,6 +85,8 @@ inline void Game::update(float delta_time) {
 			if (not is_core_shards_flying) shard_pos -= glm::vec3(0.0f, - delta_time * gravity_for_core_particles, 0.0f);
 		}
 		losing_shard_velocity -= 0.99 * delta_time * losing_shard_velocity;
+	} else if (game_state == GAME_WIN) {
+
 	}
 
 	if (game_state == GAME_ZERO_HP)
@@ -83,6 +95,17 @@ inline void Game::update(float delta_time) {
 	if (sound_pitch <= 0.09f) {
 		ma_sound_stop(&bgm);
 		is_sound_playing = false;
+
+		if (game_state == GAME_ZERO_HP){
+			game_state = GAME_MAIN_MENU;
+
+			animating_menu_tile = false;
+
+			current_menu_tile = main_menu_tiles.begin();
+			last_menu_tile = main_menu_tiles.end();
+
+			current_user_beatmap_index = 0;
+		}
 	}
 
 	if (is_sound_playing)

@@ -37,6 +37,7 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 			if (current_menu_label == "Play") {
 				game_state = GAME_SELECTING_BEATMAP;
 				load_all_beatmaps();
+				last_menu_input_time = current_time;
 			}
 			else if (current_menu_label == "Settings") {
 
@@ -45,7 +46,7 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 
 			}
 			else if (current_menu_label == "Exit") {
-				glfwSetWindowShouldClose(window, 1);
+				glfwSetWindowShouldClose(window, true);
 			}
 		}
 	}
@@ -59,7 +60,6 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 				last_menu_input_time = current_time;
 
 				animating_menu_tile = true;
-				is_beatmap_moving_up = false;
 				beatmap_scale = 1.0f;
 				beatmap_tile_distance_change = 0.0f;
 			}
@@ -70,10 +70,15 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 				last_menu_input_time = current_time;
 
 				animating_menu_tile = true;
-				is_beatmap_moving_up = true;
 				beatmap_scale = 1.0f;
 				beatmap_tile_distance_change = 0.0f;
 			}
+		}
+		else if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
+			load_beatmap_from_file();
+			game_state = GAME_RUNNING;
+
+			play_sound();
 		}
 	}
 

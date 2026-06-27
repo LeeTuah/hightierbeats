@@ -29,7 +29,6 @@ int main () {
 
 	Game* htb_engine = new Game(SCR_WIDTH, SCR_HEIGHT);
 
-	// htb_engine->play_sound();
 	while (not glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 
@@ -42,10 +41,17 @@ int main () {
 		htb_engine->process_input(window, delta_time);
 		htb_engine->update(delta_time);
 
-		if (htb_engine->game_state == GAME_RUNNING)
+		if (
+			htb_engine->game_state == GAME_RUNNING or 
+			htb_engine->game_state == GAME_ZERO_HP or
+			htb_engine->game_state == GAME_WIN
+		)
 			htb_engine->render_game();
 
-		else if (htb_engine->game_state == GAME_MAIN_MENU or htb_engine->game_state == GAME_SELECTING_BEATMAP)
+		else if (
+			htb_engine->game_state == GAME_MAIN_MENU or 
+			htb_engine->game_state == GAME_SELECTING_BEATMAP
+		)
 			htb_engine->render_menu();
 
 		glfwSwapBuffers(window);

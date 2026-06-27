@@ -7,6 +7,8 @@ inline void Game::load_all_beatmaps() {
 	fs::path beatmap_path = "beatmaps/";
 
 	try {
+		beatmap_tiles.clear();
+
 		unsigned index = 0;
 		for (auto &beatmap : fs::directory_iterator(beatmap_path)) {
 			if (not fs::is_directory(beatmap)) continue;
@@ -41,7 +43,9 @@ inline void Game::load_all_beatmaps() {
 	}
 }
 
-inline void Game::load_beatmap_from_file(int index) {
+inline void Game::load_beatmap_from_file() {
+	int index = current_user_beatmap_index;
+
 	fs::path beatmap_path = "beatmaps/";
 	std::string beatmap_name = "";
 	int beatmap_index = 0;
@@ -73,9 +77,18 @@ inline void Game::load_beatmap_from_file(int index) {
 	beatmap_data = beatmap_stringstream.str();
 
 	json beatmap_json = json::parse(beatmap_data);
+	if (not bg_song_path.empty()) ma_sound_uninit(&bgm);
 
 	bg_song_path = beatmap_path.string() + beatmap_name + "/" + beatmap_json["audio"].get<std::string>();
 	bg_image_path = beatmap_path.string() + beatmap_name + "/" + beatmap_json["background"].get<std::string>();
+
+	if (ma_sound_init_from_file(&audio_engine, bg_song_path.c_str(), 0, 0, NULL, &bgm) != MA_SUCCESS)
+		std::cout << "[!] Failed to initialize the audio file!" << std::endl;
+
+	if (background_image != nullptr) delete background_image;
+	background_image = new Texture2D(bg_image_path);
+
+	shards.clear();
 
 	Shard base_shard;
 	base_shard.active = false;
@@ -104,6 +117,82 @@ inline void Game::load_beatmap_from_file(int index) {
 		
 		shards.push_back(base_shard);
 	}
+
+	float x_level = 10.0f, y_level = 8.0f, z_level = 14.0f;
+	for (auto &shard : shards) {
+		switch (shard.alignment) {
+			case W:
+				shard.position = glm::vec3(x_level, -y_level, 0.0f);
+				break;
+			
+			case S:
+				shard.position = glm::vec3(x_level, +y_level, 0.0f);
+				break;
+
+			case A:
+				shard.position = glm::vec3(x_level, 0.0f, +z_level);
+				break;
+
+			case D:
+				shard.position = glm::vec3(x_level, 0.0f, -z_level);
+				break;
+
+
+			case WD:
+				shard.position = glm::vec3(x_level, -y_level, -z_level);
+				break;
+
+			case DS:
+				shard.position = glm::vec3(x_level, +y_level, -z_level);
+				break;
+
+			case SA:
+				shard.position = glm::vec3(x_level, +y_level, +z_level);
+				break;
+
+			case WA:
+				shard.position = glm::vec3(x_level, -y_level, +z_level);
+				break;
+		} shard.direction = glm::normalize(core.position - shard.position);
+
+		if (shard.direction.y == 0.0f and shard.direction.z != 0.0f) {
+			shard.rotation_angle = 90.0f;
+			shard.rotation_axis = glm::vec3(1.0f, 0.0f, 0.0f);
+		}
+		else if (shard.direction.y != 0.0f and shard.direction.z == 0.0f) {
+			shard.rotation_angle = 45.0f;
+			shard.rotation_axis = glm::vec3(0.0f, 1.0f, 0.0f);
+		}
+		else if ((shard.direction.y > 0.0f and shard.direction.z < 0.0f) or (shard.direction.y < 0.0f and shard.direction.z > 0.0f)) {
+			shard.rotation_angle = -45.0f;
+			shard.rotation_axis = glm::vec3(1.0f, 0.0f, 0.0f);
+		}
+		else if ((shard.direction.y < 0.0f and shard.direction.z < 0.0f) or (shard.direction.y > 0.0f and shard.direction.z > 0.0f)) {
+			shard.rotation_angle = 45.0f;
+			shard.rotation_axis = glm::vec3(1.0f, 0.0f, 0.0f);
+		}
+
+		shard.spawn_time = shard.impact_time - (glm::distance(core.position, shard.position) / shard.velocity);
+	}
+
+	health_point = 100;
+	score_point = 0;
+	combo_point = 0;
+	max_combo_reached = 0;
+
+	total_accuracy = 0.0f;
+	sum_of_total_accuracy = 0.0f;
+	total_shards_destroyed = 0.0f;
+
+	sound_pitch = 1.0f;
+	losing_shards.clear();
+	for (int i = 0; i < total_losing_shards; i++)
+		losing_shards.push_back(core.position);
+
+	last_beat_status = BEAT_NULL;
+	beat_clock_time = 0.0f;
+
+	losing_shard_velocity = 15.0f;
 }
 
 # endif

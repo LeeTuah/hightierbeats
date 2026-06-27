@@ -13,6 +13,11 @@ inline Game::Game(int width, int height) {
 	health_point = 100;
 	score_point = 0;
 	combo_point = 0;
+	max_combo_reached = 0;
+
+	total_accuracy = 0.0f;
+	sum_of_total_accuracy = 0.0f;
+	total_shards_destroyed = 0.0f;
 
 	FPS_COUNTING_DELAY = 0.250f;
 	fps_counter = true;
@@ -81,7 +86,6 @@ inline Game::Game(int width, int height) {
 	beatmap_tile_size_change = 6.6f;
 	beatmap_scale = max_beatmap_scale; 
 
-	is_beatmap_moving_up = false;
 	beatmap_tile_speed = 3.2f;
 	beatmap_tile_distance_change = 0.0f;
 
@@ -117,81 +121,19 @@ inline Game::Game(int width, int height) {
 	core_offset_one = 0.0f;
 	core_offset_two = 0.0f;
 
-	// load_beatmap_from_file(0);
-
-	float x_level = 10.0f, y_level = 8.0f, z_level = 14.0f;
-	for (auto &shard : shards) {
-		switch (shard.alignment) {
-			case W:
-				shard.position = glm::vec3(x_level, -y_level, 0.0f);
-				break;
-			
-			case S:
-				shard.position = glm::vec3(x_level, +y_level, 0.0f);
-				break;
-
-			case A:
-				shard.position = glm::vec3(x_level, 0.0f, +z_level);
-				break;
-
-			case D:
-				shard.position = glm::vec3(x_level, 0.0f, -z_level);
-				break;
-
-
-			case WD:
-				shard.position = glm::vec3(x_level, -y_level, -z_level);
-				break;
-
-			case DS:
-				shard.position = glm::vec3(x_level, +y_level, -z_level);
-				break;
-
-			case SA:
-				shard.position = glm::vec3(x_level, +y_level, +z_level);
-				break;
-
-			case WA:
-				shard.position = glm::vec3(x_level, -y_level, +z_level);
-				break;
-		} shard.direction = glm::normalize(core.position - shard.position);
-
-		if (shard.direction.y == 0.0f and shard.direction.z != 0.0f) {
-			shard.rotation_angle = 90.0f;
-			shard.rotation_axis = glm::vec3(1.0f, 0.0f, 0.0f);
-		}
-		else if (shard.direction.y != 0.0f and shard.direction.z == 0.0f) {
-			shard.rotation_angle = 45.0f;
-			shard.rotation_axis = glm::vec3(0.0f, 1.0f, 0.0f);
-		}
-		else if ((shard.direction.y > 0.0f and shard.direction.z < 0.0f) or (shard.direction.y < 0.0f and shard.direction.z > 0.0f)) {
-			shard.rotation_angle = -45.0f;
-			shard.rotation_axis = glm::vec3(1.0f, 0.0f, 0.0f);
-		}
-		else if ((shard.direction.y < 0.0f and shard.direction.z < 0.0f) or (shard.direction.y > 0.0f and shard.direction.z > 0.0f)) {
-			shard.rotation_angle = 45.0f;
-			shard.rotation_axis = glm::vec3(1.0f, 0.0f, 0.0f);
-		}
-
-		shard.spawn_time = shard.impact_time - (glm::distance(core.position, shard.position) / shard.velocity);
-	}
-
 	total_losing_shards = 700;
 	losing_shard_velocity = 15.0f;
 
 	gravity_for_core_particles = 2.5f;
 	is_core_shards_flying = true;
-	for (int i = 0; i < total_losing_shards; i++) {
-		losing_shards.push_back(core.position);
+	for (int i = 0; i < total_losing_shards; i++)
 		losing_shards_directions.push_back(
 			glm::normalize(glm::vec3((float)random_number() / 100.0f, (float)random_number() / 100.0f, (float)random_number() / 100.0f))
 		);
-	}
 
 	BEAT_DISPLAY_DELAY = 0.100f;
 	last_beat_status = BEAT_NULL;
 	beat_clock_time = 0.0f;
-
 
 	shield.position = core.position + glm::vec3(0.0f, 0.0f, -1.5f);
 	shield.pivot = core.position;
@@ -203,8 +145,6 @@ inline Game::Game(int width, int height) {
 	sun_directions.push_back(glm::vec3(+1.0f, -1.0f, +0.0f));
 	sun_directions.push_back(glm::vec3(+1.0f, +1.0f, +0.0f));
 
-	// FIXME: Load sound and image background later
-
 	if (ma_engine_init(NULL, &audio_engine) != MA_SUCCESS) 
 		std::cout << "[!] Audio engine failed to initialize!" << std::endl;
 
@@ -214,6 +154,7 @@ inline Game::Game(int width, int height) {
 
 	black_img = new Texture2D("assets/black.png");
 	background_dim = 0.7f;
+	background_image = nullptr;
 
 	vcr_osd_mono = new character_class("assets/VCR_OSD_MONO_1.001.ttf", text_shader, &font_VAO, &font_VBO, &text_projection);
 	rajdhani_regular = new character_class("assets/Rajdhani-Regular.ttf", text_shader, &font_VAO, &font_VBO, &text_projection);

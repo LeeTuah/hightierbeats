@@ -34,6 +34,7 @@ enum GameState {
 	GAME_SELECTING_BEATMAP,
 	GAME_PAUSED,
 	GAME_RUNNING,
+	GAME_WIN,
 	GAME_ZERO_HP
 };
 
@@ -42,6 +43,13 @@ enum BeatTiming {
 	BEAT_GREAT   = 300,
 	BEAT_GOOD    = 100,
 	BEAT_NULL    = 0
+};
+
+enum BeatAccuracy {
+	ACCURACY_PERFECT = 100,
+	ACCURACY_GREAT   = 80,
+	ACCURACY_GOOD    = 60,
+	ACCURACY_NULL    = 0
 };
 
 enum ShieldAlignment {
@@ -115,6 +123,10 @@ public:
 	int score_point;
 	int combo_point;
 	bool is_strike_frame;
+	int max_combo_reached;
+
+	float sum_of_total_accuracy, total_shards_destroyed;
+	float total_accuracy;
 	
 	bool fps_counter;
 	float fps;
@@ -158,7 +170,6 @@ public:
 	float beatmap_scale;
 	float beatmap_tile_size_change;
 
-	float is_beatmap_moving_up;
 	float beatmap_tile_distance_change;
 	float beatmap_tile_speed;
 
@@ -212,7 +223,7 @@ public:
 	Game(int width, int height);
 	~Game();
 
-	void load_beatmap_from_file(int index);
+	void load_beatmap_from_file();
 	void load_all_beatmaps();
 	void play_sound();
 	float calc_audio_time();
