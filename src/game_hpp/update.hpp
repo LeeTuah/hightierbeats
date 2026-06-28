@@ -72,7 +72,7 @@ inline void Game::update(float delta_time) {
 		total_accuracy = (total_shards_destroyed != 0)? (sum_of_total_accuracy / (total_shards_destroyed * ACCURACY_PERFECT)) * 100.0f : 0.0f;
 		total_accuracy = std::round(total_accuracy * 10.0f) / 10.0f;
 
-		if (ma_sound_at_end(&bgm) and not game_state == GAME_ZERO_HP) {
+		if (ma_sound_at_end(&bgm) and game_state != GAME_ZERO_HP) {
 			is_sound_playing = false;
 			if (combo_point > max_combo_reached) max_combo_reached = combo_point;
 
@@ -86,7 +86,7 @@ inline void Game::update(float delta_time) {
 		}
 		losing_shard_velocity -= 0.99 * delta_time * losing_shard_velocity;
 	} else if (game_state == GAME_WIN) {
-
+		
 	}
 
 	if (game_state == GAME_ZERO_HP)
@@ -96,9 +96,14 @@ inline void Game::update(float delta_time) {
 		ma_sound_stop(&bgm);
 		is_sound_playing = false;
 
-		if (game_state == GAME_ZERO_HP){
-			game_state = GAME_MAIN_MENU;
+		if (enable_auto_restart_on_loss) {
+			load_beatmap_from_file();
+			game_state = GAME_RUNNING;
 
+			play_sound();
+		}
+		else {
+			game_state = GAME_MAIN_MENU;
 			animating_menu_tile = false;
 
 			current_menu_tile = main_menu_tiles.begin();

@@ -180,6 +180,11 @@ inline void Game::load_beatmap_from_file() {
 	combo_point = 0;
 	max_combo_reached = 0;
 
+	fps = 0.0f;
+	last_fps_clock_time = 0.0f;
+
+	core.active = true;
+
 	total_accuracy = 0.0f;
 	sum_of_total_accuracy = 0.0f;
 	total_shards_destroyed = 0.0f;

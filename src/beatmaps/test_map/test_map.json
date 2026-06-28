@@ -1,0 +1,12 @@
+{
+	"name": "Testing Purposes",
+	"audio": "song.mp3",
+	"background": "image.jpg",
+	"base_velocity": 8.0,
+	"notes": [
+		{"time": 3.0, "alignment": "W"},
+		{"time": 3.5, "alignment": "S"},
+		{"time": 4.0, "alignment": "A"},
+		{"time": 4.5, "alignment": "D"}
+	]
+}

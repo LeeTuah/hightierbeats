@@ -28,6 +28,7 @@ namespace fs = std::filesystem;
 # include <random>
 # include <any>
 # include <functional>
+# include <format>
 
 enum GameState {
 	GAME_MAIN_MENU,
@@ -50,6 +51,17 @@ enum BeatAccuracy {
 	ACCURACY_GREAT   = 80,
 	ACCURACY_GOOD    = 60,
 	ACCURACY_NULL    = 0
+};
+
+enum SkillRatings{
+	SKILL_SSP = 99,
+	SKILL_SS  = 95,
+	SKILL_S   = 90,
+	SKILL_A   = 80,
+	SKILL_B   = 70,
+	SKILL_C   = 60,
+	SKILL_D   = 50,
+	SKILL_F   = 40
 };
 
 enum ShieldAlignment {
@@ -125,9 +137,12 @@ public:
 	bool is_strike_frame;
 	int max_combo_reached;
 
+	bool enable_auto_restart_on_loss;
+
 	float sum_of_total_accuracy, total_shards_destroyed;
 	float total_accuracy;
 	
+	// FIXME: fps does not register after restarting another level
 	bool fps_counter;
 	float fps;
 	float FPS_COUNTING_DELAY;

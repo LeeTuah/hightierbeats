@@ -38,7 +38,6 @@ inline void Game::check_for_collisions() {
 		float split_reaction_time = reaction_time / 2.0f;
 		float time_difference = abs(current_time - shard.impact_time);
 		
-		// FIXME: shard collision issue
 		if (
 			is_strike_frame and
 			time_difference <= split_reaction_time

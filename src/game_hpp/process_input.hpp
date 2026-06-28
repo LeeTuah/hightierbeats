@@ -82,6 +82,19 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 		}
 	}
 
+	else if (game_state == GAME_WIN) {
+		if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
+			game_state = GAME_MAIN_MENU;
+			animating_menu_tile = false;
+
+			current_menu_tile = main_menu_tiles.begin();
+			last_menu_tile = main_menu_tiles.end();
+
+			current_user_beatmap_index = 0;
+			last_menu_input_time = current_time;
+		}
+	}
+
 	else if (game_state == GAME_RUNNING) {
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS and glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
 			shield.alignment = WA;

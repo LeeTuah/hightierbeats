@@ -15,6 +15,8 @@ inline Game::Game(int width, int height) {
 	combo_point = 0;
 	max_combo_reached = 0;
 
+	enable_auto_restart_on_loss = true;
+
 	total_accuracy = 0.0f;
 	sum_of_total_accuracy = 0.0f;
 	total_shards_destroyed = 0.0f;

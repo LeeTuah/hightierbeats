@@ -28,9 +28,6 @@ inline void Game::render_game() {
 		return zeroes + num;
 	};
 
-	if (fps_counter)
-		vcr_osd_mono->render_text(std::to_string((int)fps), 20, 20, 0.5f, glm::vec3(1.0f));
-
 	std::string beat_timing_msg = "", score_msg = "", combo_msg = "";
 	glm::vec3 beat_text_color = glm::vec3(0.0f);
 
@@ -47,9 +44,14 @@ inline void Game::render_game() {
 	score_msg = format_int_to_str(8, score_point);
 	combo_msg = "x" + format_int_to_str(3, combo_point);
 
-	vcr_osd_mono->render_text(beat_timing_msg, (SCR_WIDTH / 2) - 20, SCR_HEIGHT - 100, 0.5f, beat_text_color);
-	vcr_osd_mono->render_text(score_msg, SCR_WIDTH - 147, SCR_HEIGHT - 50, 0.6f, glm::vec3(1.0f));
-	vcr_osd_mono->render_text(combo_msg, SCR_WIDTH - 80, SCR_HEIGHT - 80, 0.6f, glm::vec3(1.0f));
+	if (game_state == GAME_RUNNING) {
+		if (fps_counter)
+			vcr_osd_mono->render_text(std::to_string((int)fps), 20, 20, 0.5f, glm::vec3(1.0f));
+
+		vcr_osd_mono->render_text(beat_timing_msg, (SCR_WIDTH / 2) - 20, SCR_HEIGHT - 100, 0.5f, beat_text_color);
+		vcr_osd_mono->render_text(score_msg, SCR_WIDTH - 147, SCR_HEIGHT - 50, 0.6f, glm::vec3(1.0f));
+		vcr_osd_mono->render_text(combo_msg, SCR_WIDTH - 80, SCR_HEIGHT - 80, 0.6f, glm::vec3(1.0f));
+	}
 
 	flat_shader->use();
 	glBindVertexArray(rect_VAO);
@@ -189,30 +191,104 @@ inline void Game::render_game() {
 		model = glm::translate(model, shield.position - core.position);
 		main_shader->set_mat4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 24 * shield.segments + 12);
-	}
 
-	screen_shader->use(); 
-	glBindVertexArray(square_VAO);
+		screen_shader->use(); 
+		glBindVertexArray(square_VAO);
 
-	float starting_pos = -0.92f;
-	int total_filled_hp_boxes = health_point / 5;
+		float starting_pos = -0.92f;
+		int total_filled_hp_boxes = health_point / 5;
+		if (total_filled_hp_boxes == 0 and health_point > 0)
+			total_filled_hp_boxes = 1;
 
-	for (int i = 0; i < 20; i++) {
-		if (total_filled_hp_boxes <= 0) continue;
+		for (int i = 0; i < total_filled_hp_boxes; i++) {
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(starting_pos, 0.85f, 0.0f));
+			model = glm::scale(model, glm::vec3(0.2f, 0.3f, 0.0f));
+			screen_shader->set_mat4("model", model);
+
+			float red_channel = del_change_for_hp;
+			float green_channel = std::max(0.65f - (red_channel / 5.0f), 0.0f);
+			float blue_channel = std::max(0.83f - red_channel, 0.0f);
+			screen_shader->set_float3("frag_color", red_channel, green_channel, blue_channel);
+
+			starting_pos += 0.04f;
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+		}
+	} else if (game_state == GAME_WIN) {
+		flat_shader->use();
+		glBindVertexArray(rect_VAO);
+
+		flat_shader->set_mat4("projection", projection);
+		flat_shader->set_mat4("view", view);
+
+		flat_shader->set_bool("use_texture", false);
+		flat_shader->set_float3("color", glm::vec3(0.0f));
 
 		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(starting_pos, 0.85f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.2f, 0.3f, 0.0f));
-		screen_shader->set_mat4("model", model);
+		model = glm::translate(model, glm::vec3(6.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(1.0f, 9.0f, 7.0f));
+		model = glm::rotate(model, glm::radians(90.0f), glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)));
 
-		float red_channel = del_change_for_hp;
-		float green_channel = std::max(0.65f - (red_channel / 5.0f), 0.0f);
-		float blue_channel = std::max(0.83f - red_channel, 0.0f);
-		screen_shader->set_float3("frag_color", red_channel, green_channel, blue_channel);
-
-		starting_pos += 0.04f;
-		total_filled_hp_boxes--;
+		flat_shader->set_mat4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		// TODO: animate the score gradually increase
+		// TODO: add a pause menu
+		std::string skill_rating = "";
+		float skill_rating_x_offset = -65.0f, skill_rating_scale = 5.0f;
+
+		if      (total_accuracy <= (float)SKILL_F)   skill_rating = "F";
+		else if (total_accuracy <= (float)SKILL_D)   skill_rating = "D"; 
+		else if (total_accuracy <= (float)SKILL_C)   skill_rating = "C"; 
+		else if (total_accuracy <= (float)SKILL_B)   skill_rating = "B"; 
+		else if (total_accuracy <= (float)SKILL_A)   skill_rating = "A"; 
+		else if (total_accuracy <= (float)SKILL_S)   skill_rating = "S"; 
+		else if (total_accuracy <= (float)SKILL_SS)  skill_rating = "SS"; 
+		else if (total_accuracy <= (float)SKILL_SSP) skill_rating = "SS+";
+		
+		skill_rating_x_offset *= skill_rating.size();
+		if (skill_rating.size() == 3) skill_rating_scale = 4.5f;
+
+		vcr_osd_mono->render_text(
+			skill_rating, 
+			SCR_WIDTH / 2 + skill_rating_x_offset, SCR_HEIGHT / 2 + 50.0f, 
+			skill_rating_scale, glm::vec3(1.0f)
+		);
+
+		float labels_x_offset = -195.0f, label_y_offset = -100.0f, label_gap = -50.0f;
+		std::string accuracy_msg = std::format("{:.2f}", total_accuracy) + "%";
+
+		vcr_osd_mono->render_text(
+			"Score: ", SCR_WIDTH / 2 + labels_x_offset, SCR_HEIGHT / 2 + label_y_offset,
+			0.6f, glm::vec3(1.0f)
+		);
+		vcr_osd_mono->render_text(
+			score_msg, SCR_WIDTH / 2 + 60.0f, SCR_HEIGHT / 2 + label_y_offset,
+			0.6f, glm::vec3(1.0f)
+		);
+
+		vcr_osd_mono->render_text(
+			"Accuracy: ", SCR_WIDTH / 2 + labels_x_offset, SCR_HEIGHT / 2 + label_y_offset + label_gap,
+			0.6f, glm::vec3(1.0f)
+		);
+		vcr_osd_mono->render_text(
+			accuracy_msg, SCR_WIDTH / 2 + 94.0f, SCR_HEIGHT / 2 + label_y_offset + label_gap,
+			0.6f, glm::vec3(1.0f)
+		);
+		
+		vcr_osd_mono->render_text(
+			"Max Combo: ", SCR_WIDTH / 2 + labels_x_offset, SCR_HEIGHT / 2 + label_y_offset + 2 * label_gap,
+			0.6f, glm::vec3(1.0f)
+		);
+		vcr_osd_mono->render_text(
+			combo_msg, SCR_WIDTH / 2 + 128.0f, SCR_HEIGHT / 2 + label_y_offset + 2 * label_gap,
+			0.6f, glm::vec3(1.0f)
+		);
+
+		vcr_osd_mono->render_text(
+			"Press ENTER to continue...", SCR_WIDTH / 2 + labels_x_offset, SCR_HEIGHT / 2 + label_y_offset + 3 * label_gap,
+			0.5f, glm::vec3(1.0f)
+		);
 	}
 }
 
