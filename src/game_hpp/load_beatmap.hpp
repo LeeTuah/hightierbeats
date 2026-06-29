@@ -180,9 +180,6 @@ inline void Game::load_beatmap_from_file() {
 	combo_point = 0;
 	max_combo_reached = 0;
 
-	fps = 0.0f;
-	last_fps_clock_time = 0.0f;
-
 	core.active = true;
 
 	total_accuracy = 0.0f;
@@ -198,6 +195,22 @@ inline void Game::load_beatmap_from_file() {
 	beat_clock_time = 0.0f;
 
 	losing_shard_velocity = 15.0f;
+
+	win_screen_animation_completed = false;
+	del_score = 0;
+	del_accuracy = 0;
+	del_combo = 0;
+
+	current_win_label = win_label_animation_order.begin();
+	for (auto label : win_label_animation_order) {
+		if (label->big_label)
+			label->scale = win_skill_rating_init_scale;
+		else
+			label->scale = win_label_init_scale;
+
+		label->rotation_angle = win_label_init_angle;
+		label->animated = false;
+	}
 }
 
 # endif

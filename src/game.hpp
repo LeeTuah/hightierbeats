@@ -75,7 +75,24 @@ enum ShieldAlignment {
 	WA =  135
 };
 
-struct MenuTile { // TODO: remove function_ptr if possible
+enum WinAnimationStyle {
+	SCORES_BUILD_UP,
+	SCORES_PUNCHED_IN
+};
+
+struct WinLabels {
+	glm::vec3 position;
+	float scale;
+	float rotation_angle;
+
+	bool animated;
+	bool big_label;
+	std::string label;
+
+	float x_offset;
+};
+
+struct MenuTile {
 	glm::vec3 position;
 	glm::vec3 scale;
 	glm::vec3 color;
@@ -138,6 +155,7 @@ public:
 	int max_combo_reached;
 
 	bool enable_auto_restart_on_loss;
+	WinAnimationStyle win_animation_style;
 
 	float sum_of_total_accuracy, total_shards_destroyed;
 	float total_accuracy;
@@ -147,6 +165,16 @@ public:
 	float fps;
 	float FPS_COUNTING_DELAY;
 	float last_fps_clock_time;
+
+	float win_screen_load_time;
+	float del_score, del_combo, del_accuracy;
+	float win_screen_animation_completed;
+
+	float win_label_animation_time;
+	float win_label_init_scale, win_skill_rating_init_scale, win_label_init_angle;
+	// float del_scale, del_angle;
+	std::vector<WinLabels*> win_label_animation_order;
+	std::vector<WinLabels*>::iterator current_win_label;
 
 	Camera* camera;
 	int SCR_WIDTH, SCR_HEIGHT;
@@ -173,13 +201,17 @@ public:
 	std::vector<MenuTile*> main_menu_tiles;
 	std::vector<MenuTile*>::iterator current_menu_tile, last_menu_tile;
 	
+	MenuTile continue_tile, exit_level_tile;
+	std::vector<MenuTile*> pause_menu_tiles;
+	std::vector<MenuTile*>::iterator current_pause_menu_tile, last_pause_menu_tile;
+
 	float menu_input_process_delay;
 	float last_menu_input_time;
 	
 	bool animating_menu_tile;
-	float max_menu_scale;
+	float max_menu_scale, max_pause_scale;
 	float menu_scale;
-	float menu_tile_size_change; 
+	float menu_tile_size_change;
 
 	float max_beatmap_scale;
 	float beatmap_scale;
@@ -240,7 +272,9 @@ public:
 
 	void load_beatmap_from_file();
 	void load_all_beatmaps();
+
 	void play_sound();
+	void pause_sound();
 	float calc_audio_time();
 
 	void process_input(GLFWwindow* window, float delta_time);

@@ -44,7 +44,8 @@ int main () {
 		if (
 			htb_engine->game_state == GAME_RUNNING or 
 			htb_engine->game_state == GAME_ZERO_HP or
-			htb_engine->game_state == GAME_WIN
+			htb_engine->game_state == GAME_WIN or
+			htb_engine->game_state == GAME_PAUSED
 		)
 			htb_engine->render_game();
 

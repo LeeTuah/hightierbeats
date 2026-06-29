@@ -5,6 +5,7 @@
 
 inline void Game::update(float delta_time) {
 	float current_time = audio_time;
+	float glfw_current_time = glfwGetTime();
 
 	if (health_point > 100) health_point = 100;
 	else if (health_point <= 0 and game_state == GAME_RUNNING) {
@@ -17,6 +18,13 @@ inline void Game::update(float delta_time) {
 			menu_tile->active = false;
 
 		(*current_menu_tile)->active = true;
+	}
+
+	if (game_state == GAME_PAUSED) {
+		for (auto &pause_tile : pause_menu_tiles)
+			pause_tile->active = false;
+
+		(*current_pause_menu_tile)->active = true;
 	}
 
 	if (game_state == GAME_SELECTING_BEATMAP and animating_menu_tile) {
@@ -44,11 +52,15 @@ inline void Game::update(float delta_time) {
 		}
 	}
 
-	if (animating_menu_tile and game_state == GAME_MAIN_MENU)
+	if (animating_menu_tile and (game_state == GAME_MAIN_MENU or game_state == GAME_PAUSED))
 		menu_scale += menu_tile_size_change * delta_time;
 
 	if (menu_scale >= max_menu_scale and game_state == GAME_MAIN_MENU) {
 		menu_scale = max_menu_scale;
+		animating_menu_tile = false;
+	}
+	if (menu_scale >= max_pause_scale and game_state == GAME_PAUSED) {
+		menu_scale = max_pause_scale;
 		animating_menu_tile = false;
 	}
 
@@ -58,14 +70,14 @@ inline void Game::update(float delta_time) {
 		beatmap_tile_distance_change = 1.0f;
 	}
 
-	if (game_state == GAME_RUNNING) {
+	if (game_state == GAME_RUNNING or game_state == GAME_PAUSED) {
 		for (auto &shard : shards) {
 			if (shard.destroyed) continue;
 
 			if (not shard.active and current_time >= shard.spawn_time)
 				shard.active = true;
 
-			if (shard.active)
+			if (shard.active and game_state != GAME_PAUSED)
 				shard.position += shard.direction * shard.velocity * delta_time;
 		}
 
@@ -86,7 +98,53 @@ inline void Game::update(float delta_time) {
 		}
 		losing_shard_velocity -= 0.99 * delta_time * losing_shard_velocity;
 	} else if (game_state == GAME_WIN) {
-		
+		if (win_animation_style == SCORES_BUILD_UP and (not win_screen_animation_completed)) {
+			del_score += ((float)score_point / win_screen_load_time) * delta_time;
+			del_accuracy += ((float)total_accuracy / win_screen_load_time) * delta_time;
+			del_combo += ((float)max_combo_reached / win_screen_load_time) * delta_time;
+
+			if (del_score > score_point) del_score = score_point;
+			if (del_accuracy > total_accuracy) del_accuracy = total_accuracy;
+			if (del_combo > max_combo_reached) del_combo = max_combo_reached;
+
+			if (del_score == score_point and del_accuracy == total_accuracy and del_combo == max_combo_reached)
+				win_screen_animation_completed = true;
+		}
+		else if (win_animation_style == SCORES_PUNCHED_IN and current_win_label != win_label_animation_order.end()) {
+			if ((*current_win_label)->scale <= 0.6f and (not (*current_win_label)->big_label))
+				(*current_win_label)->scale = 0.6f;
+
+			if ((*current_win_label)->scale <= 5.0f and (*current_win_label)->big_label)
+				(*current_win_label)->scale = 5.0f;
+
+			if ((*current_win_label)->rotation_angle <= 0.0f)
+				(*current_win_label)->rotation_angle = 0.0f;
+
+			if (
+				(*current_win_label)->scale == 0.6f and 
+				(*current_win_label)->rotation_angle == 0.0f and 
+				(not (*current_win_label)->big_label)
+			) {
+				(*current_win_label)->animated = true;
+				current_win_label++;
+			}
+			else if (
+				(*current_win_label)->scale == 5.0f and 
+				(*current_win_label)->rotation_angle == 0.0f and 
+				(*current_win_label)->big_label
+			) {
+				(*current_win_label)->animated = true;
+				current_win_label++;
+			}
+
+			if ((*current_win_label)->big_label)
+			(*current_win_label)->scale -= (win_skill_rating_init_scale / win_label_animation_time) * delta_time;
+
+			else
+			(*current_win_label)->scale -= (win_label_init_scale / win_label_animation_time) * delta_time;
+
+			(*current_win_label)->rotation_angle -= (win_label_init_angle / win_label_animation_time) * delta_time;
+		}
 	}
 
 	if (game_state == GAME_ZERO_HP)
@@ -119,9 +177,9 @@ inline void Game::update(float delta_time) {
 	if (current_time - beat_clock_time > BEAT_DISPLAY_DELAY and last_beat_status != BEAT_NULL)
 		last_beat_status = BEAT_NULL;
 
-	if (fps_counter and current_time - last_fps_clock_time > FPS_COUNTING_DELAY) {
+	if (fps_counter and glfw_current_time - last_fps_clock_time > FPS_COUNTING_DELAY) {
 		fps = 1.0f / delta_time;
-		last_fps_clock_time = current_time;
+		last_fps_clock_time = glfw_current_time;
 	}
 
 	float core_shake_offset = core_shake_intensity * delta_time * CORE_SHAKE_DECAY_SPEED;

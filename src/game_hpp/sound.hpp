@@ -10,6 +10,11 @@ inline void Game::play_sound() {
 	is_sound_playing = true;
 }
 
+inline void Game::pause_sound() {
+	ma_sound_stop(&bgm);
+	is_sound_playing = false;
+}
+
 inline float Game::calc_audio_time() {
 	if (not is_sound_playing) return 0.0f;
 

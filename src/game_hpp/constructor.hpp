@@ -16,6 +16,7 @@ inline Game::Game(int width, int height) {
 	max_combo_reached = 0;
 
 	enable_auto_restart_on_loss = true;
+	win_animation_style = SCORES_PUNCHED_IN;
 
 	total_accuracy = 0.0f;
 	sum_of_total_accuracy = 0.0f;
@@ -25,6 +26,64 @@ inline Game::Game(int width, int height) {
 	fps_counter = true;
 	fps = 0.0f;
 	last_fps_clock_time = 0.0f;
+
+	win_screen_load_time = 2.0f;
+	win_screen_animation_completed = false;
+
+	del_score = 0;
+	del_accuracy = 0;
+	del_combo = 0;
+
+	win_label_animation_time = 0.5f;
+
+	win_label_init_scale = 0.95f;
+	win_skill_rating_init_scale = 8.7f;
+	win_label_init_angle = glm::radians(75.0f);
+
+	current_win_label = win_label_animation_order.begin();
+
+	float skill_rating_x_offset = -65.0f, skill_rating_scale = 5.0f;
+	float labels_x_offset = -195.0f, label_y_offset = -100.0f, label_gap = -50.0f;
+
+	WinLabels base_label;
+	base_label.position = glm::vec3(SCR_WIDTH / 2 + labels_x_offset, SCR_HEIGHT / 2 + label_y_offset, 0.0f);
+	base_label.scale = win_label_init_scale;
+	base_label.rotation_angle = win_label_init_angle;
+	base_label.animated = false;
+	base_label.big_label = false;
+	base_label.label = "";
+	base_label.x_offset = 0.0f;
+
+	WinLabels* score_label = new WinLabels(base_label);
+	score_label->label = "Score";
+	score_label->x_offset = 130.0f;
+
+	WinLabels* accuracy_label = new WinLabels(base_label);
+	accuracy_label->position.y += label_gap;
+	accuracy_label->label = "Accuracy";
+	accuracy_label->x_offset = 147.0f;
+
+	WinLabels* max_combo_label = new WinLabels(base_label);
+	max_combo_label->position.y += 2 * label_gap;
+	max_combo_label->label = "Max Combo";
+	max_combo_label->x_offset = 130.0f;
+
+	WinLabels* press_enter_label = new WinLabels(base_label);
+	press_enter_label->position.y += 3 * label_gap;
+	press_enter_label->label = "Press ENTER to continue";
+	press_enter_label->x_offset = 199.0f;
+
+	WinLabels* skill_rating_label = new WinLabels(base_label);
+	skill_rating_label->position = glm::vec3(SCR_WIDTH / 2 + skill_rating_x_offset, SCR_HEIGHT / 2 + 50.0f, 0.0f);
+	skill_rating_label->scale = win_skill_rating_init_scale;
+	skill_rating_label->big_label = true;
+	skill_rating_label->x_offset = 145.0f;
+
+	win_label_animation_order.push_back(score_label);
+	win_label_animation_order.push_back(accuracy_label);
+	win_label_animation_order.push_back(max_combo_label);
+	win_label_animation_order.push_back(skill_rating_label);
+	win_label_animation_order.push_back(press_enter_label);
 
 	camera = new Camera(glm::vec3(0.0f));
 
@@ -79,8 +138,34 @@ inline Game::Game(int width, int height) {
 	current_menu_tile = main_menu_tiles.begin();
 	last_menu_tile = main_menu_tiles.end();
 
+	base_tile.position = glm::vec3(SCR_WIDTH / 2, SCR_HEIGHT / 2 + 10.0f, 1.0f);
+	base_tile.scale = glm::vec3(0.6f);
+	base_tile.color = glm::vec3(0.9f);
+
+	base_tile.label = "";
+	base_tile.label_x_offset = 0.0f;
+
+	base_tile.function_ptr = nullptr;
+	base_tile.active = false;
+
+	continue_tile = base_tile;
+	continue_tile.label_x_offset = -27.0f;
+	continue_tile.label = "Continue";
+
+	exit_level_tile = base_tile;
+	exit_level_tile.position = base_tile.position - glm::vec3(0.0f, 70.0f, 0.0f);
+	exit_level_tile.label_x_offset = 3.0f;
+	exit_level_tile.label = "Exit";
+
+	pause_menu_tiles.push_back(&continue_tile);
+	pause_menu_tiles.push_back(&exit_level_tile);
+
+	current_pause_menu_tile = pause_menu_tiles.begin();
+	last_pause_menu_tile = pause_menu_tiles.end();
+
 	animating_menu_tile = false;
 	max_menu_scale = 1.1f;
+	max_pause_scale = 0.7f;
 	menu_tile_size_change = 0.8f;
 	menu_scale = max_menu_scale;
 
@@ -165,6 +250,9 @@ inline Game::Game(int width, int height) {
 inline Game::~Game() {
 	ma_sound_uninit(&bgm);
 	ma_engine_uninit(&audio_engine);
+
+	for (auto label : win_label_animation_order)
+		delete label;
 }
 
 # endif
