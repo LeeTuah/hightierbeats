@@ -21,6 +21,7 @@ namespace fs = std::filesystem;
 # include "includes/texture.hpp"
 
 # include "includes/miniaudio.h"
+# include "imgui.h"
 
 # include <algorithm>
 # include <vector>
@@ -33,6 +34,7 @@ namespace fs = std::filesystem;
 enum GameState {
 	GAME_MAIN_MENU,
 	GAME_SELECTING_BEATMAP,
+	GAME_MAPMAKER,
 	GAME_PAUSED,
 	GAME_RUNNING,
 	GAME_WIN,
@@ -197,7 +199,7 @@ public:
 	glm::mat4 view, projection, model, text_projection;
 	std::vector<glm::vec3> sun_directions;
 	
-	MenuTile play_tile, settings_tile, credits_tile, exit_tile;
+	MenuTile play_tile, settings_tile, mapmaker_tile, exit_tile;
 	std::vector<MenuTile*> main_menu_tiles;
 	std::vector<MenuTile*>::iterator current_menu_tile, last_menu_tile;
 	
@@ -281,6 +283,8 @@ public:
 
 	void render_menu();
 	void render_game();
+	void render_mapmaker();
+
 	void check_for_collisions();
 	void update(float delta_time);
 private:
@@ -294,6 +298,7 @@ private:
 # include "game_hpp/process_input.hpp"
 # include "game_hpp/render_menu.hpp"
 # include "game_hpp/render_game.hpp"
+# include "game_hpp/render_mapmaker.hpp"
 # include "game_hpp/check_for_collisions.hpp"
 # include "game_hpp/update.hpp"
 # include "game_hpp/generate_vaos.hpp"

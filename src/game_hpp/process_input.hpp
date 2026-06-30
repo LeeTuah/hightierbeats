@@ -23,6 +23,9 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 		current_user_beatmap_index = 0;
 		last_menu_input_time = current_time;
 		menu_scale = max_menu_scale;
+
+		current_pause_menu_tile = pause_menu_tiles.begin();
+		last_pause_menu_tile = pause_menu_tiles.end();
 	};
 
 	if (game_state == GAME_MAIN_MENU) {
@@ -57,8 +60,8 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 			else if (current_menu_label == "Settings") {
 
 			}
-			else if (current_menu_label == "Credits") {
-
+			else if (current_menu_label == "Mapmaker") {
+				game_state = GAME_MAPMAKER;
 			}
 			else if (current_menu_label == "Exit") {
 				glfwSetWindowShouldClose(window, true);
@@ -151,6 +154,11 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 				go_back_to_main_menu();
 			}
 		}
+	}
+
+	else if (game_state == GAME_MAPMAKER) {
+		if (esc_key_pressed)
+		glfwSetWindowShouldClose(window, true);
 	}
 
 	else if (game_state == GAME_RUNNING) {

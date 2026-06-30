@@ -3,6 +3,10 @@
 
 # include "game.hpp"
 
+# include "imgui.h"
+# include "imgui_impl_glfw.h"
+# include "imgui_impl_opengl3.h"
+
 const int SCR_WIDTH = 1280;
 const int SCR_HEIGHT = 720;
 
@@ -27,6 +31,13 @@ int main () {
 	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init("#version 330 core");
+
 	Game* htb_engine = new Game(SCR_WIDTH, SCR_HEIGHT);
 
 	while (not glfwWindowShouldClose(window)) {
@@ -41,23 +52,24 @@ int main () {
 		htb_engine->process_input(window, delta_time);
 		htb_engine->update(delta_time);
 
-		if (
-			htb_engine->game_state == GAME_RUNNING or 
-			htb_engine->game_state == GAME_ZERO_HP or
-			htb_engine->game_state == GAME_WIN or
-			htb_engine->game_state == GAME_PAUSED
-		)
-			htb_engine->render_game();
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
 
-		else if (
-			htb_engine->game_state == GAME_MAIN_MENU or 
-			htb_engine->game_state == GAME_SELECTING_BEATMAP
-		)
-			htb_engine->render_menu();
+		htb_engine->render_game();
+		htb_engine->render_menu();
+		htb_engine->render_mapmaker();
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		glfwSwapBuffers(window);
 	}
 
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+	
 	glfwTerminate();
 	return 0;
 }

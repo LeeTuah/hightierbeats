@@ -120,10 +120,10 @@ inline Game::Game(int width, int height) {
 	settings_tile.label_x_offset = -24.0f;
 	settings_tile.position = base_tile.position - glm::vec3(0.0f, menu_tiles_gap, 0.0f);
 
-	credits_tile = base_tile;
-	credits_tile.label = "Credits";
-	credits_tile.label_x_offset = -20.0f;
-	credits_tile.position = base_tile.position - glm::vec3(0.0f, 2 * menu_tiles_gap, 0.0f);
+	mapmaker_tile = base_tile;
+	mapmaker_tile.label = "Mapmaker";
+	mapmaker_tile.label_x_offset = -20.0f;
+	mapmaker_tile.position = base_tile.position - glm::vec3(0.0f, 2 * menu_tiles_gap, 0.0f);
 
 	exit_tile = base_tile;
 	exit_tile.label = "Exit";
@@ -132,7 +132,7 @@ inline Game::Game(int width, int height) {
 
 	main_menu_tiles.push_back(&play_tile);
 	main_menu_tiles.push_back(&settings_tile);
-	main_menu_tiles.push_back(&credits_tile);
+	main_menu_tiles.push_back(&mapmaker_tile);
 	main_menu_tiles.push_back(&exit_tile);
 
 	current_menu_tile = main_menu_tiles.begin();

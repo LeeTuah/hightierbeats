@@ -4,6 +4,13 @@
 # include "../game.hpp"
 
 inline void Game::render_game() {
+	if (
+		game_state != GAME_RUNNING and
+		game_state != GAME_ZERO_HP and
+		game_state != GAME_WIN	   and
+		game_state != GAME_PAUSED
+	) return;
+
 	// glfwSetInputMode for mouse later
 	glClearColor(0.02f, 0.02f, 0.02f, 1.0f);
 
