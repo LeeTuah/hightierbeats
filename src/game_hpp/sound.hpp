@@ -25,7 +25,9 @@ inline float Game::get_audio_length(ma_sound *sound) {
 }
 
 inline float Game::calc_audio_time() {
-	ma_uint64 cursor_pcm;
+	if (not is_sound_playing and game_state != GAME_MAPMAKER) return 0.0f;
+
+	ma_uint64 cursor_pcm = 0;
 	ma_sound_get_cursor_in_pcm_frames(&bgm, &cursor_pcm);
 
 	ma_uint32 sample_rate = ma_engine_get_sample_rate(&audio_engine);

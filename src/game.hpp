@@ -239,6 +239,7 @@ public:
 	std::vector<BeatmapTile*> beatmap_tiles;
 
 	std::vector<Shard> shards;
+	float shard_radius;
 	Shield shield;
 
 	std::vector<glm::vec3> losing_shards;

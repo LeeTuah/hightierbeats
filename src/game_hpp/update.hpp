@@ -137,13 +137,15 @@ inline void Game::update(float delta_time) {
 				current_win_label++;
 			}
 
-			if ((*current_win_label)->big_label)
-			(*current_win_label)->scale -= (win_skill_rating_init_scale / win_label_animation_time) * delta_time;
+			if (current_win_label != win_label_animation_order.end()) {
+				if ((*current_win_label)->big_label)
+				(*current_win_label)->scale -= (win_skill_rating_init_scale / win_label_animation_time) * delta_time;
 
-			else
-			(*current_win_label)->scale -= (win_label_init_scale / win_label_animation_time) * delta_time;
+				else
+				(*current_win_label)->scale -= (win_label_init_scale / win_label_animation_time) * delta_time;
 
-			(*current_win_label)->rotation_angle -= (win_label_init_angle / win_label_animation_time) * delta_time;
+				(*current_win_label)->rotation_angle -= (win_label_init_angle / win_label_animation_time) * delta_time;
+			}
 		}
 	}
 

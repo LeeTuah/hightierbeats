@@ -36,7 +36,9 @@ inline void Game::check_for_collisions() {
 		if (not shard.active) continue;
 
 		float split_reaction_time = reaction_time / 2.0f;
-		float time_difference = abs(current_time - shard.impact_time);
+		float del_time_between_shard_tip_and_center = shard_radius / shard.velocity;
+
+		float time_difference = abs(current_time - shard.impact_time + del_time_between_shard_tip_and_center);
 		
 		if (
 			is_strike_frame and

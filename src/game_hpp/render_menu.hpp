@@ -100,7 +100,7 @@ inline void Game::render_menu() {
 			if (menu_tile == *current_menu_tile and menu_tile->active) 
 				model = glm::scale(model, glm::vec3(menu_scale));
 
-			else if (menu_tile == *last_menu_tile and not menu_tile->active)
+			else if (last_menu_tile != main_menu_tiles.end() and menu_tile == *last_menu_tile and not menu_tile->active)
 				model = glm::scale(model, glm::vec3(1.0f + max_menu_scale - menu_scale));
 
 			flat_shader->set_mat4("model", model);
@@ -111,7 +111,7 @@ inline void Game::render_menu() {
 			float menu_label_scale = 0.5f;
 
 			if (menu_tile == *current_menu_tile) menu_label_scale = menu_scale - 0.5f;
-			else if (menu_tile == *last_menu_tile) menu_label_scale = 1.0f + max_menu_scale - menu_scale - 0.5f;
+			else if (last_menu_tile != main_menu_tiles.end() and menu_tile == *last_menu_tile) menu_label_scale = 1.0f + max_menu_scale - menu_scale - 0.5f;
 
 			vcr_osd_mono->render_text(
 				menu_tile->label,

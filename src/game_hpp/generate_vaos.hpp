@@ -86,6 +86,7 @@ inline void Game::generate_VAOs() {
 		0.0f, -shard_length[1], 0.0f,
 		0.0f, 0.0f, -shard_length[2]
 	};
+	shard_radius = shard_length[1];
 	std::vector<float> shard_data = generate_normals(shard_vertices);
 
 	glGenVertexArrays(1, &shard_VAO);
