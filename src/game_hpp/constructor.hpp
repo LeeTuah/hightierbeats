@@ -243,8 +243,18 @@ inline Game::Game(int width, int height) {
 	background_dim = 0.7f;
 	background_image = nullptr;
 
+	background_image = new Texture2D("beatmaps/test_map/image.jpg"); // FIXME: temporary
+	bg_song_path = "beatmaps/du_bist_gut_genug/song.mp3";
+	if (ma_sound_init_from_file(&audio_engine, bg_song_path.c_str(), 0, NULL, NULL, &bgm) != MA_SUCCESS) {
+		std::cout << "Audio did not load." << std::endl;
+	} 
+
 	vcr_osd_mono = new character_class("assets/VCR_OSD_MONO_1.001.ttf", text_shader, &font_VAO, &font_VBO, &text_projection);
 	rajdhani_regular = new character_class("assets/Rajdhani-Regular.ttf", text_shader, &font_VAO, &font_VBO, &text_projection);
+
+	mapmaker_timeline_opened = true;
+	mapmaker_properties_opened = true;
+	mapmaker_play_music = false;
 }
 
 inline Game::~Game() {

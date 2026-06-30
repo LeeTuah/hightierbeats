@@ -158,7 +158,7 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 
 	else if (game_state == GAME_MAPMAKER) {
 		if (esc_key_pressed)
-		glfwSetWindowShouldClose(window, true);
+		go_back_to_main_menu();
 	}
 
 	else if (game_state == GAME_RUNNING) {

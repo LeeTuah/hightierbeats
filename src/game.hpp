@@ -174,7 +174,6 @@ public:
 
 	float win_label_animation_time;
 	float win_label_init_scale, win_skill_rating_init_scale, win_label_init_angle;
-	// float del_scale, del_angle;
 	std::vector<WinLabels*> win_label_animation_order;
 	std::vector<WinLabels*>::iterator current_win_label;
 
@@ -269,6 +268,9 @@ public:
 	float sound_volume, sound_pitch;
 	float audio_time;
 
+	bool mapmaker_timeline_opened, mapmaker_properties_opened;
+	bool mapmaker_play_music;
+
 	Game(int width, int height);
 	~Game();
 
@@ -278,6 +280,8 @@ public:
 	void play_sound();
 	void pause_sound();
 	float calc_audio_time();
+	float get_audio_length(ma_sound *sound);
+	void set_audio_time(ma_sound* sound, float timestamp);
 
 	void process_input(GLFWwindow* window, float delta_time);
 
