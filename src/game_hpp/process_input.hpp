@@ -62,6 +62,8 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 			}
 			else if (current_menu_label == "Mapmaker") {
 				game_state = GAME_MAPMAKER;
+				
+				shards.clear();
 			}
 			else if (current_menu_label == "Exit") {
 				glfwSetWindowShouldClose(window, true);
@@ -99,7 +101,7 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 			load_beatmap_from_file();
 			game_state = GAME_RUNNING;
 
-			play_sound();
+			play_sound(&bgm);
 		}
 		if (esc_key_pressed) {
 			go_back_to_main_menu();
@@ -117,7 +119,7 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 
 		if (esc_key_pressed) {
 			game_state = GAME_RUNNING;
-			play_sound();
+			play_sound(&bgm);
 
 			last_menu_input_time = current_time;
 		}
@@ -145,12 +147,12 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 
 			if (current_pause_menu_label == "Continue") {
 				game_state = GAME_RUNNING;
-				play_sound();
+				play_sound(&bgm);
 
 				last_menu_input_time = current_time;
 			}
 			else if (current_pause_menu_label == "Exit") {
-				pause_sound();
+				pause_sound(&bgm);
 				go_back_to_main_menu();
 			}
 		}
@@ -166,7 +168,7 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 			if (current_time - last_menu_input_time <= menu_input_process_delay) return;
 
 			game_state = GAME_PAUSED;
-			pause_sound();
+			pause_sound(&bgm);
 
 			last_menu_input_time = current_time;
 		}

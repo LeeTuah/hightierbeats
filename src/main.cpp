@@ -31,14 +31,19 @@ int main () {
 	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+	float font_size = 14.0f;
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.Fonts->AddFontFromFileTTF("assets/VCR_OSD_MONO_1.001.ttf", font_size, nullptr, io.Fonts->GetGlyphRangesDefault());
+	
 	ImGui::StyleColorsDark();
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330 core");
 
 	Game* htb_engine = new Game(SCR_WIDTH, SCR_HEIGHT);
+	htb_engine->mapmaker_font_size = font_size;
 
 	while (not glfwWindowShouldClose(window)) {
 		glfwPollEvents();

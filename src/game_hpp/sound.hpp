@@ -3,14 +3,14 @@
 
 # include "../game.hpp"
 
-inline void Game::play_sound() {
+inline void Game::play_sound(ma_sound *sound) {
 	ma_sound_set_volume(&bgm, sound_volume);
 	ma_sound_start(&bgm);
 
 	is_sound_playing = true;
 }
 
-inline void Game::pause_sound() {
+inline void Game::pause_sound(ma_sound *sound) {
 	ma_sound_stop(&bgm);
 	is_sound_playing = false;
 }

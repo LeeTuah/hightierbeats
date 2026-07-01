@@ -22,6 +22,7 @@ namespace fs = std::filesystem;
 
 # include "includes/miniaudio.h"
 # include "imgui.h"
+# include "imgui_stdlib.h"
 
 # include <algorithm>
 # include <vector>
@@ -267,19 +268,32 @@ public:
 	ma_sound bgm;
 	bool is_sound_playing;
 	float sound_volume, sound_pitch;
-	float audio_time;
+	float audio_time, visual_time;
 
+	float mapmaker_font_size;
 	bool mapmaker_timeline_opened, mapmaker_properties_opened;
 	bool mapmaker_play_music;
+
+	bool is_background_loaded, is_song_loaded;
+	std::string play_button_label;
+	std::string loaded_bg_path, loaded_song_path;
+	float base_velocity, velocity_multiplier;
+	std::string song_name, artist_name, creator_name;
+
+	ShieldAlignment current_alignment_selected;
+	int current_alignment_selected_int;
+
+	Shard current_shard;
 
 	Game(int width, int height);
 	~Game();
 
 	void load_beatmap_from_file();
 	void load_all_beatmaps();
+	Shard generate_shard_data(Shard shard, glm::vec3 core_elevation = glm::vec3(0.0f));
 
-	void play_sound();
-	void pause_sound();
+	void play_sound(ma_sound *sound);
+	void pause_sound(ma_sound *sound);
 	float calc_audio_time();
 	float get_audio_length(ma_sound *sound);
 	void set_audio_time(ma_sound* sound, float timestamp);

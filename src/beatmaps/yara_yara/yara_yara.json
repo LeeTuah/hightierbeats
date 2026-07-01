@@ -1,5 +1,7 @@
 {
     "name": "Yara Yara Ya Phonk (Slowed)",
+    "artist": "MC WM",
+	"creator": "leetuah",
     "audio": "song.mp3",
     "background": "image.jpeg",
     "base_velocity": 10.0,

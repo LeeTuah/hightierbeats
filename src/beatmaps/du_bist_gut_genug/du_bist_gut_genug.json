@@ -1,5 +1,7 @@
 {
 	"name": "Du Bist Gut Genug",
+	"artist": "KitschKrieg",
+	"creator": "leetuah",
 	"audio": "song.mp3",
 	"background": "image.jpg",
 	"base_velocity": 8.0,

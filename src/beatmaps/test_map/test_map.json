@@ -1,5 +1,7 @@
 {
 	"name": "Testing Purposes",
+	"artist": "random yt video",
+	"creator": "leetuah",
 	"audio": "song.mp3",
 	"background": "image.jpg",
 	"base_velocity": 8.0,

@@ -118,62 +118,8 @@ inline void Game::load_beatmap_from_file() {
 		shards.push_back(base_shard);
 	}
 
-	float x_level = 10.0f, y_level = 8.0f, z_level = 14.0f;
-	for (auto &shard : shards) {
-		switch (shard.alignment) {
-			case W:
-				shard.position = glm::vec3(x_level, -y_level, 0.0f);
-				break;
-			
-			case S:
-				shard.position = glm::vec3(x_level, +y_level, 0.0f);
-				break;
-
-			case A:
-				shard.position = glm::vec3(x_level, 0.0f, +z_level);
-				break;
-
-			case D:
-				shard.position = glm::vec3(x_level, 0.0f, -z_level);
-				break;
-
-
-			case WD:
-				shard.position = glm::vec3(x_level, -y_level, -z_level);
-				break;
-
-			case DS:
-				shard.position = glm::vec3(x_level, +y_level, -z_level);
-				break;
-
-			case SA:
-				shard.position = glm::vec3(x_level, +y_level, +z_level);
-				break;
-
-			case WA:
-				shard.position = glm::vec3(x_level, -y_level, +z_level);
-				break;
-		} shard.direction = glm::normalize(core.position - shard.position);
-
-		if (shard.direction.y == 0.0f and shard.direction.z != 0.0f) {
-			shard.rotation_angle = 90.0f;
-			shard.rotation_axis = glm::vec3(1.0f, 0.0f, 0.0f);
-		}
-		else if (shard.direction.y != 0.0f and shard.direction.z == 0.0f) {
-			shard.rotation_angle = 45.0f;
-			shard.rotation_axis = glm::vec3(0.0f, 1.0f, 0.0f);
-		}
-		else if ((shard.direction.y > 0.0f and shard.direction.z < 0.0f) or (shard.direction.y < 0.0f and shard.direction.z > 0.0f)) {
-			shard.rotation_angle = -45.0f;
-			shard.rotation_axis = glm::vec3(1.0f, 0.0f, 0.0f);
-		}
-		else if ((shard.direction.y < 0.0f and shard.direction.z < 0.0f) or (shard.direction.y > 0.0f and shard.direction.z > 0.0f)) {
-			shard.rotation_angle = 45.0f;
-			shard.rotation_axis = glm::vec3(1.0f, 0.0f, 0.0f);
-		}
-
-		shard.spawn_time = shard.impact_time - (glm::distance(core.position, shard.position) / shard.velocity);
-	}
+	for (auto &shard : shards)
+		shard = generate_shard_data(shard);
 
 	health_point = 100;
 	score_point = 0;
@@ -211,6 +157,71 @@ inline void Game::load_beatmap_from_file() {
 		label->rotation_angle = win_label_init_angle;
 		label->animated = false;
 	}
+
+	visual_time = 0.0f;
+}
+
+Shard Game::generate_shard_data(Shard shard, glm::vec3 core_elevation) {
+	Shard new_shard = shard;
+
+	float x_level = 10.0f - core_elevation.x, y_level = 8.0f - core_elevation.y, z_level = 14.0f - core_elevation.z;
+	switch (new_shard.alignment) {
+		case W:
+			new_shard.position = glm::vec3(x_level, -y_level, 0.0f);
+			break;
+		
+		case S:
+			new_shard.position = glm::vec3(x_level, +y_level, 0.0f);
+			break;
+
+		case A:
+			new_shard.position = glm::vec3(x_level, 0.0f, +z_level);
+			break;
+
+		case D:
+			new_shard.position = glm::vec3(x_level, 0.0f, -z_level);
+			break;
+
+
+		case WD:
+			new_shard.position = glm::vec3(x_level, -y_level, -z_level);
+			break;
+
+		case DS:
+			new_shard.position = glm::vec3(x_level, +y_level, -z_level);
+			break;
+
+		case SA:
+			new_shard.position = glm::vec3(x_level, +y_level, +z_level);
+			break;
+
+		case WA:
+			new_shard.position = glm::vec3(x_level, -y_level, +z_level);
+			break;
+	} new_shard.direction = glm::normalize(core.position - new_shard.position);
+
+	if (new_shard.direction.y == 0.0f and new_shard.direction.z != 0.0f) {
+		new_shard.rotation_angle = 90.0f;
+		new_shard.rotation_axis = glm::vec3(1.0f, 0.0f, 0.0f);
+	}
+	else if (new_shard.direction.y != 0.0f and new_shard.direction.z == 0.0f) {
+		new_shard.rotation_angle = 45.0f;
+		new_shard.rotation_axis = glm::vec3(0.0f, 1.0f, 0.0f);
+	}
+	else if ((new_shard.direction.y > 0.0f and new_shard.direction.z < 0.0f) or (new_shard.direction.y < 0.0f and new_shard.direction.z > 0.0f)) {
+		new_shard.rotation_angle = -45.0f;
+		new_shard.rotation_axis = glm::vec3(1.0f, 0.0f, 0.0f);
+	}
+	else if ((new_shard.direction.y < 0.0f and new_shard.direction.z < 0.0f) or (new_shard.direction.y > 0.0f and new_shard.direction.z > 0.0f)) {
+		new_shard.rotation_angle = 45.0f;
+		new_shard.rotation_axis = glm::vec3(1.0f, 0.0f, 0.0f);
+	}
+
+	new_shard.spawn_time = new_shard.impact_time - (glm::distance(core.position, new_shard.position) / new_shard.velocity);
+	new_shard.active = false;
+	new_shard.destroyed = false;
+
+	return new_shard;
 }
 
 # endif

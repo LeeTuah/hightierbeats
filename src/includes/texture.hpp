@@ -24,6 +24,7 @@
 class Texture2D {
 public:
 	unsigned int ID;
+	bool loaded_without_errors;
 
 	Texture2D(std::string texture_path);
 	void bind();
@@ -54,9 +55,13 @@ Texture2D::Texture2D(std::string texture_path) {
 
 		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
-	} else std::cout << "[!] Failed to load texture " << texture_path << std::endl;
+	} else {
+		std::cout << "[!] Failed to load texture " << texture_path << std::endl;
+		loaded_without_errors = false;
+	}
 
 	stbi_image_free(data);
+	loaded_without_errors = true;
 }
 
 void Texture2D::bind() {
@@ -127,7 +132,7 @@ character_class::character_class(
 
 		Character character = {
 			texture, glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-			glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top), face->glyph->advance.x
+			glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top), (unsigned int)face->glyph->advance.x
 		};
 		characters.insert({c, character});
 	}

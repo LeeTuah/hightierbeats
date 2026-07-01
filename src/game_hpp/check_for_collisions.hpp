@@ -9,6 +9,8 @@ inline void Game::check_for_collisions() {
 	float current_time = audio_time;
 	float reaction_time = 0.200f;
 
+	if (game_state == GAME_MAPMAKER) return;
+
 	auto update_health = [&](int sign, Shard &shard, BeatTiming beat_status) {
 		if (sign > 0) {
 			if (beat_status == BEAT_PERFECT) health_point += 10;
@@ -49,21 +51,21 @@ inline void Game::check_for_collisions() {
 			BeatTiming beat_status;
 			if (time_difference <= split_reaction_time / 3.0f) {
 				beat_status = BEAT_PERFECT;
-				sum_of_total_accuracy += ACCURACY_PERFECT;
+				sum_of_total_accuracy += (int)ACCURACY_PERFECT;
 			}
 
 			else if (time_difference <= split_reaction_time / 1.5f) {
 				beat_status = BEAT_GREAT;
-				sum_of_total_accuracy += ACCURACY_GREAT;
+				sum_of_total_accuracy += (int)ACCURACY_GREAT;
 			}
 
 			else {
 				beat_status = BEAT_GOOD;
-				sum_of_total_accuracy += ACCURACY_GOOD;
+				sum_of_total_accuracy += (int)ACCURACY_GOOD;
 			}
 
 			float combo_decay = (combo_point > 1)? 2.0f / (float)combo_point : 1.0f;
-			score_point += beat_status + (int)(beat_status * combo_decay);
+			score_point += beat_status + (int)((int)beat_status * combo_decay);
 			
 			update_health(1, shard, beat_status);
 			continue;

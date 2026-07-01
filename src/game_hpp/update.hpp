@@ -71,17 +71,22 @@ inline void Game::update(float delta_time) {
 	}
 
 	if (game_state == GAME_RUNNING or game_state == GAME_PAUSED) {
+		visual_time += delta_time;
+		if (abs(visual_time - current_time) > 0.025f) visual_time = current_time;
+
 		for (auto &shard : shards) {
 			if (shard.destroyed) continue;
 
 			if (not shard.active and current_time >= shard.spawn_time)
 				shard.active = true;
 
-			if (shard.active and game_state != GAME_PAUSED)
-				shard.position += shard.direction * shard.velocity * delta_time;
+			if (shard.active and game_state != GAME_PAUSED) {
+				float dist_from_core = (shard.impact_time - visual_time) * shard.velocity;
+				shard.position = core.position - (shard.direction * dist_from_core);
+			}
 		}
 
-		total_accuracy = (total_shards_destroyed != 0)? (sum_of_total_accuracy / (total_shards_destroyed * ACCURACY_PERFECT)) * 100.0f : 0.0f;
+		total_accuracy = (total_shards_destroyed != 0)? (sum_of_total_accuracy / (total_shards_destroyed * (int)ACCURACY_PERFECT)) * 100.0f : 0.0f;
 		total_accuracy = std::round(total_accuracy * 10.0f) / 10.0f;
 
 		if (ma_sound_at_end(&bgm) and game_state != GAME_ZERO_HP) {
@@ -147,6 +152,19 @@ inline void Game::update(float delta_time) {
 				(*current_win_label)->rotation_angle -= (win_label_init_angle / win_label_animation_time) * delta_time;
 			}
 		}
+	} else if (game_state == GAME_MAPMAKER) {
+		for (auto &shard : shards) {
+			if (not shard.active and current_time >= shard.spawn_time)
+				shard.active = true;
+
+			if (shard.active and (current_time < shard.spawn_time or current_time > shard.impact_time))
+				shard.active = false;
+
+			if (shard.active and game_state != GAME_PAUSED) {
+				float dist_from_core = (shard.impact_time - current_time) * shard.velocity;
+				shard.position = core.position - (shard.direction * dist_from_core);
+			}
+		}
 	}
 
 	if (game_state == GAME_ZERO_HP)
@@ -160,7 +178,7 @@ inline void Game::update(float delta_time) {
 			load_beatmap_from_file();
 			game_state = GAME_RUNNING;
 
-			play_sound();
+			play_sound(&bgm);
 		}
 		else {
 			game_state = GAME_MAIN_MENU;

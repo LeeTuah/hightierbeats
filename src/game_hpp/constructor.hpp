@@ -243,18 +243,35 @@ inline Game::Game(int width, int height) {
 	background_dim = 0.7f;
 	background_image = nullptr;
 
-	// background_image = new Texture2D("beatmaps/test_map/image.jpg"); // FIXME: temporary
-	// bg_song_path = "beatmaps/du_bist_gut_genug/song.mp3";
-	// if (ma_sound_init_from_file(&audio_engine, bg_song_path.c_str(), 0, NULL, NULL, &bgm) != MA_SUCCESS) {
-	// 	std::cout << "Audio did not load." << std::endl;
-	// } 
-
 	vcr_osd_mono = new character_class("assets/VCR_OSD_MONO_1.001.ttf", text_shader, &font_VAO, &font_VBO, &text_projection);
 	rajdhani_regular = new character_class("assets/Rajdhani-Regular.ttf", text_shader, &font_VAO, &font_VBO, &text_projection);
+
+	mapmaker_font_size = 14.0f;
 
 	mapmaker_timeline_opened = true;
 	mapmaker_properties_opened = true;
 	mapmaker_play_music = false;
+
+	is_background_loaded = false;
+	is_song_loaded = false;
+
+	play_button_label = "►";
+
+	// loaded_bg_path = "beatmaps/yara_yara/image.jpeg";
+	// loaded_song_path = "beatmaps/yara_yara/song.mp3";
+
+	loaded_bg_path = "";
+	loaded_song_path = "";
+
+	base_velocity = 8.0f;
+	velocity_multiplier = 1.0f;
+
+	song_name = "";
+	artist_name = "";
+	creator_name = "";
+
+	current_alignment_selected_int = 0;
+	current_alignment_selected = WA;
 }
 
 inline Game::~Game() {
@@ -266,3 +283,4 @@ inline Game::~Game() {
 }
 
 # endif
+
