@@ -1,0 +1,107 @@
+{
+    "artist": "",
+    "audio": "song.mp3",
+    "background": "image.png",
+    "base_velocity": 8.0,
+    "creator": "",
+    "name": "",
+    "notes": [
+        {
+            "alignment": "WA",
+            "time": 5.150000095367432
+        },
+        {
+            "alignment": "WA",
+            "time": 6.387499809265137
+        },
+        {
+            "alignment": "WA",
+            "time": 7.231249809265137
+        },
+        {
+            "alignment": "WA",
+            "time": 8.431249618530273,
+            "velocity_multiplier": 1.0
+        },
+        {
+            "alignment": "WA",
+            "time": 9.612500190734863,
+            "velocity_multiplier": 1.0
+        },
+        {
+            "alignment": "WA",
+            "time": 11.398502349853516,
+            "velocity_multiplier": 3.4719998836517334
+        },
+        {
+            "alignment": "WA",
+            "time": 12.823502540588379,
+            "velocity_multiplier": 3.4719998836517334
+        },
+        {
+            "alignment": "WA",
+            "time": 13.479752540588379,
+            "velocity_multiplier": 3.4719998836517334
+        },
+        {
+            "alignment": "WA",
+            "time": 13.836002349853516,
+            "velocity_multiplier": 3.4719998836517334
+        },
+        {
+            "alignment": "WA",
+            "time": 14.454751968383789,
+            "velocity_multiplier": 3.4719998836517334
+        },
+        {
+            "alignment": "WA",
+            "time": 15.467251777648926,
+            "velocity_multiplier": 3.4719998836517334
+        },
+        {
+            "alignment": "WA",
+            "time": 15.879752159118652,
+            "velocity_multiplier": 3.4719998836517334
+        },
+        {
+            "alignment": "WA",
+            "time": 17.59894561767578,
+            "velocity_multiplier": 1.4459999799728394
+        },
+        {
+            "alignment": "WA",
+            "time": 19.47394561767578,
+            "velocity_multiplier": 1.4459999799728394
+        },
+        {
+            "alignment": "WA",
+            "time": 20.748945236206055,
+            "velocity_multiplier": 1.4459999799728394
+        },
+        {
+            "alignment": "WA",
+            "time": 21.555194854736328,
+            "velocity_multiplier": 1.4459999799728394
+        },
+        {
+            "alignment": "WA",
+            "time": 22.042694091796875,
+            "velocity_multiplier": 1.4459999799728394
+        },
+        {
+            "alignment": "WA",
+            "time": 22.492694854736328,
+            "velocity_multiplier": 1.4459999799728394
+        },
+        {
+            "alignment": "WA",
+            "time": 23.97394561767578,
+            "velocity_multiplier": 1.4459999799728394
+        },
+        {
+            "alignment": "WA",
+            "time": 25.323944091796875,
+            "velocity_multiplier": 1.4459999799728394
+        }
+    ]
+}

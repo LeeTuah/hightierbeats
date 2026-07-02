@@ -2,6 +2,7 @@
 
 mkdir -p builds
 
+clear
 if [ ! -f "builds/audio.o" ]; then
     echo "Building Miniaudio library..."
     g++ -c src/audio.cpp -o builds/audio.o -Iinclude -Isrc -O2

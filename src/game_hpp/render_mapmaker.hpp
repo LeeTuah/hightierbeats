@@ -129,6 +129,26 @@ inline void Game::render_mapmaker() {
 		if (ImGui::SliderFloat("##audio_timeline", &current_time, 0.0f, bgm_length, " ")) {
 			set_bgm_time();
 		}
+
+		ImVec2 min_pos = ImGui::GetItemRectMin();
+		ImVec2 max_pos = ImGui::GetItemRectMax();
+
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImU32 keyframe_color = IM_COL32(0, 255, 255, 255);
+		float keyframe_thickness = 2.0f;
+
+		ImGuiStyle &style = ImGui::GetStyle();
+		float track_cutoff = style.FramePadding.x + (style.GrabMinSize / 2.0f);
+		float start_pos = min_pos.x + track_cutoff, end_pos = max_pos.x - track_cutoff;
+		
+		for (auto &shard : shards) {
+			float keyframe_x_coord = start_pos + ((shard.impact_time / bgm_length) * (end_pos - start_pos));
+
+			ImVec2 keyframe_start(keyframe_x_coord, min_pos.y);
+			ImVec2 keyframe_end(keyframe_x_coord, max_pos.y);
+
+			draw_list->AddLine(keyframe_start, keyframe_end, keyframe_color, keyframe_thickness);
+		}
 		ImGui::PopStyleVar();
 
 		for (int i = 0; i < 3; i++)
@@ -140,7 +160,6 @@ inline void Game::render_mapmaker() {
 									 ImGui::CalcTextSize(">>>").x + (14 * ImGui::GetStyle().FramePadding.x)
 									 + (6 * ImGui::GetStyle().ItemSpacing.x);
 		float starting_x_pos = (avaliable_content_region - width_of_media_block) / 2.0f;
-		float btn_gap = 20.0f;
 
 		std::string timeline_text = std::to_string(current_time) + " / " + std::to_string(bgm_length);
 		ImGui::Text("%s", timeline_text.c_str());
@@ -181,6 +200,7 @@ inline void Game::render_mapmaker() {
 					play_button_label = "►";
 				}
 			}
+			ma_sound_set_volume(&bgm, sound_volume);
 		}
 
 		ImGui::SameLine();
@@ -200,12 +220,107 @@ inline void Game::render_mapmaker() {
 			current_time += 1.0;
 			set_bgm_time();
 		}
+
+		ImGui::Spacing();
+		ImGui::Spacing();
+
+		avaliable_content_region = ImGui::GetContentRegionAvail().x;
+		width_of_media_block = ImGui::CalcTextSize("< Snap").x + ImGui::CalcTextSize("<-").x + ImGui::CalcTextSize("->").x
+							 + ImGui::CalcTextSize("Snap >").x+ (8 * ImGui::GetStyle().FramePadding.x) 
+							 + (3 * ImGui::GetStyle().ItemSpacing.x);
+		starting_x_pos = (avaliable_content_region - width_of_media_block) / 2.0f;
+
+		ImGui::SetNextItemWidth(ImGui::CalcTextSize("8.888888").x + 4.0f);
+		if (ImGui::InputFloat("##sound_pitch_input", &sound_pitch)) {
+			sound_pitch = std::clamp(sound_pitch, 0.1f, 4.0f);
+		}
+
+		ImGui::SameLine();
+		if (ImGui::Button("▼##sound_pitch_down_btn")) {
+			sound_pitch -= 0.1f;
+			sound_pitch = std::clamp(sound_pitch, 0.1f, 4.0f);
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("▲##sound_pitch_up_btn")) {
+			sound_pitch += 0.1f;
+			sound_pitch = std::clamp(sound_pitch, 0.1f, 4.0f);
+		}
+
+		ImGui::SameLine();
+		ImGui::SetCursorPosX(starting_x_pos);
+		if (ImGui::Button("< Snap")) {
+			float snap_interval = (60.0f / beats_per_minute) * song_divisor;
+			float current_index = (current_time - song_offset) / snap_interval;
+
+			float prev_index = std::ceil(current_index - 0.0005f) - 1;
+			current_time = song_offset + (prev_index * snap_interval);
+			set_bgm_time();
+		}
+
+		ImGui::SameLine();
+		if (ImGui::Button("<-")) {
+			for (auto shard_iter = shards.rbegin(); shard_iter != shards.rend(); shard_iter++) {
+				if (shard_iter->impact_time >= current_time - 0.005f) continue;
+
+				current_time = shard_iter->impact_time;
+				set_bgm_time();
+				break;
+			}
+		}
+
+		ImGui::SameLine();
+		if (ImGui::Button("->")) {
+			for (auto shard_iter = shards.begin(); shard_iter != shards.end(); shard_iter++) {
+				if (shard_iter->impact_time <= current_time + 0.005f) continue;
+
+				current_time = shard_iter->impact_time;
+				set_bgm_time();
+				break;
+			}
+		}
+
+		ImGui::SameLine();
+		if (ImGui::Button("Snap >")) {
+			float snap_interval = (60.0f / beats_per_minute) * song_divisor;
+			float current_index = (current_time - song_offset) / snap_interval;
+
+			float next_index = std::floor(current_index + 0.005f) + 1;
+			current_time = song_offset + (next_index * snap_interval);
+			set_bgm_time();
+		}
 	}
 	ImGui::End();
 
 	ImGui::SetNextWindowPos(viewport->WorkPos);
 	ImGui::SetNextWindowSize(ImVec2(side_panels_width, viewport->WorkSize.y - timeline_height));
-	if (ImGui::Begin("Properties", &mapmaker_properties_opened, flags)){
+	if (ImGui::Begin("Properties", &mapmaker_properties_opened, flags)) {
+		ImGui::Text("Folder Name");
+		if (ImGui::InputText("##folder_name_label", &loaded_folder_name)) {
+
+		}
+		ImGui::SameLine();
+
+		if (ImGui::Button("Load##folder_load_btn")) {
+			fs::path beatmap_path = "beatmaps/";
+			is_folder_loaded = false;
+
+			try {
+				for (auto &beatmap : fs::directory_iterator(beatmap_path)) {
+					if (not fs::is_directory(beatmap)) continue;
+					if (beatmap.path().filename().string() != loaded_folder_name) continue;
+
+					loaded_bg_path = beatmap_path.string() + loaded_folder_name + "/";
+					loaded_song_path = beatmap_path.string() + loaded_folder_name + "/";
+					is_folder_loaded = true;
+					break;
+				}
+			} catch (fs::filesystem_error &e) {
+				std::cout << e.what() << std::endl;
+			}
+		}
+
+		ImGui::Spacing();
+		ImGui::Spacing();
 		ImGui::Text("Background Path");
 		if (ImGui::InputText("##background_label", &loaded_bg_path)) {
 
@@ -277,6 +392,31 @@ inline void Game::render_mapmaker() {
 			}
 		}
 
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Text("Beats Per Minute (BPM)");
+		if (ImGui::InputFloat("##bpm_input", &beats_per_minute)) {
+			beats_per_minute = std::clamp(beats_per_minute, 1.0f, 1000.0f);
+		}
+
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Text("Song Offset");
+		if (ImGui::InputFloat("##song_offset_input", &song_offset)) {
+			song_offset = std::clamp(song_offset, 0.0f, bgm_length);
+		}
+
+		const char *divisors[] = {"1/1", "1/2", "1/4", "1/8"};
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Text("Beat Divisor");
+		if (ImGui::Combo("##beat_divisor_combo", &song_divisor_int, divisors, IM_ARRAYSIZE(divisors))) {
+			if (song_divisor_int == 0) song_divisor = 1.0f;
+			else if (song_divisor_int == 1) song_divisor = 1.0f / 2.0f;
+			else if (song_divisor_int == 2) song_divisor = 1.0f / 4.0f;
+			else if (song_divisor_int == 3) song_divisor = 1.0f / 8.0f;
+		}
+
 		for (int i = 0; i < 3; i++)
 			ImGui::Spacing();
 			
@@ -315,23 +455,75 @@ inline void Game::render_mapmaker() {
 			background_dim = std::clamp(background_dim, 0.0f, 1.0f);
 		}
 
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Text("Volume");
+		if (ImGui::SliderFloat("##volume_slider", &sound_volume, 0.0f, 1.0f)) {
+			ma_sound_set_volume(&bgm, sound_volume);
+		}
+
 		for (int i = 0; i < 20; i++)
 			ImGui::Spacing();
 
 		ImVec2 save_btn_size = ImVec2(
-			ImGui::CalcTextSize("Save to JSON").x * scale_up_factor, 
+			ImGui::GetContentRegionAvail().x, 
 			(mapmaker_font_size + (2 * ImGui::GetStyle().FramePadding.y)) * scale_up_factor
 		);
-		ImGui::SetCursorPosX(ImGui::GetContentRegionAvail().x - save_btn_size.x - (2 * ImGui::GetStyle().FramePadding.x));
 		if (ImGui::Button("Save to JSON##save_json_btn", save_btn_size)) {
-			// TODO: code to save json here
+			json beatmap_data;
+			beatmap_data["name"] = song_name;
+			beatmap_data["artist"] = artist_name;
+			beatmap_data["creator"] = creator_name;
+
+			auto bg_path = fs::path(loaded_bg_path);
+			auto song_path = fs::path(loaded_song_path);
+
+			beatmap_data["audio"] = song_path.filename();
+			beatmap_data["background"] = bg_path.filename();
+
+			beatmap_data["base_velocity"] = base_velocity;
+			beatmap_data["notes"] = json::array();
+
+			for (auto shard : shards) {
+				json current_shard;
+
+				current_shard["time"] = shard.impact_time;
+				if (std::abs(shard.velocity - base_velocity) > 0.01f)
+					current_shard["velocity_multiplier"] = shard.velocity / base_velocity;
+
+				if (shard.alignment == W)
+					current_shard["alignment"] = "W";
+				else if (shard.alignment == A)
+					current_shard["alignment"] = "A";
+				else if (shard.alignment == S)
+					current_shard["alignment"] = "S";
+				else if (shard.alignment == D)
+					current_shard["alignment"] = "D";
+
+				else if (shard.alignment == WA)
+					current_shard["alignment"] = "WA";
+				else if (shard.alignment == SA)
+					current_shard["alignment"] = "SA";
+				else if (shard.alignment == DS)
+					current_shard["alignment"] = "DS";
+				else if (shard.alignment == WD)
+					current_shard["alignment"] = "WD";
+
+				beatmap_data["notes"].push_back(current_shard);
+			}
+
+			std::ofstream file("beatmaps/" + loaded_folder_name + "/" + loaded_folder_name + ".json");
+			file << beatmap_data.dump(4);
+			file.close();
 		}
 	}
 	ImGui::End();
 
-	ImGui::SetNextWindowPos(ImVec2(viewport->WorkSize.x - side_panels_width, viewport->WorkPos.y));
-	ImGui::SetNextWindowSize(ImVec2(side_panels_width, viewport->WorkSize.y - timeline_height));
-	if (ImGui::Begin("Shards", &mapmaker_timeline_opened, flags)) {
+	if (is_song_loaded) {
+		ImGui::SetNextWindowPos(ImVec2(viewport->WorkSize.x - side_panels_width, viewport->WorkPos.y));
+		ImGui::SetNextWindowSize(ImVec2(side_panels_width, viewport->WorkSize.y - timeline_height));
+		ImGui::Begin("Shards", &mapmaker_timeline_opened, flags);
+
 		ImGui::Text("Shard Alignment");
 		ImGui::Spacing();
 
@@ -365,7 +557,7 @@ inline void Game::render_mapmaker() {
 			current_alignment_selected = S;
 		}
 		ImGui::SameLine();
-		if (ImGui::RadioButton("DS", &current_alignment_selected_int, 7)) {
+		if (ImGui::RadioButton("SD", &current_alignment_selected_int, 7)) {
 			current_alignment_selected = DS;
 		}
 
@@ -393,25 +585,40 @@ inline void Game::render_mapmaker() {
 		for (int i = 0; i < 20; i++)
 			ImGui::Spacing();
 		
+		scale_up_factor = 2.4f;
 		ImVec2 shard_btn_size = ImVec2(
-			ImGui::CalcTextSize("Place Shard").x * scale_up_factor, 
+			ImGui::GetContentRegionAvail().x, 
 			(mapmaker_font_size + (2 * ImGui::GetStyle().FramePadding.y)) * scale_up_factor
 		);
-		ImGui::SetCursorPosX(ImGui::GetContentRegionAvail().x - shard_btn_size.x - (2 * ImGui::GetStyle().FramePadding.x));
 		if (ImGui::Button("Place Shard##place_shard_btn", shard_btn_size)) {
-			if (is_song_loaded) {
-				current_shard = generate_shard_data(current_shard);
-				current_shard.active = true;
+			current_shard = generate_shard_data(current_shard);
+			current_shard.active = true;
 
-				shards.push_back(current_shard);
+			shards.push_back(current_shard);
+			std::sort(shards.begin(), shards.end(), [](const Shard &a, const Shard &b) {
+				return a.impact_time < b.impact_time;
+			});
+		}
+
+		if (ImGui::Button("Delete Shard##delete_shard_btn", shard_btn_size)) {
+			if (not shards.empty()) {
+				std::vector<Shard>::iterator shard_to_delete = shards.end();
+				for (auto shard = shards.begin(); shard != shards.end(); shard++) {
+					if (abs(shard->impact_time - current_time) > 0.050f) continue;
+
+					shard_to_delete = shard;
+					break;
+				}
+				if (shard_to_delete != shards.end())
+				shards.erase(shard_to_delete);
 			}
 		}
+		ImGui::End();
 	}
-	ImGui::End();
 
 	current_shard.alignment = current_alignment_selected;
 	current_shard.velocity = base_velocity * velocity_multiplier;
-	current_shard.impact_time = current_time;
+	current_shard.impact_time = current_time + (shard_radius / current_shard.velocity);
 }
 
 # endif

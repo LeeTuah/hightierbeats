@@ -64,6 +64,27 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 				game_state = GAME_MAPMAKER;
 				
 				shards.clear();
+				mapmaker_play_music = false;
+
+				is_folder_loaded = false;
+				is_background_loaded = false;
+				is_song_loaded = false;
+
+				play_button_label = "►";
+
+				loaded_folder_name = "jane_the_long_faces";
+				loaded_bg_path = "";
+				loaded_song_path = "";
+
+				base_velocity = 8.0f;
+				velocity_multiplier = 1.0f;
+
+				song_name = "";
+				artist_name = "";
+				creator_name = "";
+
+				current_alignment_selected_int = 0;
+				current_alignment_selected = WA;
 			}
 			else if (current_menu_label == "Exit") {
 				glfwSetWindowShouldClose(window, true);

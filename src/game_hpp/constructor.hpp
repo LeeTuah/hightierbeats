@@ -252,16 +252,18 @@ inline Game::Game(int width, int height) {
 	mapmaker_properties_opened = true;
 	mapmaker_play_music = false;
 
+	is_folder_loaded = false;
 	is_background_loaded = false;
 	is_song_loaded = false;
 
 	play_button_label = "►";
 
-	// loaded_bg_path = "beatmaps/yara_yara/image.jpeg";
-	// loaded_song_path = "beatmaps/yara_yara/song.mp3";
+	loaded_folder_name = "jane_the_long_faces";
+	loaded_bg_path = "beatmaps/jane_the_long_faces/image.png";
+	loaded_song_path = "beatmaps/jane_the_long_faces/song.mp3";
 
-	loaded_bg_path = "";
-	loaded_song_path = "";
+	// loaded_bg_path = "";
+	// loaded_song_path = "";
 
 	base_velocity = 8.0f;
 	velocity_multiplier = 1.0f;
@@ -270,7 +272,12 @@ inline Game::Game(int width, int height) {
 	artist_name = "";
 	creator_name = "";
 
+	beats_per_minute = 120.0f;
+	song_offset = 0.0f;
+	song_divisor = 1.0f;
+
 	current_alignment_selected_int = 0;
+	song_divisor_int = 0;
 	current_alignment_selected = WA;
 }
 

@@ -274,14 +274,15 @@ public:
 	bool mapmaker_timeline_opened, mapmaker_properties_opened;
 	bool mapmaker_play_music;
 
-	bool is_background_loaded, is_song_loaded;
+	bool is_background_loaded, is_song_loaded, is_folder_loaded;
 	std::string play_button_label;
-	std::string loaded_bg_path, loaded_song_path;
+	std::string loaded_bg_path, loaded_song_path, loaded_folder_name;
 	float base_velocity, velocity_multiplier;
 	std::string song_name, artist_name, creator_name;
+	float beats_per_minute, song_offset, song_divisor;
 
 	ShieldAlignment current_alignment_selected;
-	int current_alignment_selected_int;
+	int current_alignment_selected_int, song_divisor_int;
 
 	Shard current_shard;
 
