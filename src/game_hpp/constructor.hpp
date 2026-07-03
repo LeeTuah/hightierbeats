@@ -16,7 +16,7 @@ inline Game::Game(int width, int height) {
 	max_combo_reached = 0;
 
 	enable_auto_restart_on_loss = true;
-	win_animation_style = SCORES_PUNCHED_IN;
+	win_animation_style = SCORES_PUNCHED_IN; // TODO: SCORES_PUNCHED_IN sound effect
 
 	total_accuracy = 0.0f;
 	sum_of_total_accuracy = 0.0f;
@@ -232,12 +232,43 @@ inline Game::Game(int width, int height) {
 	sun_directions.push_back(glm::vec3(+1.0f, -1.0f, +0.0f));
 	sun_directions.push_back(glm::vec3(+1.0f, +1.0f, +0.0f));
 
+	is_sound_playing = false;
+	sound_volume = 0.1f;
+	sfx_volume = 1.0f;
+	sound_pitch = 1.0f;
+
 	if (ma_engine_init(NULL, &audio_engine) != MA_SUCCESS) 
 		std::cout << "[!] Audio engine failed to initialize!" << std::endl;
 
-	is_sound_playing = false;
-	sound_volume = 0.1f;
-	sound_pitch = 1.0f;
+	if (ma_sound_init_from_file(&audio_engine, "assets/move_cursor.mp3", 0, 0, NULL, &move_cursor_sound) != MA_SUCCESS) {
+		std::cout << "[!] Move cursor sound failed to load!" << std::endl;
+	}
+
+	if (ma_sound_init_from_file(&audio_engine, "assets/click_cursor.mp3", 0, 0, NULL, &click_cursor_sound) != MA_SUCCESS) {
+		std::cout << "[!] Click cursor sound failed to load!" << std::endl;
+	}
+
+	if (ma_sound_init_from_file(&audio_engine, "assets/close_down.mp3", 0, 0, NULL, &close_cursor_sound) != MA_SUCCESS) {
+		std::cout << "[!] Close cursor sound failed to load!" << std::endl;
+	}
+
+	if (ma_sound_init_from_file(&audio_engine, "assets/scoreboard_going_up.mp3", 0, 0, NULL, &win_sound_scores_build_up) != MA_SUCCESS) {
+		std::cout << "[!] Scoreboard going up sound failed to load!" << std::endl;
+	}
+
+	if (ma_sound_init_from_file(&audio_engine, "assets/punch_in_sound.mp3", 0, 0, NULL, &win_sound_punched_in) != MA_SUCCESS) {
+		std::cout << "[!] Scoreboard punch in sound failed to load!" << std::endl;
+	}
+
+	for (int i = 0; i < TOTAL_HIT_SOUNDS; i++) {
+		if (ma_sound_init_from_file(&audio_engine, "assets/glass_hitting_metal.wav", 0, 0, NULL, &hit_sounds[i]) != MA_SUCCESS)
+			std::cout << "[!] Hit sound " << i + 1 <<" failed to load!" << std::endl;
+	}
+
+	for (int i = 0; i < TOTAL_HIT_SOUNDS; i++) {
+		if (ma_sound_init_from_file(&audio_engine, "assets/core_taking_damage.wav", 0, 0, NULL, &dmg_sounds[i]) != MA_SUCCESS)
+			std::cout << "[!] Damage sound " << i + 1 <<" failed to load!" << std::endl;
+	}
 
 	black_img = new Texture2D("assets/black.png");
 	background_dim = 0.7f;
@@ -258,12 +289,10 @@ inline Game::Game(int width, int height) {
 
 	play_button_label = "►";
 
-	loaded_folder_name = "jane_the_long_faces";
-	loaded_bg_path = "beatmaps/jane_the_long_faces/image.png";
-	loaded_song_path = "beatmaps/jane_the_long_faces/song.mp3";
+	loaded_folder_name = "";
 
-	// loaded_bg_path = "";
-	// loaded_song_path = "";
+	loaded_bg_path = "";
+	loaded_song_path = "";
 
 	base_velocity = 8.0f;
 	velocity_multiplier = 1.0f;
@@ -279,6 +308,14 @@ inline Game::Game(int width, int height) {
 	current_alignment_selected_int = 0;
 	song_divisor_int = 0;
 	current_alignment_selected = WA;
+
+	play_pause_pressed = false;
+	snap_fwd_pressed = false;
+	snap_bwd_pressed = false;
+	next_shard_pressed = false;
+	prev_shard_pressed = false;
+	place_shard_pressed = false;
+	delete_shard_pressed = false;
 }
 
 inline Game::~Game() {

@@ -94,6 +94,12 @@ inline void Game::update(float delta_time) {
 			if (combo_point > max_combo_reached) max_combo_reached = combo_point;
 
 			game_state = GAME_WIN;
+
+			if (win_animation_style == SCORES_BUILD_UP)
+				play_sfx(&win_sound_scores_build_up);
+
+			else if (win_animation_style == SCORES_PUNCHED_IN)
+				play_sfx(&win_sound_punched_in);
 		}
 	} else if (game_state == GAME_ZERO_HP) {
 		int index = 0;
@@ -114,6 +120,8 @@ inline void Game::update(float delta_time) {
 
 			if (del_score == score_point and del_accuracy == total_accuracy and del_combo == max_combo_reached)
 				win_screen_animation_completed = true;
+		} else if (win_animation_style == SCORES_BUILD_UP and win_screen_animation_completed) {
+			ma_sound_stop(&win_sound_scores_build_up);
 		}
 		else if (win_animation_style == SCORES_PUNCHED_IN and current_win_label != win_label_animation_order.end()) {
 			if ((*current_win_label)->scale <= 0.6f and (not (*current_win_label)->big_label))
@@ -132,6 +140,8 @@ inline void Game::update(float delta_time) {
 			) {
 				(*current_win_label)->animated = true;
 				current_win_label++;
+				if (current_win_label != win_label_animation_order.end())
+					play_sfx(&win_sound_punched_in);
 			}
 			else if (
 				(*current_win_label)->scale == 5.0f and 
@@ -140,6 +150,8 @@ inline void Game::update(float delta_time) {
 			) {
 				(*current_win_label)->animated = true;
 				current_win_label++;
+				if (current_win_label != win_label_animation_order.end())
+					play_sfx(&win_sound_punched_in);
 			}
 
 			if (current_win_label != win_label_animation_order.end()) {

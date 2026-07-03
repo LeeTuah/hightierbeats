@@ -32,6 +32,8 @@ namespace fs = std::filesystem;
 # include <functional>
 # include <format>
 
+# define TOTAL_HIT_SOUNDS 22
+
 enum GameState {
 	GAME_MAIN_MENU,
 	GAME_SELECTING_BEATMAP,
@@ -163,7 +165,6 @@ public:
 	float sum_of_total_accuracy, total_shards_destroyed;
 	float total_accuracy;
 	
-	// FIXME: fps does not register after restarting another level
 	bool fps_counter;
 	float fps;
 	float FPS_COUNTING_DELAY;
@@ -265,9 +266,15 @@ public:
 	character_class *rajdhani_regular;
 
 	ma_engine audio_engine;
-	ma_sound bgm;
+	ma_sound bgm, move_cursor_sound, click_cursor_sound, close_cursor_sound;
+	ma_sound win_sound_scores_build_up, win_sound_punched_in;
+
+	ma_sound hit_sounds[TOTAL_HIT_SOUNDS];
+	ma_sound dmg_sounds[TOTAL_HIT_SOUNDS];
+	int current_hit_sound_index, current_dmg_sound_index;
+
 	bool is_sound_playing;
-	float sound_volume, sound_pitch;
+	float sound_volume, sound_pitch, sfx_volume;
 	float audio_time, visual_time;
 
 	float mapmaker_font_size;
@@ -280,6 +287,11 @@ public:
 	float base_velocity, velocity_multiplier;
 	std::string song_name, artist_name, creator_name;
 	float beats_per_minute, song_offset, song_divisor;
+
+	bool play_pause_pressed;
+	bool snap_fwd_pressed, snap_bwd_pressed;
+	bool next_shard_pressed, prev_shard_pressed;
+	bool place_shard_pressed, delete_shard_pressed;
 
 	ShieldAlignment current_alignment_selected;
 	int current_alignment_selected_int, song_divisor_int;
@@ -294,6 +306,7 @@ public:
 	Shard generate_shard_data(Shard shard, glm::vec3 core_elevation = glm::vec3(0.0f));
 
 	void play_sound(ma_sound *sound);
+	void play_sfx(ma_sound *sfx);
 	void pause_sound(ma_sound *sound);
 	float calc_audio_time();
 	float get_audio_length(ma_sound *sound);

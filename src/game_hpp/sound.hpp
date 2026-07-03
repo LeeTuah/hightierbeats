@@ -10,6 +10,12 @@ inline void Game::play_sound(ma_sound *sound) {
 	is_sound_playing = true;
 }
 
+inline void Game::play_sfx(ma_sound *sfx) {
+	ma_sound_stop(sfx);
+	ma_sound_seek_to_pcm_frame(sfx, 0);
+	ma_sound_start(sfx);
+}
+
 inline void Game::pause_sound(ma_sound *sound) {
 	ma_sound_stop(&bgm);
 	is_sound_playing = false;

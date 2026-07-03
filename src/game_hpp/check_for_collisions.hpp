@@ -48,6 +48,7 @@ inline void Game::check_for_collisions() {
 			and shield.alignment == shard.alignment
 			and game_state == GAME_RUNNING
 		) {
+			play_sfx(&hit_sounds[current_hit_sound_index++]);
 			BeatTiming beat_status;
 			if (time_difference <= split_reaction_time / 3.0f) {
 				beat_status = BEAT_PERFECT;
@@ -68,12 +69,15 @@ inline void Game::check_for_collisions() {
 			score_point += beat_status + (int)((int)beat_status * combo_decay);
 			
 			update_health(1, shard, beat_status);
+			if (current_hit_sound_index >= TOTAL_HIT_SOUNDS) current_hit_sound_index = 0;
 			continue;
 		}
 		else if (shard.impact_time < current_time and time_difference > split_reaction_time) {
+			play_sfx(&dmg_sounds[current_dmg_sound_index++]);
 			core_shake_intensity = CORE_SHAKE_INTENSITY;
 			
 			update_health(-1, shard, BEAT_NULL);
+			if (current_dmg_sound_index >= TOTAL_HIT_SOUNDS) current_dmg_sound_index = 0;
 			continue;
 		}
 	}
