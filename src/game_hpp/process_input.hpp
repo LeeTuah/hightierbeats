@@ -71,6 +71,10 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 			play_sfx(&click_cursor_sound);
 			if (current_menu_label == "Play") {
 				game_state = GAME_SELECTING_BEATMAP;
+				for (auto background : all_beatmaps_backgrounds)
+					delete background;
+				all_beatmaps_backgrounds.clear();
+
 				load_all_beatmaps();
 				last_menu_input_time = current_time;
 			}
@@ -111,6 +115,8 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 				prev_shard_pressed = false;
 				place_shard_pressed = false;
 				delete_shard_pressed = false;
+				esc_mapmaker_key_pressed = false;
+				esc_mapmaker_key_confirmed = false;
 			}
 			else if (current_menu_label == "Exit") {
 				glfwSetWindowShouldClose(window, true);
@@ -218,9 +224,15 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 	else if (game_state == GAME_MAPMAKER) {
 		if (current_time - last_menu_input_time <= menu_input_process_delay) return;
 
-		if (esc_key_pressed) {
+		if (esc_mapmaker_key_confirmed) {
+			ma_sound_stop(&bgm);
+			ma_sound_seek_to_pcm_frame(&bgm, 0);
+
 			play_sfx(&close_cursor_sound);
 			go_back_to_main_menu();
+		}
+		if (esc_key_pressed) {
+			esc_mapmaker_key_pressed = true;
 		}
 		else if (pause_key_pressed) {
 			play_pause_pressed = true;

@@ -26,11 +26,7 @@ inline void Game::render_menu() {
 
 	flat_shader->set_mat4("projection", glm::mat4(1.0f));
 	flat_shader->set_mat4("view", glm::mat4(1.0f));
-
-	int current_backgroud_frame = (int)(glfwGetTime() * menu_video_fps) % total_menu_video_frames;
-	
 	glActiveTexture(GL_TEXTURE0);
-	menu_video_frames[current_backgroud_frame]->bind();
 
 	flat_shader->set_bool("use_texture", true);
 	flat_shader->set_int("tex", 0);
@@ -38,8 +34,23 @@ inline void Game::render_menu() {
 
 	model = glm::mat4(1.0f);
 	model = glm::scale(model, glm::vec3(2.0f, 2.0f, 1.0f));
-
 	flat_shader->set_mat4("model", model);
+
+	if (game_state == GAME_MAIN_MENU) {
+		int current_backgroud_frame = (int)(glfwGetTime() * menu_video_fps) % total_menu_video_frames;
+		menu_video_frames[current_backgroud_frame]->bind();
+	}
+	else if (game_state == GAME_SELECTING_BEATMAP) {
+		if (
+			not all_beatmaps_backgrounds.empty() and
+			current_user_beatmap_index < all_beatmaps_backgrounds.size() and
+			all_beatmaps_backgrounds[current_user_beatmap_index] != nullptr
+		)
+			all_beatmaps_backgrounds[current_user_beatmap_index]->bind();
+		else
+			black_img->bind();
+	}
+
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	glBindVertexArray(menu_tile_VAO);

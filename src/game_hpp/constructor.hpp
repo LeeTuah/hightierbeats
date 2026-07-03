@@ -16,7 +16,7 @@ inline Game::Game(int width, int height) {
 	max_combo_reached = 0;
 
 	enable_auto_restart_on_loss = true;
-	win_animation_style = SCORES_PUNCHED_IN; // TODO: SCORES_PUNCHED_IN sound effect
+	win_animation_style = SCORES_PUNCHED_IN;
 
 	total_accuracy = 0.0f;
 	sum_of_total_accuracy = 0.0f;
@@ -316,6 +316,8 @@ inline Game::Game(int width, int height) {
 	prev_shard_pressed = false;
 	place_shard_pressed = false;
 	delete_shard_pressed = false;
+	esc_mapmaker_key_pressed = false;
+	esc_mapmaker_key_confirmed = false;
 }
 
 inline Game::~Game() {
@@ -324,6 +326,11 @@ inline Game::~Game() {
 
 	for (auto label : win_label_animation_order)
 		delete label;
+	win_label_animation_order.clear();
+
+	for (auto background : all_beatmaps_backgrounds)
+		delete background;
+	all_beatmaps_backgrounds.clear();
 }
 
 # endif

@@ -13,12 +13,45 @@ inline void Game::load_all_beatmaps() {
 		for (auto &beatmap : fs::directory_iterator(beatmap_path)) {
 			if (not fs::is_directory(beatmap)) continue;
 
+			std::ifstream beatmap_stream;
+			std::stringstream beatmap_stringstream;
+			std::string beatmap_json_data = "", beatmap_name = "", beatmap_folder_name = "";
+
+			json beatmap_data;
+			Texture2D* img_background = nullptr;
+
+			beatmap_name = beatmap.path().filename().string();
+			beatmap_folder_name = beatmap_name;
+			beatmap_stream.open(("beatmaps/" + beatmap_name + "/" + beatmap_name + ".json").c_str());
+
+			if (beatmap_stream.is_open()) {
+				beatmap_stringstream << beatmap_stream.rdbuf();
+				beatmap_stream.close();
+
+				beatmap_json_data = beatmap_stringstream.str();
+				beatmap_data = json::parse(beatmap_json_data);
+
+				if (beatmap_data.contains("name") and beatmap_data.contains("artist")) {
+					if (not beatmap_data["name"].get<std::string>().empty())
+						beatmap_name = beatmap_data["name"].get<std::string>();
+
+					if (not beatmap_data["artist"].get<std::string>().empty())
+						beatmap_name += " - " + beatmap_data["artist"].get<std::string>();
+				}
+
+				if (beatmap_data.contains("background") and (not beatmap_data["background"].get<std::string>().empty()))
+					if (fs::exists("beatmaps/" + beatmap_folder_name + "/" + beatmap_data["background"].get<std::string>()))
+					img_background = new Texture2D("beatmaps/" + beatmap_folder_name + "/" + beatmap_data["background"].get<std::string>());
+			}
+
+			all_beatmaps_backgrounds.push_back(img_background);
+
 			BeatmapTile *bmt = new BeatmapTile();
 			bmt->position = glm::vec3(SCR_WIDTH - 250, 0.0f, 0.0f);
 			bmt->scale = glm::vec3(1.0f);
 			bmt->color = glm::vec3(1.0f);
 
-			bmt->label = beatmap.path().filename().string();
+			bmt->label = beatmap_name;
 			bmt->label_x_offset = -50.0f;
 
 			bmt->function_ptr = nullptr;
@@ -28,7 +61,7 @@ inline void Game::load_all_beatmaps() {
 
 			beatmap_tiles.push_back(bmt);
 		}
-	} catch (fs::filesystem_error &e) {
+	} catch (std::exception &e) {
 		std::cout << e.what() << std::endl;
 	}
 

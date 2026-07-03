@@ -227,6 +227,8 @@ public:
 	int total_menu_video_frames;
 	float menu_video_fps;
 
+	std::vector<Texture2D*> all_beatmaps_backgrounds;
+
 	Shard core;
 	float shield_radius;
 	float core_radius;
@@ -292,6 +294,7 @@ public:
 	bool snap_fwd_pressed, snap_bwd_pressed;
 	bool next_shard_pressed, prev_shard_pressed;
 	bool place_shard_pressed, delete_shard_pressed;
+	bool esc_mapmaker_key_confirmed, esc_mapmaker_key_pressed;
 
 	ShieldAlignment current_alignment_selected;
 	int current_alignment_selected_int, song_divisor_int;

@@ -118,8 +118,6 @@ inline void Game::render_mapmaker() {
 		set_audio_time(&bgm, current_time);
 	};
 
-	// TODO: add an error popup later
-
 	ImGui::SetNextWindowPos(ImVec2(viewport->WorkPos.x, viewport->WorkSize.y - timeline_height));
 	ImGui::SetNextWindowSize(ImVec2(viewport->WorkSize.x, timeline_height));
 	if (ImGui::Begin("Timeline", &mapmaker_timeline_opened, flags)) {
@@ -434,142 +432,190 @@ inline void Game::render_mapmaker() {
 			(mapmaker_font_size + (2 * ImGui::GetStyle().FramePadding.y)) * scale_up_factor
 		);
 		if (ImGui::Button("Save to JSON##save_json_btn", save_btn_size)) {
-			json beatmap_data;
-			beatmap_data["name"] = song_name;
-			beatmap_data["artist"] = artist_name;
-			beatmap_data["creator"] = creator_name;
+			ImGui::OpenPopup("Are you sure?##save_popup");
+		}
 
-			auto bg_path = fs::path(loaded_bg_path);
-			auto song_path = fs::path(loaded_song_path);
+		ImGui::SetNextWindowPos(
+			ImVec2(viewport->WorkPos.x + (0.5 * viewport->WorkSize.x), viewport->WorkPos.y + (0.5 * viewport->WorkSize.y)),
+			ImGuiCond_Appearing, ImVec2(0.5f, 0.5f)
+		);
+		if (ImGui::BeginPopupModal("Are you sure?##save_popup")) {
+			ImGui::Text("Saving will overwrite previous beatmap data.");
 
-			beatmap_data["audio"] = song_path.filename();
-			beatmap_data["background"] = bg_path.filename();
+			for (int i = 0; i < 5; i++)
+				ImGui::Spacing();
 
-			beatmap_data["base_velocity"] = base_velocity;
-			beatmap_data["notes"] = json::array();
+			if (ImGui::Button("Ok")) {
+				json beatmap_data;
+				beatmap_data["name"] = song_name;
+				beatmap_data["artist"] = artist_name;
+				beatmap_data["creator"] = creator_name;
 
-			for (auto shard : shards) {
-				json current_shard;
+				auto bg_path = fs::path(loaded_bg_path);
+				auto song_path = fs::path(loaded_song_path);
 
-				current_shard["time"] = shard.impact_time;
-				if (std::abs(shard.velocity - base_velocity) > 0.01f)
-					current_shard["velocity_multiplier"] = shard.velocity / base_velocity;
+				beatmap_data["audio"] = song_path.filename();
+				beatmap_data["background"] = bg_path.filename();
 
-				if (shard.alignment == W)
-					current_shard["alignment"] = "W";
-				else if (shard.alignment == A)
-					current_shard["alignment"] = "A";
-				else if (shard.alignment == S)
-					current_shard["alignment"] = "S";
-				else if (shard.alignment == D)
-					current_shard["alignment"] = "D";
+				beatmap_data["base_velocity"] = base_velocity;
+				beatmap_data["notes"] = json::array();
 
-				else if (shard.alignment == WA)
-					current_shard["alignment"] = "WA";
-				else if (shard.alignment == SA)
-					current_shard["alignment"] = "SA";
-				else if (shard.alignment == DS)
-					current_shard["alignment"] = "DS";
-				else if (shard.alignment == WD)
-					current_shard["alignment"] = "WD";
+				for (auto shard : shards) {
+					json current_shard;
 
-				beatmap_data["notes"].push_back(current_shard);
+					current_shard["time"] = shard.impact_time;
+					if (std::abs(shard.velocity - base_velocity) > 0.01f)
+						current_shard["velocity_multiplier"] = shard.velocity / base_velocity;
+
+					if (shard.alignment == W)
+						current_shard["alignment"] = "W";
+					else if (shard.alignment == A)
+						current_shard["alignment"] = "A";
+					else if (shard.alignment == S)
+						current_shard["alignment"] = "S";
+					else if (shard.alignment == D)
+						current_shard["alignment"] = "D";
+
+					else if (shard.alignment == WA)
+						current_shard["alignment"] = "WA";
+					else if (shard.alignment == SA)
+						current_shard["alignment"] = "SA";
+					else if (shard.alignment == DS)
+						current_shard["alignment"] = "DS";
+					else if (shard.alignment == WD)
+						current_shard["alignment"] = "WD";
+
+					beatmap_data["notes"].push_back(current_shard);
+				}
+
+				std::ofstream file("beatmaps/" + loaded_folder_name + "/" + loaded_folder_name + ".json");
+				file << beatmap_data.dump(4);
+				file.close();
+
+				ImGui::CloseCurrentPopup();
 			}
 
-			std::ofstream file("beatmaps/" + loaded_folder_name + "/" + loaded_folder_name + ".json");
-			file << beatmap_data.dump(4);
-			file.close();
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel")) {
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
 		}
 
 		if (ImGui::Button("Load from JSON##load_from_json_btn", save_btn_size)) {
-			fs::path beatmap_path = "beatmaps/";
-			std::string json_data = "";
+			ImGui::OpenPopup("Are you sure?##load_popup");
+		}
 
-			try {
-				for (auto &beatmap : fs::directory_iterator(beatmap_path)) {
-					if (not fs::is_directory(beatmap)) continue;
-					if (loaded_folder_name != beatmap.path().filename().string()) continue;
+		ImGui::SetNextWindowPos(
+			ImVec2(viewport->WorkPos.x + (0.5 * viewport->WorkSize.x), viewport->WorkPos.y + (0.5 * viewport->WorkSize.y)),
+			ImGuiCond_Appearing, ImVec2(0.5f, 0.5f)
+		);
+		if (ImGui::BeginPopupModal("Are you sure?##load_popup")) {
+			ImGui::Text("Loading will overwrite unsaved progress.");
 
-					std::ifstream json_file_stream;
-					std::stringstream json_file_stringstream;
+			for (int i = 0; i < 5; i++)
+				ImGui::Spacing();
+			
+			if (ImGui::Button("Ok")) {
+				fs::path beatmap_path = "beatmaps/";
+				std::string json_data = "";
 
-					json_file_stream.open(("beatmaps/" + loaded_folder_name + "/" + loaded_folder_name + ".json").c_str());
-					if (not json_file_stream.is_open()) {
-						std::cout << "[!] Failed to open the file!" << std::endl;
+				try {
+					for (auto &beatmap : fs::directory_iterator(beatmap_path)) {
+						if (not fs::is_directory(beatmap)) continue;
+						if (loaded_folder_name != beatmap.path().filename().string()) continue;
+
+						std::ifstream json_file_stream;
+						std::stringstream json_file_stringstream;
+
+						json_file_stream.open(("beatmaps/" + loaded_folder_name + "/" + loaded_folder_name + ".json").c_str());
+						if (not json_file_stream.is_open()) {
+							std::cout << "[!] Failed to open the file!" << std::endl;
+							break;
+						}
+
+						json_file_stringstream << json_file_stream.rdbuf();
+						json_file_stream.close();
+						json_data = json_file_stringstream.str();
 						break;
 					}
-
-					json_file_stringstream << json_file_stream.rdbuf();
-					json_file_stream.close();
-					json_data = json_file_stringstream.str();
-					break;
+				} catch (fs::filesystem_error &e) {
+					std::cout << e.what() << std::endl;
 				}
-			} catch (fs::filesystem_error &e) {
-				std::cout << e.what() << std::endl;
-			}
-			if (json_data != "") {
-				json file_json = json::parse(json_data);
+				if (json_data != "") {
+					json file_json = json::parse(json_data);
 
-				artist_name = file_json["artist"];
-				creator_name = file_json["creator"];
-				song_name = file_json["name"];
-				base_velocity = file_json["base_velocity"];
+					artist_name = file_json["artist"];
+					creator_name = file_json["creator"];
+					song_name = file_json["name"];
+					base_velocity = file_json["base_velocity"];
 
-				loaded_song_path = "beatmaps/" + loaded_folder_name + "/" + file_json["audio"].get<std::string>();
-				loaded_bg_path = "beatmaps/" + loaded_folder_name + "/" + file_json["background"].get<std::string>();
+					loaded_song_path = "beatmaps/" + loaded_folder_name + "/" + file_json["audio"].get<std::string>();
+					loaded_bg_path = "beatmaps/" + loaded_folder_name + "/" + file_json["background"].get<std::string>();
 
-				Shard base_shard;
-				base_shard.active = false;
-				base_shard.destroyed = false;
-				base_shard.velocity = base_velocity;
-				float base_velocity = base_shard.velocity;
-
-				for (auto shard_data : file_json["notes"]) {
+					Shard base_shard;
+					base_shard.active = false;
+					base_shard.destroyed = false;
 					base_shard.velocity = base_velocity;
+					float base_velocity = base_shard.velocity;
 
-					base_shard.impact_time = shard_data["time"];
-					std::string alignment = shard_data["alignment"].get<std::string>();
+					for (auto shard_data : file_json["notes"]) {
+						base_shard.velocity = base_velocity;
 
-					if (alignment == "W") base_shard.alignment = W;
-					else if (alignment == "S") base_shard.alignment = S;
-					else if (alignment == "A") base_shard.alignment = A;
-					else if (alignment == "D") base_shard.alignment = D;
+						base_shard.impact_time = shard_data["time"];
+						std::string alignment = shard_data["alignment"].get<std::string>();
 
-					else if (alignment == "WD") base_shard.alignment = WD;
-					else if (alignment == "DS") base_shard.alignment = DS;
-					else if (alignment == "SA") base_shard.alignment = SA;
-					else if (alignment == "WA") base_shard.alignment = WA;
+						if (alignment == "W") base_shard.alignment = W;
+						else if (alignment == "S") base_shard.alignment = S;
+						else if (alignment == "A") base_shard.alignment = A;
+						else if (alignment == "D") base_shard.alignment = D;
 
-					if (shard_data.contains("velocity_multiplier"))
-						base_shard.velocity = base_shard.velocity * shard_data["velocity_multiplier"].get<float>();
-					
-					shards.push_back(base_shard);
+						else if (alignment == "WD") base_shard.alignment = WD;
+						else if (alignment == "DS") base_shard.alignment = DS;
+						else if (alignment == "SA") base_shard.alignment = SA;
+						else if (alignment == "WA") base_shard.alignment = WA;
+
+						if (shard_data.contains("velocity_multiplier"))
+							base_shard.velocity = base_shard.velocity * shard_data["velocity_multiplier"].get<float>();
+						
+						shards.push_back(base_shard);
+					}
+
+					for (auto &shard : shards)
+						shard = generate_shard_data(shard);
+
+					if (background_image != nullptr) delete background_image;
+					background_image = new Texture2D(loaded_bg_path);
+
+					if (background_image->loaded_without_errors) {
+						bg_image_path = loaded_bg_path;
+						is_background_loaded = true;
+					} else {
+						bg_image_path = "";
+						is_background_loaded = false;
+					}
+
+					if (not bg_song_path.empty()) ma_sound_uninit(&bgm);
+					if (ma_sound_init_from_file(&audio_engine, loaded_song_path.c_str(), 0, 0, NULL, &bgm) != MA_SUCCESS) {
+						std::cout << "[!] Failed to load the audio!" << std::endl;
+						bg_song_path = "";
+						is_song_loaded = false;
+					} else {
+						bg_song_path = loaded_song_path;
+						is_song_loaded = true;
+					}
 				}
 
-				for (auto &shard : shards)
-					shard = generate_shard_data(shard);
-
-				if (background_image != nullptr) delete background_image;
-				background_image = new Texture2D(loaded_bg_path);
-
-				if (background_image->loaded_without_errors) {
-					bg_image_path = loaded_bg_path;
-					is_background_loaded = true;
-				} else {
-					bg_image_path = "";
-					is_background_loaded = false;
-				}
-
-				if (not bg_song_path.empty()) ma_sound_uninit(&bgm);
-				if (ma_sound_init_from_file(&audio_engine, loaded_song_path.c_str(), 0, 0, NULL, &bgm) != MA_SUCCESS) {
-					std::cout << "[!] Failed to load the audio!" << std::endl;
-					bg_song_path = "";
-					is_song_loaded = false;
-				} else {
-					bg_song_path = loaded_song_path;
-					is_song_loaded = true;
-				}
+				ImGui::CloseCurrentPopup();
 			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel")) {
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
 		}
 	}
 	ImGui::End();
@@ -739,6 +785,35 @@ inline void Game::render_mapmaker() {
 			}
 			if (shard_to_delete != shards.end())
 			shards.erase(shard_to_delete);
+		}
+	}
+	if (esc_mapmaker_key_pressed) {
+		ImGui::OpenPopup("Are you sure?##exit_popup");
+
+		ImGui::SetNextWindowPos(
+			ImVec2(viewport->WorkPos.x + (0.5 * viewport->WorkSize.x), viewport->WorkPos.y + (0.5 * viewport->WorkSize.y)),
+			ImGuiCond_Appearing, ImVec2(0.5f, 0.5f)
+		);
+		if (ImGui::BeginPopupModal("Are you sure?##exit_popup")) {
+			ImGui::Text("Exiting now will wipe any unsaved progress.");
+
+			for (int i = 0; i < 5; i++)
+				ImGui::Spacing();
+
+			if (ImGui::Button("Ok")) {
+				esc_mapmaker_key_confirmed = true;
+				esc_mapmaker_key_pressed = false;
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel")) {
+				esc_mapmaker_key_confirmed = false;
+				esc_mapmaker_key_pressed = false;
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
 		}
 	}
 }
