@@ -2,8 +2,1006 @@
     "artist": "The Long Faces",
     "audio": "song.mp3",
     "background": "image.png",
-    "base_velocity": 8.0,
+    "base_velocity": 12.0,
     "creator": "leetuah",
     "name": "Jane!",
-    "notes": []
+    "notes": [
+        {
+            "alignment": "WA",
+            "time": 1.5074583292007446
+        },
+        {
+            "alignment": "DS",
+            "time": 1.9574583768844604
+        },
+        {
+            "alignment": "SA",
+            "time": 2.613708257675171
+        },
+        {
+            "alignment": "WD",
+            "time": 2.9743332862854004
+        },
+        {
+            "alignment": "A",
+            "time": 4.212499618530273,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "D",
+            "time": 4.689874649047852,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "W",
+            "time": 6.01230525970459,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "S",
+            "time": 6.424805164337158,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "WA",
+            "time": 6.855347156524658,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "DS",
+            "time": 7.233097076416016,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "W",
+            "time": 8.185416221618652,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "WD",
+            "time": 8.569499969482422,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "D",
+            "time": 8.869500160217285,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "A",
+            "time": 9.057000160217285,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "SA",
+            "time": 9.450750350952148,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "S",
+            "time": 9.493389129638672,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "DS",
+            "time": 10.766249656677246,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "WA",
+            "time": 11.416166305541992,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "W",
+            "time": 12.620770454406738,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "D",
+            "time": 12.792166709899902,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "A",
+            "time": 12.997645378112793,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "S",
+            "time": 13.203125,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "W",
+            "time": 14.424888610839844,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "WD",
+            "time": 14.527617454528809,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "SA",
+            "time": 14.63036823272705,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "S",
+            "time": 14.733097076416016,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "WD",
+            "time": 15.616326332092285,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "SA",
+            "time": 15.657763481140137,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "WD",
+            "time": 15.760513305664063,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "SA",
+            "time": 15.863243103027344,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "D",
+            "time": 17.22422218322754,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "A",
+            "time": 17.301597595214844,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "D",
+            "time": 17.404346466064453,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "A",
+            "time": 17.507076263427734,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "D",
+            "time": 17.609827041625977,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "A",
+            "time": 17.712554931640625,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "W",
+            "time": 17.795875549316406
+        },
+        {
+            "alignment": "S",
+            "time": 17.84308433532715
+        },
+        {
+            "alignment": "W",
+            "time": 17.945812225341797
+        },
+        {
+            "alignment": "S",
+            "time": 18.04856300354004
+        },
+        {
+            "alignment": "WD",
+            "time": 19.46270179748535,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "D",
+            "time": 19.56186866760254,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "DS",
+            "time": 19.66461753845215,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "WA",
+            "time": 19.87009620666504,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "A",
+            "time": 19.97282600402832,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "SA",
+            "time": 20.075576782226563,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "W",
+            "time": 21.73948097229004,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "S",
+            "time": 21.93600082397461,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "WA",
+            "time": 23.94148063659668,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "WD",
+            "time": 24.196271896362305,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "DS",
+            "time": 24.504501342773438,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "SA",
+            "time": 24.81270980834961,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "S",
+            "time": 26.046188354492188,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "S",
+            "time": 26.252437591552734,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "W",
+            "time": 26.421188354492188,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "WD",
+            "time": 27.67914581298828,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "WA",
+            "time": 27.79216766357422,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "W",
+            "time": 27.8948974609375,
+            "velocity_multiplier": 1.25
+        },
+        {
+            "alignment": "W",
+            "time": 28.175575256347656,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "S",
+            "time": 28.62557601928711,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "W",
+            "time": 29.461305618286133,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "D",
+            "time": 29.6224308013916,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "A",
+            "time": 29.827911376953125,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "SA",
+            "time": 30.033390045166016,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "WA",
+            "time": 30.238868713378906,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "DS",
+            "time": 30.444347381591797,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "W",
+            "time": 30.64982795715332,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "S",
+            "time": 30.85530662536621,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "A",
+            "time": 31.068326950073242,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "D",
+            "time": 31.163536071777344,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "A",
+            "time": 31.266263961791992,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "D",
+            "time": 31.369014739990234,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "A",
+            "time": 31.574493408203125,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "D",
+            "time": 31.77997398376465,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "A",
+            "time": 31.882701873779297,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "D",
+            "time": 31.98545265197754,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "A",
+            "time": 32.08818054199219,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "D",
+            "time": 32.19093322753906,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "A",
+            "time": 32.39641189575195,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "D",
+            "time": 32.601890563964844,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "A",
+            "time": 32.704620361328125,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "D",
+            "time": 32.807369232177734,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "W",
+            "time": 33.235374450683594,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "S",
+            "time": 33.31510543823242,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "A",
+            "time": 33.61043930053711,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "D",
+            "time": 33.7260627746582,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "WD",
+            "time": 33.82881546020508,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "SA",
+            "time": 33.931541442871094,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "DS",
+            "time": 34.03429412841797,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "SA",
+            "time": 34.13702392578125,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "WA",
+            "time": 34.23977279663086,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "D",
+            "time": 34.62858581542969,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "DS",
+            "time": 34.75345993041992,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "S",
+            "time": 34.85620880126953,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "SA",
+            "time": 34.95893859863281,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "A",
+            "time": 35.06168746948242,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "WA",
+            "time": 35.1644172668457,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "W",
+            "time": 35.26716613769531,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "WD",
+            "time": 35.369895935058594,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "W",
+            "time": 36.20793914794922,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "D",
+            "time": 36.29456329345703,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "A",
+            "time": 36.39729309082031,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "S",
+            "time": 36.50004196166992,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "WD",
+            "time": 36.70552062988281,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "WA",
+            "time": 36.808250427246094,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "WD",
+            "time": 36.91100311279297,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "WA",
+            "time": 37.013729095458984,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "D",
+            "time": 37.388729095458984,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "W",
+            "time": 37.52743911743164,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "SA",
+            "time": 37.73291778564453,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "DS",
+            "time": 37.93839645385742,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "A",
+            "time": 38.14387512207031,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "WA",
+            "time": 38.3493537902832,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "D",
+            "time": 38.55483627319336,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "W",
+            "time": 38.67147445678711,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "W",
+            "time": 38.876953125,
+            "velocity_multiplier": 1.5
+        },
+        {
+            "alignment": "A",
+            "time": 39.06854248046875,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "D",
+            "time": 39.17127227783203,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "SA",
+            "time": 39.27402114868164,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "DS",
+            "time": 39.37675094604492,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "DS",
+            "time": 39.37675094604492,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "W",
+            "time": 39.64456558227539,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "W",
+            "time": 39.68498229980469,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "D",
+            "time": 39.993186950683594,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "A",
+            "time": 40.19866943359375,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "D",
+            "time": 40.395938873291016,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "D",
+            "time": 40.50689697265625,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "D",
+            "time": 40.60962677001953,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "D",
+            "time": 40.71237564086914,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "D",
+            "time": 40.81510543823242,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "D",
+            "time": 40.91785430908203,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "W",
+            "time": 41.299293518066406,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "SA",
+            "time": 41.431541442871094,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "W",
+            "time": 41.99711990356445,
+            "velocity_multiplier": 2.25
+        },
+        {
+            "alignment": "S",
+            "time": 42.22211837768555,
+            "velocity_multiplier": 2.25
+        },
+        {
+            "alignment": "A",
+            "time": 42.762535095214844,
+            "velocity_multiplier": 2.25
+        },
+        {
+            "alignment": "D",
+            "time": 42.865264892578125,
+            "velocity_multiplier": 2.25
+        },
+        {
+            "alignment": "WA",
+            "time": 43.58445358276367,
+            "velocity_multiplier": 2.25
+        },
+        {
+            "alignment": "DS",
+            "time": 43.79070281982422,
+            "velocity_multiplier": 2.25
+        },
+        {
+            "alignment": "SA",
+            "time": 44.184452056884766,
+            "velocity_multiplier": 2.25
+        },
+        {
+            "alignment": "S",
+            "time": 44.61185073852539,
+            "velocity_multiplier": 2.25
+        },
+        {
+            "alignment": "W",
+            "time": 44.714599609375,
+            "velocity_multiplier": 2.25
+        },
+        {
+            "alignment": "D",
+            "time": 45.414520263671875,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "SA",
+            "time": 45.75714874267578,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "WA",
+            "time": 46.39464569091797,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "WD",
+            "time": 47.08839797973633,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "D",
+            "time": 47.53839874267578,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "A",
+            "time": 48.044647216796875,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "A",
+            "time": 48.46035385131836,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "S",
+            "time": 48.62589645385742,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "W",
+            "time": 49.18839645385742,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "D",
+            "time": 49.24785614013672,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "WD",
+            "time": 49.665626525878906,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "DS",
+            "time": 50.03214645385742,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "SA",
+            "time": 50.53839874267578,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "WA",
+            "time": 51.08214569091797,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "WA",
+            "time": 52.187896728515625,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "WD",
+            "time": 52.32196044921875,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "DS",
+            "time": 52.52743911743164,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "SA",
+            "time": 52.73291778564453,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "W",
+            "time": 53.33214569091797,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "S",
+            "time": 53.45210647583008,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "D",
+            "time": 53.65758514404297,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "A",
+            "time": 53.86306381225586,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "WD",
+            "time": 54.10466766357422,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "D",
+            "time": 54.27402114868164,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "A",
+            "time": 54.47949981689453,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "WA",
+            "time": 54.68498229980469,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "SA",
+            "time": 55.09593963623047,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "W",
+            "time": 55.19866943359375,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "DS",
+            "time": 55.30141830444336,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "W",
+            "time": 56.73977279663086,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "WD",
+            "time": 56.8897705078125,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "D",
+            "time": 57.0772705078125,
+            "velocity_multiplier": 2.0
+        },
+        {
+            "alignment": "A",
+            "time": 57.449222564697266,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "S",
+            "time": 57.730472564697266,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "DS",
+            "time": 58.87422180175781,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "WD",
+            "time": 59.09922409057617,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "WA",
+            "time": 59.65249252319336,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "SA",
+            "time": 60.06499481201172,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "A",
+            "time": 60.66499328613281,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "W",
+            "time": 60.98374557495117,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "S",
+            "time": 61.41499328613281,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "A",
+            "time": 62.184349060058594,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "DS",
+            "time": 63.215599060058594,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "S",
+            "time": 63.3210563659668,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "WA",
+            "time": 63.423805236816406,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "W",
+            "time": 63.52653503417969,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "A",
+            "time": 63.7898063659668,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "S",
+            "time": 64.0702896118164,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "SA",
+            "time": 65.33785247802734,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "S",
+            "time": 65.54410552978516,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "DS",
+            "time": 65.80660247802734,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "D",
+            "time": 66.46285247802734,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "WD",
+            "time": 66.63159942626953,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "W",
+            "time": 66.71147918701172,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "WA",
+            "time": 66.91695404052734,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "A",
+            "time": 67.34432983398438,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "S",
+            "time": 67.94432830810547,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "W",
+            "time": 68.22557830810547,
+            "velocity_multiplier": 1.75
+        },
+        {
+            "alignment": "D",
+            "time": 68.56307983398438,
+            "velocity_multiplier": 1.75
+        }
+    ]
 }

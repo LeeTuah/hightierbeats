@@ -1,0 +1,54 @@
+{
+    "artist": "Yoasobi",
+    "audio": "song.mp3",
+    "background": "image.png",
+    "base_velocity": 8.0,
+    "creator": "leetuah",
+    "name": "Racing into the Night",
+    "notes": [
+        {
+            "alignment": "WA",
+            "time": 4.640812397003174
+        },
+        {
+            "alignment": "W",
+            "time": 7.117249965667725
+        },
+        {
+            "alignment": "WD",
+            "time": 10.03068733215332
+        },
+        {
+            "alignment": "S",
+            "time": 14.692187309265137
+        },
+        {
+            "alignment": "WA",
+            "time": 20.373395919799805
+        },
+        {
+            "alignment": "W",
+            "time": 22.704145431518555
+        },
+        {
+            "alignment": "WD",
+            "time": 23.723854064941406
+        },
+        {
+            "alignment": "D",
+            "time": 26.200292587280273
+        },
+        {
+            "alignment": "DS",
+            "time": 28.09402084350586
+        },
+        {
+            "alignment": "SA",
+            "time": 32.46418762207031
+        },
+        {
+            "alignment": "A",
+            "time": 34.212249755859375
+        }
+    ]
+}
