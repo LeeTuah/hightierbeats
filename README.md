@@ -25,6 +25,10 @@ Refer to the following links for more info on the project
 - **Menu Navigation**: `W, S` or Arrow Keys
 - **Select an Item**: `ENTER` or `SPACE`
 - **Pause Game/Back**: `ESC`
+- **How to Hit**: Whenever a shard is in range of being hit, the game checks whether the shield is aligned against the Shard, and that you are holding the respective keys for that alignment.
+- **Score and Accuracy**: The closer you hit the shard to the actual timing, the more points you get (500 for Perfect, 300 for Great, 100 for Good). This also impacts the overall accuracy aswell.
+- **Combos**: The more combos you have, the more score you will accumulate aswell.
+- **Skill Rating**: Depending on your accuracy, the game hands you a skill rating (S, A, B, C,...) at the end of the beatmap, provided that you beat it. 
 
 # How to Run
 
