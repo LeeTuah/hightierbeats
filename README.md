@@ -37,6 +37,7 @@ To run the program on Windows, you have to install the [MSYS2](https://www.msys2
 
 After installing, open MSYS2 UCRT64 on your pc.
 Then, run the following command to download all the libraries that will be needed by the program.
+(Note: You cannot Ctrl+V to paste into the MSYS2 terminal, you have to right click and then Paste)
 
 ```
 pacman -S --needed mingw-w64-ucrt-x86_64-toolchain mingw-w64-ucrt-x86_64-pkg-config mingw-w64-ucrt-x86_64-glfw mingw-w64-ucrt-x86_64-freetype mingw-w64-ucrt-x86_64-harfbuzz mingw-w64-ucrt-x86_64-glm mingw-w64-ucrt-x86_64-nlohmann-json
