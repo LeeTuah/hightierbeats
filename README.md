@@ -8,8 +8,8 @@ HighTierBeats is a rhythm game built in OpenGL and C++, intended as a passion pr
 
 Refer to the following links for more info on the project
 
-- [How to Play the Game](assets/htb_showcase.mp4)
-- [How to Use the Level Editor](assets/mapmaker_showcase.mp4)
+- [How to Play the Game](https://www.youtube.com/watch?v=fzMCu_hO5es) (Video Link)
+- [How to Use the Level Editor](https://www.youtube.com/watch?v=aj2r1SJC35A) (Video Link)
 - [Screenshots of the project](markdowns/screenshots.md)
 
 ## Tech Stack
