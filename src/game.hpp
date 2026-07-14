@@ -37,6 +37,7 @@ namespace fs = std::filesystem;
 enum GameState {
 	GAME_MAIN_MENU,
 	GAME_SELECTING_BEATMAP,
+	GAME_SETTINGS,
 	GAME_MAPMAKER,
 	GAME_PAUSED,
 	GAME_RUNNING,
@@ -161,11 +162,12 @@ public:
 
 	bool enable_auto_restart_on_loss;
 	WinAnimationStyle win_animation_style;
+	int win_animation_style_int;
 
 	float sum_of_total_accuracy, total_shards_destroyed;
 	float total_accuracy;
 	
-	bool fps_counter;
+	bool fps_counter, enable_vsync;
 	float fps;
 	float FPS_COUNTING_DELAY;
 	float last_fps_clock_time;
@@ -180,6 +182,7 @@ public:
 	std::vector<WinLabels*>::iterator current_win_label;
 
 	Camera* camera;
+	GLFWwindow* window;
 	int SCR_WIDTH, SCR_HEIGHT;
 	
 	unsigned int menu_tile_VAO, menu_tile_VBO;
@@ -190,6 +193,11 @@ public:
 	unsigned int square_VAO, square_VBO;
 	unsigned int rect_VAO, rect_VBO;
 	unsigned int font_VAO, font_VBO;
+
+	unsigned int msaa_FBO;
+	int msaa_samples, msaa_samples_int;
+	bool enable_chromatic_aberration, enable_bloom, enable_vignette;
+	bool enable_motion_blur, enable_hdr_tonemapping, enable_deflection_sparks;
 
 	Shader* main_shader;
 	Shader* text_shader;
@@ -301,7 +309,9 @@ public:
 
 	Shard current_shard;
 
-	Game(int width, int height);
+	int current_settings_menu_item;
+
+	Game(GLFWwindow *win, int width, int height);
 	~Game();
 
 	void load_beatmap_from_file();

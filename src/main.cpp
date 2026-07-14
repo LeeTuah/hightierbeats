@@ -42,7 +42,7 @@ int main () {
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330 core");
 
-	Game* htb_engine = new Game(SCR_WIDTH, SCR_HEIGHT);
+	Game* htb_engine = new Game(window, SCR_WIDTH, SCR_HEIGHT);
 	htb_engine->mapmaker_font_size = font_size;
 
 	while (not glfwWindowShouldClose(window)) {

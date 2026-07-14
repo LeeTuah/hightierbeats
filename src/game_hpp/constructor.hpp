@@ -3,11 +3,10 @@
 
 # include "../game.hpp"
 
-inline Game::Game(int width, int height) {
+inline Game::Game(GLFWwindow* win, int width, int height) {
+	window = win;
 	SCR_WIDTH = width;
 	SCR_HEIGHT = height;
-
-	glfwSwapInterval(0); // disable vsync
 
 	game_state = GAME_MAIN_MENU;
 	health_point = 100;
@@ -17,6 +16,7 @@ inline Game::Game(int width, int height) {
 
 	enable_auto_restart_on_loss = true;
 	win_animation_style = SCORES_PUNCHED_IN;
+	win_animation_style_int = 1;
 
 	total_accuracy = 0.0f;
 	sum_of_total_accuracy = 0.0f;
@@ -24,6 +24,7 @@ inline Game::Game(int width, int height) {
 
 	FPS_COUNTING_DELAY = 0.250f;
 	fps_counter = true;
+	enable_vsync = false;
 	fps = 0.0f;
 	last_fps_clock_time = 0.0f;
 
@@ -94,6 +95,16 @@ inline Game::Game(int width, int height) {
 	flat_shader = new Shader("shaders/flat.vert", "shaders/flat.frag");
 
 	generate_VAOs();
+
+	msaa_samples = 4;
+	msaa_samples_int = 2;
+
+	enable_chromatic_aberration = false;
+	enable_bloom = false;
+	enable_vignette = false;
+	enable_motion_blur = false;
+	enable_hdr_tonemapping = false;
+	enable_deflection_sparks = false; // compute shader to generate glowing sparks when shield blocks an object
 
 	MenuTile base_tile;
 	const float menu_tiles_gap = 110.0f;
@@ -318,6 +329,8 @@ inline Game::Game(int width, int height) {
 	delete_shard_pressed = false;
 	esc_mapmaker_key_pressed = false;
 	esc_mapmaker_key_confirmed = false;
+
+	current_settings_menu_item = 0;
 }
 
 inline Game::~Game() {

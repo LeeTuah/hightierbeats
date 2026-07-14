@@ -79,7 +79,9 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 				last_menu_input_time = current_time;
 			}
 			else if (current_menu_label == "Settings") {
-
+				game_state = GAME_SETTINGS;
+				current_settings_menu_item = 0;
+				last_menu_input_time = current_time;
 			}
 			else if (current_menu_label == "Mapmaker") {
 				game_state = GAME_MAPMAKER;
@@ -125,6 +127,13 @@ inline void Game::process_input(GLFWwindow* window, float delta_time) {
 		if (esc_key_pressed) {
 			play_sfx(&close_cursor_sound);
 			glfwSetWindowShouldClose(window, true);
+		}
+	}
+
+	else if (game_state == GAME_SETTINGS) {
+		if (esc_key_pressed) {
+			play_sfx(&close_cursor_sound);
+			go_back_to_main_menu();
 		}
 	}
 

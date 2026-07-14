@@ -13,6 +13,7 @@ inline void Game::play_sound(ma_sound *sound) {
 inline void Game::play_sfx(ma_sound *sfx) {
 	ma_sound_stop(sfx);
 	ma_sound_seek_to_pcm_frame(sfx, 0);
+	ma_sound_set_volume(sfx, sfx_volume);
 	ma_sound_start(sfx);
 }
 

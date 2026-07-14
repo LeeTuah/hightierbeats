@@ -185,6 +185,9 @@ inline void Game::update(float delta_time) {
 	if (sound_pitch <= 0.09f) {
 		ma_sound_stop(&bgm);
 		is_sound_playing = false;
+		
+		sound_pitch = 1.0f;
+		ma_sound_set_pitch(&bgm, sound_pitch);
 
 		if (enable_auto_restart_on_loss) {
 			load_beatmap_from_file();
@@ -200,6 +203,12 @@ inline void Game::update(float delta_time) {
 			last_menu_tile = main_menu_tiles.end();
 
 			current_user_beatmap_index = 0;
+			last_menu_input_time = glfw_current_time;
+			menu_scale = max_menu_scale;
+
+			current_pause_menu_tile = pause_menu_tiles.begin();
+			last_pause_menu_tile = pause_menu_tiles.end();
+			menu_input_process_delay = 0.250f;
 		}
 	}
 

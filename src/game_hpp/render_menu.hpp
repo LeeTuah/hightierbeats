@@ -6,9 +6,11 @@
 inline void Game::render_menu() {
 	if (
 		game_state != GAME_MAIN_MENU and
-		game_state != GAME_SELECTING_BEATMAP
+		game_state != GAME_SELECTING_BEATMAP and
+		game_state != GAME_SETTINGS
 	) return;
 
+	glfwSwapInterval(enable_vsync);
 	glClearColor(0.02f, 0.02f, 0.02f, 1.0f);
 
 	glDisable(GL_DEPTH_TEST);
@@ -16,6 +18,8 @@ inline void Game::render_menu() {
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glEnable(GL_MULTISAMPLE);
 
 	view = glm::mat4(1.0f);
 	text_projection = glm::ortho(0.0f, (float)SCR_WIDTH, 0.0f, (float)SCR_HEIGHT);
@@ -36,7 +40,7 @@ inline void Game::render_menu() {
 	model = glm::scale(model, glm::vec3(2.0f, 2.0f, 1.0f));
 	flat_shader->set_mat4("model", model);
 
-	if (game_state == GAME_MAIN_MENU) {
+	if (game_state == GAME_MAIN_MENU or game_state == GAME_SETTINGS) {
 		int current_backgroud_frame = (int)(glfwGetTime() * menu_video_fps) % total_menu_video_frames;
 		menu_video_frames[current_backgroud_frame]->bind();
 	}
@@ -131,6 +135,202 @@ inline void Game::render_menu() {
 				menu_label_scale, glm::vec3(0.0f)
 			);
 		}
+	}
+
+	else if (game_state == GAME_SETTINGS) {
+		const ImGuiViewport* viewport = ImGui::GetMainViewport();
+		int flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		int child_flags = ImGuiChildFlags_Borders;
+
+		ImGui::SetNextWindowPos(ImVec2(viewport->WorkSize.x * 0.20f, viewport->WorkSize.y * 0.20f));
+		ImGui::SetNextWindowSize(ImVec2(viewport->WorkSize.x * 0.60f, viewport->WorkSize.y * 0.60f));
+		if (ImGui::Begin("Settings", &mapmaker_timeline_opened, flags)) {
+			if (ImGui::BeginChild("##sidebar", ImVec2(viewport->WorkSize.x * 0.09f, 0.0f), child_flags, flags)) {
+				if (ImGui::Selectable("Game", current_settings_menu_item == 0, 0, ImVec2(0, 30))) {
+					current_settings_menu_item = 0;
+					play_sfx(&click_cursor_sound);
+				}
+				ImGui::Spacing();
+				if (ImGui::Selectable("Audio", current_settings_menu_item == 1, 0, ImVec2(0, 30))) {
+					current_settings_menu_item = 1;
+					play_sfx(&click_cursor_sound);
+				}
+				ImGui::Spacing();
+				if (ImGui::Selectable("Video", current_settings_menu_item == 2, 0, ImVec2(0, 30))) {
+					current_settings_menu_item = 2;
+					play_sfx(&click_cursor_sound);
+				}
+			} ImGui::EndChild();
+
+			ImGui::SameLine();
+			int total_spacing_between_settings_items = 3;
+
+			if (ImGui::BeginChild("##content", ImVec2(viewport->WorkSize.x * 0.497f, 0.0f), child_flags, flags)) {
+				if (current_settings_menu_item == 0) {
+					ImGui::SetCursorPosX(ImGui::GetContentRegionAvail().x / 2.0f - ImGui::CalcTextSize("General").x);
+					ImGui::Text("General");
+
+					ImGui::Spacing();
+					ImGui::Separator();
+					for (int i = 0; i < total_spacing_between_settings_items + 2; i++) ImGui::Spacing();
+
+					ImGui::Text("Auto Restart on Loss ");
+					ImGui::SameLine();
+					ImGui::Checkbox("##enable_auto_restart_on_loss", &enable_auto_restart_on_loss);
+					ImGui::TextDisabled("Automatically restart a level if you were to lose.");
+					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
+
+					ImGui::Text("Background Dim");
+					if (ImGui::SliderFloat("##background_dim_slider", &background_dim, 0.0f, 1.0f)) {
+						background_dim = std::clamp(background_dim, 0.0f, 1.0f);
+					}
+
+					ImGui::SameLine();
+					if (ImGui::Button("▼##bg_dim_down_btn")) {
+						background_dim -= 0.1f;
+						background_dim = std::clamp(background_dim, 0.0f, 1.0f);
+					}
+					ImGui::SameLine();
+					if (ImGui::Button("▲##bg_dim_up_btn")) {
+						background_dim += 0.1f;
+						background_dim = std::clamp(background_dim, 0.0f, 1.0f);
+					}
+					ImGui::TextDisabled("Change the dim of the background in beatmaps.");
+					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
+
+					ImGui::Text("Win Style Animation");
+					ImGui::SameLine();
+
+					const char *win_styles[] = {"Build Up", "Punched In"};
+					if (ImGui::Combo("##win_style_animation_combo", &win_animation_style_int, win_styles, IM_ARRAYSIZE(win_styles))) {
+						if (win_animation_style_int == 0) win_animation_style = SCORES_BUILD_UP;
+						if (win_animation_style_int == 1) win_animation_style = SCORES_PUNCHED_IN;
+					}
+					ImGui::TextDisabled("Win Animation Style to be rendered when you beat a map.");
+					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
+				}
+
+				if (current_settings_menu_item == 1) {
+					ImGui::SetCursorPosX(ImGui::GetContentRegionAvail().x / 2.0f - ImGui::CalcTextSize("Audio").x);
+					ImGui::Text("Audio");
+
+					ImGui::Spacing();
+					ImGui::Separator();
+					for (int i = 0; i < total_spacing_between_settings_items + 2; i++) ImGui::Spacing();
+
+					ImGui::Text("Music Volume");
+					if (ImGui::SliderFloat("##sond_volume_slider", &sound_volume, 0.0f, 1.0f)) {
+						sound_volume = std::clamp(sound_volume, 0.0f, 1.0f);
+					}
+
+					ImGui::SameLine();
+					if (ImGui::Button("▼##sond_volume_slider_down_btn")) {
+						sound_volume -= 0.1f;
+						sound_volume = std::clamp(sound_volume, 0.0f, 1.0f);
+					}
+					ImGui::SameLine();
+					if (ImGui::Button("▲##sond_volume_slider_up_btn")) {
+						sound_volume += 0.1f;
+						sound_volume = std::clamp(sound_volume, 0.0f, 1.0f);
+					}
+					ImGui::TextDisabled("Volume of the music.");
+					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
+
+					ImGui::Text("SFX Volume");
+					if (ImGui::SliderFloat("##sfx_volume_slider", &sfx_volume, 0.0f, 1.0f)) {
+						sfx_volume = std::clamp(sfx_volume, 0.0f, 1.0f);
+					}
+
+					ImGui::SameLine();
+					if (ImGui::Button("▼##sfx_volume_slider_down_btn")) {
+						sfx_volume -= 0.1f;
+						sfx_volume = std::clamp(sfx_volume, 0.0f, 1.0f);
+					}
+					ImGui::SameLine();
+					if (ImGui::Button("▲##sfx_volume_slider_up_btn")) {
+						sfx_volume += 0.1f;
+						sfx_volume = std::clamp(sfx_volume, 0.0f, 1.0f);
+					}
+					ImGui::TextDisabled("Volume of the Sound Effects.");
+					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
+				}
+
+				if (current_settings_menu_item == 2) {
+					ImGui::SetCursorPosX(ImGui::GetContentRegionAvail().x / 2.0f - ImGui::CalcTextSize("Video").x);
+					ImGui::Text("Video");
+					
+					ImGui::Spacing();
+					ImGui::Separator();
+					for (int i = 0; i < total_spacing_between_settings_items + 2; i++) ImGui::Spacing();
+
+					ImGui::Text("Show FPS ");
+					ImGui::SameLine();
+					ImGui::Checkbox("##fps_counter", &fps_counter);
+					ImGui::TextDisabled("Show/Hide FPS");
+					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
+
+					ImGui::Text("Enable VSync ");
+					ImGui::SameLine();
+					ImGui::Checkbox("##vsync_checkbox", &enable_vsync);
+					ImGui::TextDisabled("Enable/Disable Vertical Sync");
+					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
+
+					ImGui::BeginDisabled();
+
+					ImGui::Text("Anti-aliasing Sampling (WIP) ");
+					ImGui::SameLine();
+
+					const char *msaa_samples_list[] = {"Disabled", "2x MSAA", "4x MSAA", "8x MSAA", "16x MSAA"};
+					if (ImGui::Combo("##msaa_samples_combo", &msaa_samples_int, msaa_samples_list, IM_ARRAYSIZE(msaa_samples_list))) {
+						if (msaa_samples_int == 0) msaa_samples = 0;
+						if (msaa_samples_int == 1) msaa_samples = 2;
+						if (msaa_samples_int == 2) msaa_samples = 4;
+						if (msaa_samples_int == 3) msaa_samples = 8;
+						if (msaa_samples_int == 4) msaa_samples = 16;
+					}
+					ImGui::TextDisabled("Multisampling amount to be used (the higher the prettier)");
+					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
+
+					ImGui::Text("Bloom (WIP) ");
+					ImGui::SameLine();
+					ImGui::Checkbox("##bloom", &enable_bloom);
+					ImGui::TextDisabled("Glowing Effect for the shards and core");
+					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
+
+					ImGui::Text("Vignette (WIP) ");
+					ImGui::SameLine();
+					ImGui::Checkbox("##vignette", &enable_vignette);
+					ImGui::TextDisabled("Darken the edges of the screen");
+					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
+
+					ImGui::Text("Motion Blur (WIP) ");
+					ImGui::SameLine();
+					ImGui::Checkbox("##motion_blur", &enable_motion_blur);
+					ImGui::TextDisabled("Blurs the shards");
+					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
+
+					ImGui::Text("HDR Tonemapping (WIP) ");
+					ImGui::SameLine();
+					ImGui::Checkbox("##hdr_tonemapping", &enable_hdr_tonemapping);
+					ImGui::TextDisabled("Adapting the game brightness to the display");
+					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
+
+					ImGui::Text("Deflection Sparks (WIP) ");
+					ImGui::SameLine();
+					ImGui::Checkbox("##deflection_sparks", &enable_deflection_sparks);
+					ImGui::TextDisabled("Sparks appear when a shard is successfully blocked");
+					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
+
+					ImGui::Text("Chromatic Aberration (WIP) ");
+					ImGui::SameLine();
+					ImGui::Checkbox("##chromatic_aberration", &enable_chromatic_aberration);
+					ImGui::TextDisabled("Adds color shifting to the screen");
+					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
+
+					ImGui::EndDisabled();
+				}
+			} ImGui::EndChild();
+		} ImGui::End();
 	}
 }
 
