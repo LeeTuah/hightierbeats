@@ -5,5 +5,50 @@
     "base_velocity": 8.0,
     "creator": "leetuah",
     "name": "Looping the Rooms",
-    "notes": []
+    "notes": [
+        {
+            "alignment": "A",
+            "time": 6.661499977111816
+        },
+        {
+            "alignment": "D",
+            "time": 6.803645610809326
+        },
+        {
+            "alignment": "S",
+            "time": 7.016791820526123
+        },
+        {
+            "alignment": "SA",
+            "time": 7.087812423706055
+        },
+        {
+            "alignment": "DS",
+            "time": 7.229916572570801
+        },
+        {
+            "alignment": "WD",
+            "time": 7.229958534240723
+        },
+        {
+            "alignment": "W",
+            "time": 7.798333168029785
+        },
+        {
+            "alignment": "WA",
+            "time": 8.224645614624023
+        },
+        {
+            "alignment": "DS",
+            "time": 8.43779182434082
+        },
+        {
+            "alignment": "S",
+            "time": 8.722000122070313
+        },
+        {
+            "alignment": "D",
+            "time": 9.574583053588867
+        }
+    ]
 }

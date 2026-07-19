@@ -4,7 +4,7 @@
   <img src="assets/htb_logo.png" alt="HighTierBeats Logo" width="350">
 </p>
 
-HighTierBeats is a rhythm game built in OpenGL and C++, intended as a passion project for the Hack Club in Macondo.
+HighTierBeats is a rhythm game built in OpenGL and C++.
 
 Refer to the following links for more info on the project
 
@@ -16,7 +16,7 @@ Refer to the following links for more info on the project
 
 1. Language: C++
 2. Graphics API: OpenGL Version 3.3 Core
-3. Libraries: GLFW, GLAD, GLM, freetype2, stb_image.h, miniaudio.h and ImGui
+3. Libraries: GLFW, GLAD, GLM, freetype2, stb_image.h, miniaudio.h and Dear ImGui
 
 ## Gameplay Mechanics
 
@@ -61,7 +61,7 @@ eg. the repo is in your C: drive, then
 
 ```
 cd /c
-cd /path/to/the/repo/hightierbeats/
+cd path/to/the/repo/hightierbeats/
 ```
 
 Now, run the following command:

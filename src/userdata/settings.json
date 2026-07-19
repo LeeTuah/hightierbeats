@@ -1,0 +1,22 @@
+{
+    "audio": {
+        "music_volume": 0.296999990940094,
+        "sfx_volume": 0.5669999718666077
+    },
+    "game": {
+        "auto_restart_on_loss": true,
+        "background_dim": 0.8410000205039978,
+        "win_style_animation": 0
+    },
+    "video": {
+        "bloom": true,
+        "chromatic_aberration": true,
+        "deflection_sparks": true,
+        "hdr": true,
+        "motion_blur": true,
+        "msaa": 0,
+        "show_fps": true,
+        "vignette": true,
+        "vsync": false
+    }
+}

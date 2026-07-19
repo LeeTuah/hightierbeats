@@ -176,24 +176,36 @@ inline void Game::render_menu() {
 
 					ImGui::Text("Auto Restart on Loss ");
 					ImGui::SameLine();
-					ImGui::Checkbox("##enable_auto_restart_on_loss", &enable_auto_restart_on_loss);
+					if (ImGui::Checkbox("##enable_auto_restart_on_loss", &enable_auto_restart_on_loss)) {
+						settings_json["game"]["auto_restart_on_loss"] = enable_auto_restart_on_loss;
+						save_settings_file();
+					}
 					ImGui::TextDisabled("Automatically restart a level if you were to lose.");
 					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
 
 					ImGui::Text("Background Dim");
 					if (ImGui::SliderFloat("##background_dim_slider", &background_dim, 0.0f, 1.0f)) {
 						background_dim = std::clamp(background_dim, 0.0f, 1.0f);
+
+						settings_json["game"]["background_dim"] = background_dim;
+						save_settings_file();
 					}
 
 					ImGui::SameLine();
 					if (ImGui::Button("▼##bg_dim_down_btn")) {
 						background_dim -= 0.1f;
 						background_dim = std::clamp(background_dim, 0.0f, 1.0f);
+
+						settings_json["game"]["background_dim"] = background_dim;
+						save_settings_file();
 					}
 					ImGui::SameLine();
 					if (ImGui::Button("▲##bg_dim_up_btn")) {
 						background_dim += 0.1f;
 						background_dim = std::clamp(background_dim, 0.0f, 1.0f);
+
+						settings_json["game"]["background_dim"] = background_dim;
+						save_settings_file();
 					}
 					ImGui::TextDisabled("Change the dim of the background in beatmaps.");
 					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
@@ -205,6 +217,9 @@ inline void Game::render_menu() {
 					if (ImGui::Combo("##win_style_animation_combo", &win_animation_style_int, win_styles, IM_ARRAYSIZE(win_styles))) {
 						if (win_animation_style_int == 0) win_animation_style = SCORES_BUILD_UP;
 						if (win_animation_style_int == 1) win_animation_style = SCORES_PUNCHED_IN;
+
+						settings_json["game"]["win_style_animation"] = win_animation_style_int;
+						save_settings_file();
 					}
 					ImGui::TextDisabled("Win Animation Style to be rendered when you beat a map.");
 					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
@@ -221,17 +236,26 @@ inline void Game::render_menu() {
 					ImGui::Text("Music Volume");
 					if (ImGui::SliderFloat("##sond_volume_slider", &sound_volume, 0.0f, 1.0f)) {
 						sound_volume = std::clamp(sound_volume, 0.0f, 1.0f);
+
+						settings_json["audio"]["music_volume"] = sound_volume;
+						save_settings_file();
 					}
 
 					ImGui::SameLine();
 					if (ImGui::Button("▼##sond_volume_slider_down_btn")) {
 						sound_volume -= 0.1f;
 						sound_volume = std::clamp(sound_volume, 0.0f, 1.0f);
+
+						settings_json["audio"]["music_volume"] = sound_volume;
+						save_settings_file();
 					}
 					ImGui::SameLine();
 					if (ImGui::Button("▲##sond_volume_slider_up_btn")) {
 						sound_volume += 0.1f;
 						sound_volume = std::clamp(sound_volume, 0.0f, 1.0f);
+
+						settings_json["audio"]["music_volume"] = sound_volume;
+						save_settings_file();
 					}
 					ImGui::TextDisabled("Volume of the music.");
 					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
@@ -239,17 +263,26 @@ inline void Game::render_menu() {
 					ImGui::Text("SFX Volume");
 					if (ImGui::SliderFloat("##sfx_volume_slider", &sfx_volume, 0.0f, 1.0f)) {
 						sfx_volume = std::clamp(sfx_volume, 0.0f, 1.0f);
+
+						settings_json["audio"]["sfx_volume"] = sfx_volume;
+						save_settings_file();
 					}
 
 					ImGui::SameLine();
 					if (ImGui::Button("▼##sfx_volume_slider_down_btn")) {
 						sfx_volume -= 0.1f;
 						sfx_volume = std::clamp(sfx_volume, 0.0f, 1.0f);
+
+						settings_json["audio"]["sfx_volume"] = sfx_volume;
+						save_settings_file();
 					}
 					ImGui::SameLine();
 					if (ImGui::Button("▲##sfx_volume_slider_up_btn")) {
 						sfx_volume += 0.1f;
 						sfx_volume = std::clamp(sfx_volume, 0.0f, 1.0f);
+
+						settings_json["audio"]["sfx_volume"] = sfx_volume;
+						save_settings_file();
 					}
 					ImGui::TextDisabled("Volume of the Sound Effects.");
 					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
@@ -265,13 +298,19 @@ inline void Game::render_menu() {
 
 					ImGui::Text("Show FPS ");
 					ImGui::SameLine();
-					ImGui::Checkbox("##fps_counter", &fps_counter);
+					if (ImGui::Checkbox("##fps_counter", &fps_counter)) {
+						settings_json["video"]["show_fps"] = fps_counter;
+						save_settings_file();
+					}
 					ImGui::TextDisabled("Show/Hide FPS");
 					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
 
 					ImGui::Text("Enable VSync ");
 					ImGui::SameLine();
-					ImGui::Checkbox("##vsync_checkbox", &enable_vsync);
+					if (ImGui::Checkbox("##vsync_checkbox", &enable_vsync)) {
+						settings_json["video"]["vsync"] = enable_vsync;
+						save_settings_file();
+					}
 					ImGui::TextDisabled("Enable/Disable Vertical Sync");
 					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
 
@@ -287,43 +326,64 @@ inline void Game::render_menu() {
 						if (msaa_samples_int == 2) msaa_samples = 4;
 						if (msaa_samples_int == 3) msaa_samples = 8;
 						if (msaa_samples_int == 4) msaa_samples = 16;
+
+						settings_json["video"]["msaa"] = msaa_samples;
+						save_settings_file();
 					}
 					ImGui::TextDisabled("Multisampling amount to be used (the higher the prettier)");
 					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
 
 					ImGui::Text("Bloom (WIP) ");
 					ImGui::SameLine();
-					ImGui::Checkbox("##bloom", &enable_bloom);
+					if (ImGui::Checkbox("##bloom", &enable_bloom)) {
+						settings_json["video"]["bloom"] = enable_bloom;
+						save_settings_file();
+					}
 					ImGui::TextDisabled("Glowing Effect for the shards and core");
 					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
 
 					ImGui::Text("Vignette (WIP) ");
 					ImGui::SameLine();
-					ImGui::Checkbox("##vignette", &enable_vignette);
+					if (ImGui::Checkbox("##vignette", &enable_vignette)) {
+						settings_json["video"]["vignette"] = enable_vignette;
+						save_settings_file();
+					}
 					ImGui::TextDisabled("Darken the edges of the screen");
 					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
 
 					ImGui::Text("Motion Blur (WIP) ");
 					ImGui::SameLine();
-					ImGui::Checkbox("##motion_blur", &enable_motion_blur);
+					if (ImGui::Checkbox("##motion_blur", &enable_motion_blur)) {
+						settings_json["video"]["motion_blur"] = enable_motion_blur;
+						save_settings_file();
+					}
 					ImGui::TextDisabled("Blurs the shards");
 					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
 
 					ImGui::Text("HDR Tonemapping (WIP) ");
 					ImGui::SameLine();
-					ImGui::Checkbox("##hdr_tonemapping", &enable_hdr_tonemapping);
+					if (ImGui::Checkbox("##hdr_tonemapping", &enable_hdr_tonemapping)) {
+						settings_json["video"]["hdr"] = enable_hdr_tonemapping;
+						save_settings_file();
+					}
 					ImGui::TextDisabled("Adapting the game brightness to the display");
 					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
 
 					ImGui::Text("Deflection Sparks (WIP) ");
 					ImGui::SameLine();
-					ImGui::Checkbox("##deflection_sparks", &enable_deflection_sparks);
+					if (ImGui::Checkbox("##deflection_sparks", &enable_deflection_sparks)) {
+						settings_json["video"]["deflection_sparks"] = enable_deflection_sparks;
+						save_settings_file();
+					}
 					ImGui::TextDisabled("Sparks appear when a shard is successfully blocked");
 					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
 
 					ImGui::Text("Chromatic Aberration (WIP) ");
 					ImGui::SameLine();
-					ImGui::Checkbox("##chromatic_aberration", &enable_chromatic_aberration);
+					if (ImGui::Checkbox("##chromatic_aberration", &enable_chromatic_aberration)) {
+						settings_json["video"]["chromatic_aberration"] = enable_chromatic_aberration;
+						save_settings_file();
+					}
 					ImGui::TextDisabled("Adds color shifting to the screen");
 					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
 

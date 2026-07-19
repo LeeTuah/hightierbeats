@@ -318,6 +318,12 @@ public:
 	void load_all_beatmaps();
 	Shard generate_shard_data(Shard shard, glm::vec3 core_elevation = glm::vec3(0.0f));
 
+	fs::path settings_filepath;
+	std::ofstream settings_file;
+	json settings_json;
+	void load_settings_file();
+	void save_settings_file();
+
 	void play_sound(ma_sound *sound);
 	void play_sfx(ma_sound *sfx);
 	void pause_sound(ma_sound *sound);

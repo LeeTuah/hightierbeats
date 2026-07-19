@@ -331,9 +331,14 @@ inline Game::Game(GLFWwindow* win, int width, int height) {
 	esc_mapmaker_key_confirmed = false;
 
 	current_settings_menu_item = 0;
+
+	settings_filepath = fs::path("userdata/settings.json");
+	load_settings_file();
 }
 
 inline Game::~Game() {
+	settings_file.close();
+
 	ma_sound_uninit(&bgm);
 	ma_engine_uninit(&audio_engine);
 
