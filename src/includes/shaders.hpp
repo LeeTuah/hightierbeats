@@ -29,6 +29,9 @@ public:
 	void set_bool(std::string name, bool value);
 	void set_float(std::string name, float value);
 
+	void set_float2(std::string name, float x, float y);
+	void set_float2(std::string name, glm::vec2 value);
+
 	void set_float3(std::string name, float x, float y, float z);
 	void set_float3(std::string name, glm::vec3 value);
 
@@ -119,6 +122,16 @@ void Shader::set_int(std::string name, int value) {
 void Shader::set_float(std::string name, float value) {
 	int location = glGetUniformLocation(ID, name.c_str());
 	glUniform1f(location, value);
+}
+
+void Shader::set_float2(std::string name, float x, float y) {
+	int location = glGetUniformLocation(ID, name.c_str());
+	glUniform2f(location, x, y);
+}
+
+void Shader::set_float2(std::string name, glm::vec2 value) {
+	int location = glGetUniformLocation(ID, name.c_str());
+	glUniform2f(location, value.x, value.y);
 }
 
 void Shader::set_float3(std::string name, float x, float y, float z) {

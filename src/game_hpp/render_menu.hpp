@@ -186,7 +186,9 @@ inline void Game::render_menu() {
 					ImGui::Text("Background Dim");
 					if (ImGui::SliderFloat("##background_dim_slider", &background_dim, 0.0f, 1.0f)) {
 						background_dim = std::clamp(background_dim, 0.0f, 1.0f);
+					}
 
+					if (ImGui::IsItemDeactivatedAfterEdit()) {
 						settings_json["game"]["background_dim"] = background_dim;
 						save_settings_file();
 					}
@@ -236,7 +238,9 @@ inline void Game::render_menu() {
 					ImGui::Text("Music Volume");
 					if (ImGui::SliderFloat("##sond_volume_slider", &sound_volume, 0.0f, 1.0f)) {
 						sound_volume = std::clamp(sound_volume, 0.0f, 1.0f);
+					}
 
+					if (ImGui::IsItemDeactivatedAfterEdit()) {
 						settings_json["audio"]["music_volume"] = sound_volume;
 						save_settings_file();
 					}
@@ -263,7 +267,9 @@ inline void Game::render_menu() {
 					ImGui::Text("SFX Volume");
 					if (ImGui::SliderFloat("##sfx_volume_slider", &sfx_volume, 0.0f, 1.0f)) {
 						sfx_volume = std::clamp(sfx_volume, 0.0f, 1.0f);
+					}
 
+					if (ImGui::IsItemDeactivatedAfterEdit()) {
 						settings_json["audio"]["sfx_volume"] = sfx_volume;
 						save_settings_file();
 					}
@@ -303,7 +309,7 @@ inline void Game::render_menu() {
 						save_settings_file();
 					}
 					ImGui::TextDisabled("Show/Hide FPS");
-					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
+					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing(); 
 
 					ImGui::Text("Enable VSync ");
 					ImGui::SameLine();
@@ -312,6 +318,15 @@ inline void Game::render_menu() {
 						save_settings_file();
 					}
 					ImGui::TextDisabled("Enable/Disable Vertical Sync");
+					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
+
+					ImGui::Text("Vignette ");
+					ImGui::SameLine();
+					if (ImGui::Checkbox("##vignette", &enable_vignette)) {
+						settings_json["video"]["vignette"] = enable_vignette;
+						save_settings_file();
+					}
+					ImGui::TextDisabled("Darken the edges of the screen");
 					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
 
 					ImGui::BeginDisabled();
@@ -340,15 +355,6 @@ inline void Game::render_menu() {
 						save_settings_file();
 					}
 					ImGui::TextDisabled("Glowing Effect for the shards and core");
-					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
-
-					ImGui::Text("Vignette (WIP) ");
-					ImGui::SameLine();
-					if (ImGui::Checkbox("##vignette", &enable_vignette)) {
-						settings_json["video"]["vignette"] = enable_vignette;
-						save_settings_file();
-					}
-					ImGui::TextDisabled("Darken the edges of the screen");
 					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
 
 					ImGui::Text("Motion Blur (WIP) ");

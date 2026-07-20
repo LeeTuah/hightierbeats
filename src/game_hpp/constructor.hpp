@@ -93,6 +93,7 @@ inline Game::Game(GLFWwindow* win, int width, int height) {
 	screen_shader = new Shader("shaders/screen.vert", "shaders/screen.frag");
 	particle_shader = new Shader("shaders/particle.vert", "shaders/main.frag");
 	flat_shader = new Shader("shaders/flat.vert", "shaders/flat.frag");
+	vignette_shader = new Shader("shaders/flat.vert", "shaders/vignette.frag");
 
 	generate_VAOs();
 
@@ -337,8 +338,6 @@ inline Game::Game(GLFWwindow* win, int width, int height) {
 }
 
 inline Game::~Game() {
-	settings_file.close();
-
 	ma_sound_uninit(&bgm);
 	ma_engine_uninit(&audio_engine);
 

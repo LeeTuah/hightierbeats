@@ -1,11 +1,11 @@
 {
     "audio": {
-        "music_volume": 0.296999990940094,
-        "sfx_volume": 0.5669999718666077
+        "music_volume": 0.5640000104904175,
+        "sfx_volume": 0.04100000113248825
     },
     "game": {
         "auto_restart_on_loss": true,
-        "background_dim": 0.8410000205039978,
+        "background_dim": 0.7799999713897705,
         "win_style_animation": 0
     },
     "video": {

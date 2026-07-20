@@ -54,15 +54,6 @@ inline void Game::render_game() {
 	combo_msg = "x" + format_int_to_str(3, combo_point);
 	max_combo_msg = "x" + format_int_to_str(3, max_combo_reached);
 
-	if (game_state == GAME_RUNNING or game_state == GAME_PAUSED) {
-		if (fps_counter)
-			vcr_osd_mono->render_text(std::to_string((int)fps), 20, 20, 0.5f, glm::vec3(1.0f));
-
-		vcr_osd_mono->render_text(beat_timing_msg, (SCR_WIDTH / 2) - 20, SCR_HEIGHT - 100, 0.5f, beat_text_color);
-		vcr_osd_mono->render_text(score_msg, SCR_WIDTH - 147, SCR_HEIGHT - 50, 0.6f, glm::vec3(1.0f));
-		vcr_osd_mono->render_text(combo_msg, SCR_WIDTH - 80, SCR_HEIGHT - 80, 0.6f, glm::vec3(1.0f));
-	}
-
 	flat_shader->use();
 	glBindVertexArray(rect_VAO);
 
@@ -286,7 +277,37 @@ inline void Game::render_game() {
 				);
 			}
 		}
+
+		if (enable_vignette) {
+			vignette_shader->use();
+			glBindVertexArray(rect_VAO);
+
+			model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(SCR_WIDTH / 2.0f, SCR_HEIGHT / 2.0f, 0.0f));
+			model = glm::scale(model, glm::vec3(SCR_WIDTH, SCR_HEIGHT, 1.0f));
+
+			vignette_shader->set_mat4("model", model);
+			vignette_shader->set_mat4("view", glm::mat4(1.0f));
+			vignette_shader->set_mat4("projection", text_projection);
+			
+			// vignette_shader->set_float2("vignette_center", SCR_WIDTH / 2.0f, SCR_HEIGHT / 2.0f);
+			// vignette_shader->set_float("vignette_radius", 300.0f);
+			// vignette_shader->set_float("vignette_strength", 100.0f);
+
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+		}
+
+		glDisable(GL_DEPTH_TEST);
+
+		if (fps_counter)
+			vcr_osd_mono->render_text(std::to_string((int)fps), 20, 20, 0.5f, glm::vec3(1.0f));
+
+		vcr_osd_mono->render_text(beat_timing_msg, (SCR_WIDTH / 2) - 20, SCR_HEIGHT - 100, 0.5f, beat_text_color);
+		vcr_osd_mono->render_text(score_msg, SCR_WIDTH - 147, SCR_HEIGHT - 50, 0.6f, glm::vec3(1.0f));
+		vcr_osd_mono->render_text(combo_msg, SCR_WIDTH - 80, SCR_HEIGHT - 80, 0.6f, glm::vec3(1.0f));
 	} else if (game_state == GAME_WIN) {
+		glDisable(GL_DEPTH_TEST);
+
 		flat_shader->use();
 		glBindVertexArray(rect_VAO);
 

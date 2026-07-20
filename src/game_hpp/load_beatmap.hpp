@@ -274,37 +274,45 @@ inline void Game::load_settings_file() {
 
 	settings_json = json::parse(settings_data);
 
-	enable_auto_restart_on_loss = settings_json["game"]["auto_restart_on_loss"];
-	background_dim = settings_json["game"]["background_dim"];
-	win_animation_style_int = settings_json["game"]["win_style_animation"].get<int>();
+	try {
+		enable_auto_restart_on_loss = settings_json["game"]["auto_restart_on_loss"];
+		background_dim = settings_json["game"]["background_dim"];
+		win_animation_style_int = settings_json["game"]["win_style_animation"].get<int>();
 
-	if (win_animation_style_int == 0) win_animation_style = SCORES_BUILD_UP;
-	else if (win_animation_style_int == 1) win_animation_style = SCORES_PUNCHED_IN;
+		if (win_animation_style_int == 0) win_animation_style = SCORES_BUILD_UP;
+		else if (win_animation_style_int == 1) win_animation_style = SCORES_PUNCHED_IN;
 
-	sound_volume = settings_json["audio"]["music_volume"];
-	sfx_volume = settings_json["audio"]["sfx_volume"];
+		sound_volume = settings_json["audio"]["music_volume"];
+		sfx_volume = settings_json["audio"]["sfx_volume"];
 
-	fps_counter = settings_json["video"]["show_fps"];
-	enable_vsync = settings_json["video"]["vsync"];
+		fps_counter = settings_json["video"]["show_fps"];
+		enable_vsync = settings_json["video"]["vsync"];
 
-	msaa_samples = settings_json["video"]["msaa"];
+		msaa_samples = settings_json["video"]["msaa"];
 
-	if (msaa_samples == 0)       msaa_samples_int = 0;
-	else if (msaa_samples == 2)  msaa_samples_int = 1;
-	else if (msaa_samples == 4)  msaa_samples_int = 2;
-	else if (msaa_samples == 8)  msaa_samples_int = 3;
-	else if (msaa_samples == 16) msaa_samples_int = 4;
+		if (msaa_samples == 0)       msaa_samples_int = 0;
+		else if (msaa_samples == 2)  msaa_samples_int = 1;
+		else if (msaa_samples == 4)  msaa_samples_int = 2;
+		else if (msaa_samples == 8)  msaa_samples_int = 3;
+		else if (msaa_samples == 16) msaa_samples_int = 4;
 
-	enable_bloom = settings_json["video"]["bloom"];
-	enable_vignette = settings_json["video"]["vignette"];
-	enable_motion_blur = settings_json["video"]["motion_blur"];
-	enable_hdr_tonemapping = settings_json["video"]["hdr"];
-	enable_deflection_sparks = settings_json["video"]["deflection_sparks"];
-	enable_chromatic_aberration = settings_json["video"]["chromatic_aberration"];
+		enable_bloom = settings_json["video"]["bloom"];
+		enable_vignette = settings_json["video"]["vignette"];
+		enable_motion_blur = settings_json["video"]["motion_blur"];
+		enable_hdr_tonemapping = settings_json["video"]["hdr"];
+		enable_deflection_sparks = settings_json["video"]["deflection_sparks"];
+		enable_chromatic_aberration = settings_json["video"]["chromatic_aberration"];
+	} catch (json::exception &e) {
+		std::cout << "Error while loading the settings file! " << std::endl << "Error: " << e.what() << std::endl;
+	}
 }
 
 inline void Game::save_settings_file() {
-	settings_file.clear();
+	if (not fs::exists(settings_filepath.parent_path())) {
+        fs::create_directories(settings_filepath.parent_path());
+    }
+
+	std::ofstream settings_file;
 	settings_file.open(settings_filepath);
 	if (not settings_file.is_open()) {
 		std::cout << "Failed to open the settings file!" << std::endl;

@@ -204,6 +204,7 @@ public:
 	Shader* screen_shader;
 	Shader* particle_shader;
 	Shader* flat_shader;
+	Shader* vignette_shader;
 
 	glm::mat4 view, projection, model, text_projection;
 	std::vector<glm::vec3> sun_directions;
@@ -319,7 +320,6 @@ public:
 	Shard generate_shard_data(Shard shard, glm::vec3 core_elevation = glm::vec3(0.0f));
 
 	fs::path settings_filepath;
-	std::ofstream settings_file;
 	json settings_json;
 	void load_settings_file();
 	void save_settings_file();
