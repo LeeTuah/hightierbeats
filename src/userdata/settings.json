@@ -14,7 +14,7 @@
         "deflection_sparks": true,
         "hdr": true,
         "motion_blur": true,
-        "msaa": 0,
+        "msaa": 4,
         "show_fps": true,
         "vignette": true,
         "vsync": false

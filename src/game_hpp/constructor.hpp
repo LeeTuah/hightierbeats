@@ -95,8 +95,6 @@ inline Game::Game(GLFWwindow* win, int width, int height) {
 	flat_shader = new Shader("shaders/flat.vert", "shaders/flat.frag");
 	postprocess_shader = new Shader("shaders/flat.vert", "shaders/postprocess.frag");
 
-	generate_VAOs();
-
 	msaa_samples = 4;
 	msaa_samples_int = 2;
 
@@ -335,6 +333,8 @@ inline Game::Game(GLFWwindow* win, int width, int height) {
 
 	settings_filepath = fs::path("userdata/settings.json");
 	load_settings_file();
+
+	generate_VAOs();
 }
 
 inline Game::~Game() {

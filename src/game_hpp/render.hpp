@@ -4,7 +4,7 @@
 # include "../game.hpp"
 
 inline void Game::render() {
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, ms_fbo);
 	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
 	glfwSwapInterval(enable_vsync);
@@ -32,6 +32,10 @@ inline void Game::render() {
 		game_state == GAME_SELECTING_BEATMAP or
 		game_state == GAME_SETTINGS
 	) render_menu();
+
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, ms_fbo);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
+	glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

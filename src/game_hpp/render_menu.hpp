@@ -296,7 +296,7 @@ inline void Game::render_menu() {
 					ImGui::TextDisabled("Show/Hide FPS");
 					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing(); 
 
-					ImGui::Text("Enable VSync ");
+					ImGui::Text("VSync ");
 					ImGui::SameLine();
 					if (ImGui::Checkbox("##vsync_checkbox", &enable_vsync)) {
 						settings_json["video"]["vsync"] = enable_vsync;
@@ -314,9 +314,7 @@ inline void Game::render_menu() {
 					ImGui::TextDisabled("Darken the edges of the screen");
 					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
 
-					ImGui::BeginDisabled();
-
-					ImGui::Text("Anti-aliasing Sampling (WIP) ");
+					ImGui::Text("Anti-aliasing ");
 					ImGui::SameLine();
 
 					const char *msaa_samples_list[] = {"Disabled", "2x MSAA", "4x MSAA", "8x MSAA", "16x MSAA"};
@@ -329,9 +327,13 @@ inline void Game::render_menu() {
 
 						settings_json["video"]["msaa"] = msaa_samples;
 						save_settings_file();
+
+						resize_fbo(SCR_WIDTH, SCR_HEIGHT);
 					}
 					ImGui::TextDisabled("Multisampling amount to be used (the higher the prettier)");
 					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
+
+					ImGui::BeginDisabled();
 
 					ImGui::Text("Bloom (WIP) ");
 					ImGui::SameLine();

@@ -196,6 +196,7 @@ public:
 	unsigned int font_VAO, font_VBO;
 
 	unsigned int fbo, fbo_color_buffer, fbo_depth_stencil_buffer;
+	unsigned int ms_fbo, ms_color_buffer, ms_depth_stencil_buffer;
 
 	int msaa_samples, msaa_samples_int;
 	bool enable_chromatic_aberration, enable_bloom, enable_vignette;

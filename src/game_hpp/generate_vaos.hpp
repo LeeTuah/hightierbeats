@@ -406,7 +406,31 @@ inline void Game::generate_VAOs() {
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fbo_depth_stencil_buffer);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		std::cout << "[!] Framebuffer object failed to complete!" << std::endl;
+		std::cout << "[!] Main framebuffer object failed to complete!" << std::endl;
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	int gpu_max_samples;
+	glGetIntegerv(GL_MAX_SAMPLES, &gpu_max_samples);
+	int msaa_rectified_samples = std::clamp(msaa_samples, 1, gpu_max_samples);
+
+	glGenFramebuffers(1, &ms_fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, ms_fbo);
+
+	glGenTextures(1, &ms_color_buffer);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, ms_color_buffer);
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, msaa_rectified_samples, GL_RGB, SCR_WIDTH, SCR_HEIGHT, GL_TRUE);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, ms_color_buffer, 0);
+
+	glGenRenderbuffers(1, &ms_depth_stencil_buffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, ms_depth_stencil_buffer);
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, msaa_rectified_samples, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, ms_depth_stencil_buffer);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		std::cout << "[!] Multisampled framebuffer object failed to complete!" << std::endl;
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -460,9 +484,26 @@ inline void Game::resize_fbo(int width, int height) {
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
+	int gpu_max_samples;
+	glGetIntegerv(GL_MAX_SAMPLES, &gpu_max_samples);
+	int msaa_rectified_samples = std::clamp(msaa_samples, 1, gpu_max_samples);
+
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, ms_color_buffer);
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, msaa_rectified_samples, GL_RGB, SCR_WIDTH, SCR_HEIGHT, GL_TRUE);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+
+	glBindRenderbuffer(GL_RENDERBUFFER, ms_depth_stencil_buffer);
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, msaa_rectified_samples, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
 	glm::vec3 base_position(SCR_WIDTH / 2.0f, SCR_HEIGHT / 2.0f + 10.0f, 1.0f), offset(0.0f, 70.0f, 0.0f);
 	for (auto i = 0; i < pause_menu_tiles.size(); i++)
 		pause_menu_tiles[i]->position = base_position - ((float)i * offset);
+
+	base_position = glm::vec3(0.80f * SCR_WIDTH, 0.80f * SCR_HEIGHT, 1.0f);
+	offset = glm::vec3(0.0f, 0.20f * SCR_HEIGHT, 0.0f);
+	for (auto i = 0; i < main_menu_tiles.size(); i++)
+		main_menu_tiles[i]->position = base_position - ((float)i * offset);
 }
 
 # endif
