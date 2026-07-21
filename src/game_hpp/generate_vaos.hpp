@@ -384,6 +384,31 @@ inline void Game::generate_VAOs() {
 	glEnableVertexAttribArray(0);
 
 	glBindVertexArray(0);
+
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+	glGenTextures(1, &fbo_color_buffer);
+	glBindTexture(GL_TEXTURE_2D, fbo_color_buffer);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo_color_buffer, 0);
+
+	glGenRenderbuffers(1, &fbo_depth_stencil_buffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, fbo_depth_stencil_buffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, fbo_depth_stencil_buffer);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		std::cout << "[!] Framebuffer object failed to complete!" << std::endl;
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 inline std::vector<float> Game::generate_normals(std::vector<float> vertices) {
@@ -421,6 +446,23 @@ inline std::vector<float> Game::generate_normals(std::vector<float> vertices) {
 	}
 
 	return data;
+}
+
+inline void Game::resize_fbo(int width, int height) {
+	SCR_WIDTH = width;
+	SCR_HEIGHT = height;
+
+	glBindTexture(GL_TEXTURE_2D, fbo_color_buffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glBindRenderbuffer(GL_RENDERBUFFER, fbo_depth_stencil_buffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+	glm::vec3 base_position(SCR_WIDTH / 2.0f, SCR_HEIGHT / 2.0f + 10.0f, 1.0f), offset(0.0f, 70.0f, 0.0f);
+	for (auto i = 0; i < pause_menu_tiles.size(); i++)
+		pause_menu_tiles[i]->position = base_position - ((float)i * offset);
 }
 
 # endif

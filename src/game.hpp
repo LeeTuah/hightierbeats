@@ -150,6 +150,7 @@ int random_number(int begin = -100, int end = 100) {
 	return distribution(mt);
 }
 
+// FIXME: all the menu elements are hardcoded, fix them
 class Game {
 public:
 	GameState game_state;
@@ -194,7 +195,8 @@ public:
 	unsigned int rect_VAO, rect_VBO;
 	unsigned int font_VAO, font_VBO;
 
-	unsigned int msaa_FBO;
+	unsigned int fbo, fbo_color_buffer, fbo_depth_stencil_buffer;
+
 	int msaa_samples, msaa_samples_int;
 	bool enable_chromatic_aberration, enable_bloom, enable_vignette;
 	bool enable_motion_blur, enable_hdr_tonemapping, enable_deflection_sparks;
@@ -204,7 +206,7 @@ public:
 	Shader* screen_shader;
 	Shader* particle_shader;
 	Shader* flat_shader;
-	Shader* vignette_shader;
+	Shader* postprocess_shader;
 
 	glm::mat4 view, projection, model, text_projection;
 	std::vector<glm::vec3> sun_directions;
@@ -333,12 +335,15 @@ public:
 
 	void process_input(GLFWwindow* window, float delta_time);
 
+	void render();
 	void render_menu();
 	void render_game();
 	void render_mapmaker();
 
 	void check_for_collisions();
 	void update(float delta_time);
+
+	void resize_fbo(int width, int height);
 private:
 	void generate_VAOs();
 	std::vector<float> generate_normals(std::vector<float> vertices);
@@ -348,6 +353,7 @@ private:
 # include "game_hpp/load_beatmap.hpp"
 # include "game_hpp/sound.hpp"
 # include "game_hpp/process_input.hpp"
+# include "game_hpp/render.hpp"
 # include "game_hpp/render_menu.hpp"
 # include "game_hpp/render_game.hpp"
 # include "game_hpp/render_mapmaker.hpp"

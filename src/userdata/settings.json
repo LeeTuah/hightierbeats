@@ -1,7 +1,7 @@
 {
     "audio": {
         "music_volume": 0.5640000104904175,
-        "sfx_volume": 0.04100000113248825
+        "sfx_volume": 0.23800000548362732
     },
     "game": {
         "auto_restart_on_loss": true,

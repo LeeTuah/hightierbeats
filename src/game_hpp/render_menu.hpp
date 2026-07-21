@@ -4,22 +4,7 @@
 # include "../game.hpp"
 
 inline void Game::render_menu() {
-	if (
-		game_state != GAME_MAIN_MENU and
-		game_state != GAME_SELECTING_BEATMAP and
-		game_state != GAME_SETTINGS
-	) return;
-
-	glfwSwapInterval(enable_vsync);
-	glClearColor(0.02f, 0.02f, 0.02f, 1.0f);
-
 	glDisable(GL_DEPTH_TEST);
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glEnable(GL_MULTISAMPLE);
 
 	view = glm::mat4(1.0f);
 	text_projection = glm::ortho(0.0f, (float)SCR_WIDTH, 0.0f, (float)SCR_HEIGHT);

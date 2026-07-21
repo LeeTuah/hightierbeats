@@ -13,8 +13,13 @@ const int SCR_HEIGHT = 720;
 float delta_time = 0.0f;
 float last_time = 0.0f;
 
+Game* htb_engine = nullptr;
+
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
 	glViewport(0, 0, width, height);
+
+	if (htb_engine != nullptr and width > 0 and height > 0)
+		htb_engine->resize_fbo(width, height);
 }
 
 int main () {
@@ -23,8 +28,6 @@ int main () {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	glfwWindowHint(GLFW_SAMPLES, 4);
 
 	GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "HighTierBeats", NULL, NULL);
 	glfwMakeContextCurrent(window);
@@ -44,7 +47,7 @@ int main () {
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330 core");
 
-	Game* htb_engine = new Game(window, SCR_WIDTH, SCR_HEIGHT);
+	htb_engine = new Game(window, SCR_WIDTH, SCR_HEIGHT);
 	htb_engine->mapmaker_font_size = font_size;
 
 	while (not glfwWindowShouldClose(window)) {
@@ -63,9 +66,7 @@ int main () {
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
-		htb_engine->render_game();
-		htb_engine->render_menu();
-		htb_engine->render_mapmaker();
+		htb_engine->render();
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
