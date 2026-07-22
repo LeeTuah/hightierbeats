@@ -97,6 +97,8 @@ inline Game::Game(GLFWwindow* win, int width, int height) {
 
 	msaa_samples = 4;
 	msaa_samples_int = 2;
+	max_ca_offset = 0.010f;
+	ca_offset = 0.0f;
 
 	enable_chromatic_aberration = false;
 	enable_bloom = false;

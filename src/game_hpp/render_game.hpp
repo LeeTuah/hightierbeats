@@ -77,9 +77,9 @@ inline void Game::render_game() {
 	for (size_t i = 0; i < sun_directions.size(); i++){
 		std::string name = "suns[" + std::to_string(i) + "].";
 
-		main_shader->set_float3(name + "ambient", 0.1f, 0.1f, 0.1f);
-		main_shader->set_float3(name + "diffuse", 0.3f, 0.3f, 0.3f);
-		main_shader->set_float3(name + "specular", 0.0f, 0.0f, 0.0f);
+		main_shader->set_float3(name + "ambient", glm::vec3(0.1f));
+		main_shader->set_float3(name + "diffuse", glm::vec3((i == 0)? 0.8f : 0.3f));
+		main_shader->set_float3(name + "specular", glm::vec3(0.0f));
 
 		main_shader->set_float3(name + "direction", sun_directions[i]);
 	}

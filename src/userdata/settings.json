@@ -5,18 +5,18 @@
     },
     "game": {
         "auto_restart_on_loss": true,
-        "background_dim": 0.7799999713897705,
+        "background_dim": 0.7379999756813049,
         "win_style_animation": 0
     },
     "video": {
         "bloom": true,
         "chromatic_aberration": true,
         "deflection_sparks": true,
-        "hdr": true,
+        "hdr": false,
         "motion_blur": true,
         "msaa": 4,
         "show_fps": true,
-        "vignette": true,
+        "vignette": false,
         "vsync": false
     }
 }

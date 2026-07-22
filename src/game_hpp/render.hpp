@@ -18,12 +18,12 @@ inline void Game::render() {
 
 	glEnable(GL_MULTISAMPLE);
 
-	if (
-		game_state == GAME_RUNNING or
+	bool ingame = game_state == GAME_RUNNING or
 		game_state == GAME_ZERO_HP or
 		game_state == GAME_WIN	   or
-		game_state == GAME_PAUSED
-	) render_game();
+		game_state == GAME_PAUSED;
+
+	if (ingame) render_game();
 
 	else if (game_state == GAME_MAPMAKER) render_mapmaker();
 
@@ -62,13 +62,12 @@ inline void Game::render() {
 	glActiveTexture(GL_TEXTURE0);
 	postprocess_shader->set_int("tex", 0);
 
-	postprocess_shader->set_bool("vignette", enable_vignette and (game_state == GAME_RUNNING or
-		game_state == GAME_ZERO_HP or
-		game_state == GAME_WIN	   or
-		game_state == GAME_PAUSED)
-	);
+	postprocess_shader->set_bool("hdr", enable_hdr_tonemapping);
+	postprocess_shader->set_bool("chromatic", enable_chromatic_aberration and ingame);
+	postprocess_shader->set_float2("ca_offset", glm::vec2(ca_offset));
+
+	postprocess_shader->set_bool("vignette", enable_vignette and ingame);
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
-
 # endif

@@ -317,13 +317,14 @@ inline void Game::render_menu() {
 					ImGui::Text("Anti-aliasing ");
 					ImGui::SameLine();
 
-					const char *msaa_samples_list[] = {"Disabled", "2x MSAA", "4x MSAA", "8x MSAA", "16x MSAA"};
+					const char *msaa_samples_list[] = {"Disabled", "2x MSAA", "4x MSAA", "8x MSAA", "16x MSAA", "32x MSAA"};
 					if (ImGui::Combo("##msaa_samples_combo", &msaa_samples_int, msaa_samples_list, IM_ARRAYSIZE(msaa_samples_list))) {
-						if (msaa_samples_int == 0) msaa_samples = 0;
-						if (msaa_samples_int == 1) msaa_samples = 2;
-						if (msaa_samples_int == 2) msaa_samples = 4;
-						if (msaa_samples_int == 3) msaa_samples = 8;
+						if (msaa_samples_int == 0) msaa_samples =  0;
+						if (msaa_samples_int == 1) msaa_samples =  2;
+						if (msaa_samples_int == 2) msaa_samples =  4;
+						if (msaa_samples_int == 3) msaa_samples =  8;
 						if (msaa_samples_int == 4) msaa_samples = 16;
+						if (msaa_samples_int == 5) msaa_samples = 32;
 
 						settings_json["video"]["msaa"] = msaa_samples;
 						save_settings_file();
@@ -331,6 +332,24 @@ inline void Game::render_menu() {
 						resize_fbo(SCR_WIDTH, SCR_HEIGHT);
 					}
 					ImGui::TextDisabled("Multisampling amount to be used (the higher the prettier)");
+					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
+
+					ImGui::Text("Chromatic Aberration ");
+					ImGui::SameLine();
+					if (ImGui::Checkbox("##chromatic_aberration", &enable_chromatic_aberration)) {
+						settings_json["video"]["chromatic_aberration"] = enable_chromatic_aberration;
+						save_settings_file();
+					}
+					ImGui::TextDisabled("Adds color shifting to the screen");
+					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
+
+					ImGui::Text("HDR Tonemapping (WIP) ");
+					ImGui::SameLine();
+					if (ImGui::Checkbox("##hdr_tonemapping", &enable_hdr_tonemapping)) {
+						settings_json["video"]["hdr"] = enable_hdr_tonemapping;
+						save_settings_file();
+					}
+					ImGui::TextDisabled("Adapting the game brightness to the display");
 					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
 
 					ImGui::BeginDisabled();
@@ -353,15 +372,6 @@ inline void Game::render_menu() {
 					ImGui::TextDisabled("Blurs the shards");
 					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
 
-					ImGui::Text("HDR Tonemapping (WIP) ");
-					ImGui::SameLine();
-					if (ImGui::Checkbox("##hdr_tonemapping", &enable_hdr_tonemapping)) {
-						settings_json["video"]["hdr"] = enable_hdr_tonemapping;
-						save_settings_file();
-					}
-					ImGui::TextDisabled("Adapting the game brightness to the display");
-					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
-
 					ImGui::Text("Deflection Sparks (WIP) ");
 					ImGui::SameLine();
 					if (ImGui::Checkbox("##deflection_sparks", &enable_deflection_sparks)) {
@@ -369,15 +379,6 @@ inline void Game::render_menu() {
 						save_settings_file();
 					}
 					ImGui::TextDisabled("Sparks appear when a shard is successfully blocked");
-					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
-
-					ImGui::Text("Chromatic Aberration (WIP) ");
-					ImGui::SameLine();
-					if (ImGui::Checkbox("##chromatic_aberration", &enable_chromatic_aberration)) {
-						settings_json["video"]["chromatic_aberration"] = enable_chromatic_aberration;
-						save_settings_file();
-					}
-					ImGui::TextDisabled("Adds color shifting to the screen");
 					for (int i = 0; i < total_spacing_between_settings_items; i++) ImGui::Spacing();
 
 					ImGui::EndDisabled();

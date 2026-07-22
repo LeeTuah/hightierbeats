@@ -71,7 +71,9 @@ inline void Game::update(float delta_time) {
 	}
 
 	if (game_state == GAME_RUNNING or game_state == GAME_PAUSED) {
+		ca_offset = max_ca_offset * (100.0f - (float)health_point) / 100.0f;
 		visual_time += delta_time;
+
 		if (abs(visual_time - current_time) > 0.025f) visual_time = current_time;
 
 		for (auto &shard : shards) {
@@ -115,6 +117,7 @@ inline void Game::update(float delta_time) {
 			del_combo += ((float)max_combo_reached / win_screen_load_time) * delta_time;
 
 			if (del_score > score_point) del_score = score_point;
+
 			if (del_accuracy > total_accuracy) del_accuracy = total_accuracy;
 			if (del_combo > max_combo_reached) del_combo = max_combo_reached;
 

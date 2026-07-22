@@ -128,6 +128,8 @@ struct Shard {
 
 	bool active;
 	bool destroyed;
+
+	glm::vec3 color;
 };
 
 struct Shield {
@@ -199,6 +201,8 @@ public:
 	unsigned int ms_fbo, ms_color_buffer, ms_depth_stencil_buffer;
 
 	int msaa_samples, msaa_samples_int;
+	float ca_offset, max_ca_offset;
+
 	bool enable_chromatic_aberration, enable_bloom, enable_vignette;
 	bool enable_motion_blur, enable_hdr_tonemapping, enable_deflection_sparks;
 

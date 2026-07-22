@@ -391,7 +391,10 @@ inline void Game::generate_VAOs() {
 	glGenTextures(1, &fbo_color_buffer);
 	glBindTexture(GL_TEXTURE_2D, fbo_color_buffer);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(
+		GL_TEXTURE_2D, 0, (enable_hdr_tonemapping)? GL_RGB16F : GL_RGB, 
+		SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, (enable_hdr_tonemapping)? GL_FLOAT : GL_UNSIGNED_BYTE, NULL
+	);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -419,7 +422,10 @@ inline void Game::generate_VAOs() {
 
 	glGenTextures(1, &ms_color_buffer);
 	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, ms_color_buffer);
-	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, msaa_rectified_samples, GL_RGB, SCR_WIDTH, SCR_HEIGHT, GL_TRUE);
+	glTexImage2DMultisample(
+		GL_TEXTURE_2D_MULTISAMPLE, msaa_rectified_samples, 
+		(enable_hdr_tonemapping)? GL_RGB16F : GL_RGB, SCR_WIDTH, SCR_HEIGHT, GL_TRUE
+	);
 	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, ms_color_buffer, 0);
 
@@ -477,7 +483,10 @@ inline void Game::resize_fbo(int width, int height) {
 	SCR_HEIGHT = height;
 
 	glBindTexture(GL_TEXTURE_2D, fbo_color_buffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(
+		GL_TEXTURE_2D, 0, (enable_hdr_tonemapping)? GL_RGB16F : GL_RGB, 
+		width, height, 0, GL_RGB, (enable_hdr_tonemapping)? GL_FLOAT : GL_UNSIGNED_BYTE, NULL
+	);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glBindRenderbuffer(GL_RENDERBUFFER, fbo_depth_stencil_buffer);
@@ -489,7 +498,10 @@ inline void Game::resize_fbo(int width, int height) {
 	int msaa_rectified_samples = std::clamp(msaa_samples, 1, gpu_max_samples);
 
 	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, ms_color_buffer);
-	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, msaa_rectified_samples, GL_RGB, SCR_WIDTH, SCR_HEIGHT, GL_TRUE);
+	glTexImage2DMultisample(
+		GL_TEXTURE_2D_MULTISAMPLE, msaa_rectified_samples, 
+		(enable_hdr_tonemapping)? GL_RGB16F : GL_RGB, width, height, GL_TRUE
+	);
 	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 
 	glBindRenderbuffer(GL_RENDERBUFFER, ms_depth_stencil_buffer);
